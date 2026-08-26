@@ -2,7 +2,10 @@
 	'use strict';
 
 	var el = element.createElement;
+	var useEffect = element.useEffect;
 	var __ = i18n.__;
+	var PANEL_NAME = 'fforms-form-settings/fforms-form-settings';
+	var PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted';
 	var PanelBody = components.PanelBody;
 	var SelectControl = components.SelectControl;
 	var TextControl = components.TextControl;
@@ -27,8 +30,17 @@
 			return {
 				id: store.getCurrentPostId(),
 				meta: store.getEditedPostAttribute( 'meta' ) || {},
-				status: store.getEditedPostAttribute( 'status' )
+				status: store.getEditedPostAttribute( 'status' ),
+				isPanelOpened: store.isEditorPanelOpened( PANEL_NAME )
 			};
+		}, [] );
+		var togglePanelOpened = data.useDispatch( 'core/editor' ).toggleEditorPanelOpened;
+		useEffect( function () {
+			if ( editor.isPanelOpened || window.localStorage.getItem( PANEL_DEFAULTED_KEY ) ) {
+				return;
+			}
+			window.localStorage.setItem( PANEL_DEFAULTED_KEY, '1' );
+			togglePanelOpened( PANEL_NAME );
 		}, [] );
 		var editPostMeta = data.useDispatch( 'core/editor' ).editPost;
 		var meta = editor.meta;
