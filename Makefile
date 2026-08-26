@@ -1,6 +1,7 @@
 # FForms — local development via wp-env (see .wp-env.json)
 # Usage: make <target>   |   make help
 
+# http://localhost:8890
 WP_ENV = npx wp-env
 PORT   = 8890
 SITE   = http://localhost:$(PORT)
