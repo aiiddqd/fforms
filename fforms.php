@@ -28,6 +28,7 @@ require_once FFORMS_DIR . 'includes/class-post-types.php';
 require_once FFORMS_DIR . 'includes/class-settings.php';
 require_once FFORMS_DIR . 'includes/class-notifications.php';
 require_once FFORMS_DIR . 'includes/class-rest-controller.php';
+require_once FFORMS_DIR . 'includes/class-public-form.php';
 require_once FFORMS_DIR . 'includes/Blocks/class-form-renderer.php';
 require_once FFORMS_DIR . 'includes/class-block.php';
 require_once FFORMS_DIR . 'includes/class-export.php';

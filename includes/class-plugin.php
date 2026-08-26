@@ -16,12 +16,14 @@ final class Plugin {
 		Migration\Legacy_Migration::boot();
 		Settings::boot();
 		REST_Controller::boot();
+		Public_Form::boot();
 		Block::boot();
 		Export::boot();
 	}
 
 	public static function activate(): void {
 		Post_Types::register();
+		Public_Form::register_rewrite_rule();
 		flush_rewrite_rules();
 	}
 

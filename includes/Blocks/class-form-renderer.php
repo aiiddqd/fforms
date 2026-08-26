@@ -18,6 +18,10 @@ final class Form_Renderer {
 		return self::render_shell( self::$source_form_id ?: absint( $block->context['postId'] ?? 0 ), $content, $attributes );
 	}
 
+	public static function render_form( int $form_id ): string {
+		return self::render_reference( $form_id );
+	}
+
 	/** @param array<string,mixed> $attributes */
 	public static function render_field( array $attributes, string $block_name ): string {
 		$type = str_replace( 'fforms/field-', '', $block_name );

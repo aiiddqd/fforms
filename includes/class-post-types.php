@@ -80,6 +80,7 @@ final class Post_Types {
 		register_post_meta( self::FORM, '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
 		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		register_post_meta( self::FORM, '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
+		register_post_meta( self::FORM, '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => false ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
 			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
@@ -108,6 +109,7 @@ final class Post_Types {
 		$email_field       = (string) get_post_meta( $post->ID, '_fforms_autoreply_email_field', true );
 		$autoreply_subject = (string) get_post_meta( $post->ID, '_fforms_autoreply_subject', true );
 		$autoreply_message = (string) get_post_meta( $post->ID, '_fforms_autoreply_message', true );
+		$public            = Public_Form::is_enabled( $post->ID );
 		?>
 		<table class="form-table" role="presentation">
 			<tr><th><label for="fforms_type"><?php esc_html_e( 'Тип формы', 'fforms' ); ?></label></th><td><select id="fforms_type" name="fforms_type"><option value="contact" <?php selected( $type, 'contact' ); ?>><?php esc_html_e( 'Контактная', 'fforms' ); ?></option><option value="lead" <?php selected( $type, 'lead' ); ?>><?php esc_html_e( 'Лид', 'fforms' ); ?></option></select></td></tr>
@@ -115,6 +117,7 @@ final class Post_Types {
 			<tr><th><label for="fforms_notification_to"><?php esc_html_e( 'Получатели', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_to" name="fforms_notification_to" value="<?php echo esc_attr( $notify_to ); ?>"><p class="description"><?php esc_html_e( 'Email через запятую; если пусто — email администратора.', 'fforms' ); ?></p></td></tr>
 			<tr><th><label for="fforms_notification_subject"><?php esc_html_e( 'Тема уведомления', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_subject" name="fforms_notification_subject" value="<?php echo esc_attr( $notify_subject ); ?>"></td></tr>
 			<tr><th><label for="fforms_success_message"><?php esc_html_e( 'Сообщение об успехе', 'fforms' ); ?></label></th><td><input class="large-text" type="text" id="fforms_success_message" name="fforms_success_message" value="<?php echo esc_attr( $success_message ); ?>" placeholder="<?php esc_attr_e( 'Спасибо! Форма отправлена.', 'fforms' ); ?>"></td></tr>
+			<tr><th><?php esc_html_e( 'Публичная форма', 'fforms' ); ?></th><td><label><input type="checkbox" name="fforms_public" value="1" <?php checked( $public ); ?>> <?php esc_html_e( 'Открыть форму по публичной ссылке', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Любой, у кого есть ссылка, сможет заполнить и отправить форму.', 'fforms' ); ?></p><?php if ( $public && 'publish' === $post->post_status ) : ?><p><input class="regular-text code" type="url" readonly value="<?php echo esc_attr( Public_Form::url( $post->ID ) ); ?>" onclick="this.select();"><a class="button button-secondary" href="<?php echo esc_url( Public_Form::url( $post->ID ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Открыть', 'fforms' ); ?></a></p><?php elseif ( $public ) : ?><p class="description"><?php esc_html_e( 'Ссылка станет доступна после публикации формы.', 'fforms' ); ?></p><?php endif; ?></td></tr>
 		</table>
 		<h3><?php esc_html_e( 'Автоответ', 'fforms' ); ?></h3>
 		<p><label><input type="checkbox" name="fforms_autoreply_enabled" value="1" <?php checked( $autoreply_enabled ); ?>> <?php esc_html_e( 'Отправлять автоответ пользователю', 'fforms' ); ?></label></p>
@@ -144,6 +147,7 @@ final class Post_Types {
 		$message = isset( $_POST['fforms_autoreply_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['fforms_autoreply_message'] ) ) : '';
 		update_post_meta( $post_id, '_fforms_autoreply_message', $message );
 		update_post_meta( $post_id, '_fforms_autoreply_enabled', isset( $_POST['fforms_autoreply_enabled'] ) ? '1' : '0' );
+		update_post_meta( $post_id, '_fforms_public', isset( $_POST['fforms_public'] ) ? '1' : '0' );
 	}
 
 	/**
