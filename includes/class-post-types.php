@@ -137,10 +137,12 @@ final class Post_Types {
 
 	/** @param array<string, mixed> $data @param array<string, mixed> $postarr */
 	public static function prevent_invalid_publish( array $data, array $postarr ): array {
-		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_form_block( (string) ( $data['post_content'] ?? '' ) ) ) {
+		// wp_insert_post_data provides slashed data; unslash before parsing block JSON attributes.
+		$content = wp_unslash( (string) ( $data['post_content'] ?? '' ) );
+		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_form_block( $content ) ) {
 			return $data;
 		}
-		$schema = \FForms\Schema\Schema_Compiler::compile( (string) $data['post_content'] );
+		$schema = \FForms\Schema\Schema_Compiler::compile( $content );
 		if ( is_wp_error( $schema ) ) {
 			$data['post_status'] = 'draft';
 			$error_data = $schema->get_error_data( 'fforms_invalid_block_schema' );
