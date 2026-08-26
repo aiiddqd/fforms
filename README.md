@@ -1,6 +1,12 @@
 # FForms
 
-Лёгкий WordPress-плагин для contact/lead-форм с REST-first архитектурой.
+Современный WordPress-плагин для contact/lead-форм с REST-first архитектурой.
+
+## Use cases
+- contact forms
+- lead forms
+- public forms, quizzes, surveys and brief forms
+- headless cms and email smtp for form submissions from JAMStack sites like AstroJS
 
 ## Быстрый старт
 
