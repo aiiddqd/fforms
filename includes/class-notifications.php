@@ -28,8 +28,10 @@ final class Notifications {
 		}
 
 		$lines = array( sprintf( __( 'Форма: %s', 'fforms' ), get_the_title( $form_id ) ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
+		$schema = \FForms\Schema\Schema_Repository::for_form( $form_id );
+		$labels = ! is_wp_error( $schema ) ? wp_list_pluck( $schema['fields'], 'label', 'name' ) : array();
 		foreach ( $data as $key => $value ) {
-			$lines[] = sprintf( '%s: %s', $key, Post_Types::stringify( $value ) );
+			$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
 		}
 
 		$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );

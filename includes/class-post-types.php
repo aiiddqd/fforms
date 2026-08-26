@@ -19,6 +19,9 @@ final class Post_Types {
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
+		add_action( 'wp_after_insert_post', array( self::class, 'cache_compiled_schema' ), 10, 3 );
+		add_filter( 'wp_insert_post_data', array( self::class, 'prevent_invalid_publish' ), 20, 2 );
+		add_action( 'admin_notices', array( self::class, 'render_validation_notice' ) );
 	}
 
 	public static function register(): void {
@@ -37,7 +40,15 @@ final class Post_Types {
 				'show_in_rest'        => true,
 				'rest_base'           => 'fforms',
 				'menu_icon'           => 'dashicons-feedback',
-				'supports'            => array( 'title', 'custom-fields' ),
+				'supports'            => array( 'title', 'editor', 'revisions', 'custom-fields' ),
+				'template'            => array(
+					array( 'fforms/form', array(), array(
+						array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
+						array( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
+						array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
+						array( 'fforms/submit', array( 'label' => __( 'Отправить', 'fforms' ) ) ),
+					) ),
+				),
 				'exclude_from_search' => true,
 			)
 		);
@@ -67,7 +78,8 @@ final class Post_Types {
 
 	private static function register_meta(): void {
 		register_post_meta( self::FORM, '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
-		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
+		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
+		register_post_meta( self::FORM, '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
 			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
@@ -89,7 +101,6 @@ final class Post_Types {
 	public static function render_form_meta_box( WP_Post $post ): void {
 		wp_nonce_field( 'fforms_save_form', 'fforms_form_nonce' );
 		$type              = (string) get_post_meta( $post->ID, '_fforms_type', true );
-		$schema            = (string) get_post_meta( $post->ID, '_fforms_schema', true ) ?: Schema::sanitize_json( Schema::defaults() );
 		$notify_to         = (string) get_post_meta( $post->ID, '_fforms_notification_to', true );
 		$notify_subject    = (string) get_post_meta( $post->ID, '_fforms_notification_subject', true );
 		$success_message   = (string) get_post_meta( $post->ID, '_fforms_success_message', true );
@@ -100,7 +111,7 @@ final class Post_Types {
 		?>
 		<table class="form-table" role="presentation">
 			<tr><th><label for="fforms_type"><?php esc_html_e( 'Тип формы', 'fforms' ); ?></label></th><td><select id="fforms_type" name="fforms_type"><option value="contact" <?php selected( $type, 'contact' ); ?>><?php esc_html_e( 'Контактная', 'fforms' ); ?></option><option value="lead" <?php selected( $type, 'lead' ); ?>><?php esc_html_e( 'Лид', 'fforms' ); ?></option></select></td></tr>
-			<tr><th><label for="fforms_schema"><?php esc_html_e( 'JSON-схема', 'fforms' ); ?></label></th><td><textarea class="large-text code" rows="18" id="fforms_schema" name="fforms_schema"><?php echo esc_textarea( $schema ); ?></textarea><p class="description"><?php esc_html_e( 'Поля: name, label, type, required, placeholder, options, max_length. Типы: text, textarea, email, tel, url, number, select, radio, checkbox, hidden.', 'fforms' ); ?></p></td></tr>
+			<tr><th><?php esc_html_e( 'Структура формы', 'fforms' ); ?></th><td><p><?php esc_html_e( 'Поля редактируются в Gutenberg. Схема для API и валидации собирается из блоков автоматически.', 'fforms' ); ?></p><?php if ( \FForms\Migration\Legacy_Migration::can_migrate( $post->ID ) ) : ?><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="fforms_migrate_form"><input type="hidden" name="form_id" value="<?php echo esc_attr( $post->ID ); ?>"><?php wp_nonce_field( 'fforms_migrate_form_' . $post->ID ); ?><button class="button" type="submit"><?php esc_html_e( 'Преобразовать legacy-схему в блоки', 'fforms' ); ?></button></form><?php endif; ?></td></tr>
 			<tr><th><label for="fforms_notification_to"><?php esc_html_e( 'Получатели', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_to" name="fforms_notification_to" value="<?php echo esc_attr( $notify_to ); ?>"><p class="description"><?php esc_html_e( 'Email через запятую; если пусто — email администратора.', 'fforms' ); ?></p></td></tr>
 			<tr><th><label for="fforms_notification_subject"><?php esc_html_e( 'Тема уведомления', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_subject" name="fforms_notification_subject" value="<?php echo esc_attr( $notify_subject ); ?>"></td></tr>
 			<tr><th><label for="fforms_success_message"><?php esc_html_e( 'Сообщение об успехе', 'fforms' ); ?></label></th><td><input class="large-text" type="text" id="fforms_success_message" name="fforms_success_message" value="<?php echo esc_attr( $success_message ); ?>" placeholder="<?php esc_attr_e( 'Спасибо! Форма отправлена.', 'fforms' ); ?>"></td></tr>
@@ -119,9 +130,6 @@ final class Post_Types {
 		}
 		$type = isset( $_POST['fforms_type'] ) ? sanitize_key( wp_unslash( $_POST['fforms_type'] ) ) : 'contact';
 		update_post_meta( $post_id, '_fforms_type', in_array( $type, array( 'contact', 'lead' ), true ) ? $type : 'contact' );
-		if ( isset( $_POST['fforms_schema'] ) ) {
-			update_post_meta( $post_id, '_fforms_schema', Schema::sanitize_json( wp_unslash( $_POST['fforms_schema'] ) ) );
-		}
 		$fields = array(
 			'fforms_notification_to'       => '_fforms_notification_to',
 			'fforms_notification_subject'  => '_fforms_notification_subject',
@@ -136,6 +144,46 @@ final class Post_Types {
 		$message = isset( $_POST['fforms_autoreply_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['fforms_autoreply_message'] ) ) : '';
 		update_post_meta( $post_id, '_fforms_autoreply_message', $message );
 		update_post_meta( $post_id, '_fforms_autoreply_enabled', isset( $_POST['fforms_autoreply_enabled'] ) ? '1' : '0' );
+	}
+
+	/**
+	 * Keep the old meta value only as a cache after normal editor, REST, or programmatic saves.
+	 */
+	public static function cache_compiled_schema( int $post_id, \WP_Post $post, bool $update ): void {
+		if ( self::FORM !== $post->post_type || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+		if ( \FForms\Schema\Schema_Compiler::has_form_block( $post->post_content ) ) {
+			\FForms\Schema\Schema_Repository::invalidate( $post_id );
+			$schema = \FForms\Schema\Schema_Repository::for_form( $post_id );
+			if ( ! is_wp_error( $schema ) ) {
+				\FForms\Schema\Schema_Repository::store_cache( $post_id, $schema );
+			}
+		}
+	}
+
+	/** @param array<string, mixed> $data @param array<string, mixed> $postarr */
+	public static function prevent_invalid_publish( array $data, array $postarr ): array {
+		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_form_block( (string) ( $data['post_content'] ?? '' ) ) ) {
+			return $data;
+		}
+		$schema = \FForms\Schema\Schema_Compiler::compile( (string) $data['post_content'] );
+		if ( is_wp_error( $schema ) ) {
+			$data['post_status'] = 'draft';
+			$error_data = $schema->get_error_data( 'fforms_invalid_block_schema' );
+			$errors     = is_array( $error_data ) && isset( $error_data['errors'] ) ? (array) $error_data['errors'] : array( $schema->get_error_message() );
+			set_transient( 'fforms_schema_error_' . get_current_user_id(), implode( ' ', $errors ), MINUTE_IN_SECONDS );
+		}
+		return $data;
+	}
+
+	public static function render_validation_notice(): void {
+		$error = get_transient( 'fforms_schema_error_' . get_current_user_id() );
+		if ( ! $error ) {
+			return;
+		}
+		delete_transient( 'fforms_schema_error_' . get_current_user_id() );
+		echo '<div class="notice notice-error"><p>' . esc_html( (string) $error ) . '</p></div>';
 	}
 
 	public static function render_entry_meta_box( WP_Post $post ): void {

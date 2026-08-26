@@ -89,7 +89,10 @@ final class REST_Controller {
 			return new WP_Error( 'fforms_invalid_fields', __( 'Поле fields должно быть объектом.', 'fforms' ), array( 'status' => 400 ) );
 		}
 
-		$schema = Schema::normalize( (string) get_post_meta( $form_id, '_fforms_schema', true ) );
+		$schema = \FForms\Schema\Schema_Repository::for_form( $form_id );
+		if ( is_wp_error( $schema ) ) {
+			return $schema;
+		}
 		$data   = Schema::validate_submission( $schema, $fields );
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -172,7 +175,8 @@ final class REST_Controller {
 	}
 
 	private static function prepare_form( \WP_Post $post ): array {
-		return array( 'id' => $post->ID, 'title' => get_the_title( $post ), 'type' => get_post_meta( $post->ID, '_fforms_type', true ) ?: 'contact', 'schema' => Schema::normalize( (string) get_post_meta( $post->ID, '_fforms_schema', true ) ), 'success_message' => self::success_message( $post->ID ), 'submit_url' => rest_url( self::NAMESPACE . '/submit' ) );
+		$schema = \FForms\Schema\Schema_Repository::for_form( $post->ID );
+		return array( 'id' => $post->ID, 'title' => get_the_title( $post ), 'type' => get_post_meta( $post->ID, '_fforms_type', true ) ?: 'contact', 'schema' => is_wp_error( $schema ) ? array( 'fields' => array() ) : $schema, 'success_message' => self::success_message( $post->ID ), 'submit_url' => rest_url( self::NAMESPACE . '/submit' ) );
 	}
 
 	private static function prepare_entry( \WP_Post $post ): array {

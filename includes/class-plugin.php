@@ -13,6 +13,7 @@ final class Plugin {
 		add_action( 'init', array( Post_Types::class, 'register' ) );
 
 		Post_Types::boot();
+		Migration\Legacy_Migration::boot();
 		Settings::boot();
 		REST_Controller::boot();
 		Block::boot();

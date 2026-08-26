@@ -1,6 +1,6 @@
 ---
 title: "Конструктор форм FForms на Gutenberg"
-status: draft
+status: implementing
 created: 2026-08-26
 updated: 2026-08-26
 ---

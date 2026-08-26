@@ -1,0 +1,12 @@
+.wp-block-fforms-form { box-sizing: border-box; }
+.fforms-form, .fforms-fields, .fforms-field { display: grid; gap: 1rem; }
+.fforms-field { gap: .5rem; }
+.fforms-field input:not([type="checkbox"]):not([type="radio"]), .fforms-field textarea, .fforms-field select { box-sizing: border-box; max-width: 100%; padding: .7em .8em; width: 100%; }
+.fforms-field textarea { min-height: 8rem; resize: vertical; }
+.fforms-options { border: 0; margin: 0; padding: 0; }
+.fforms-choice { align-items: baseline; display: flex; gap: .5rem; }
+.fforms-submit { justify-self: start; padding: .7em 1.2em; }
+.fforms-field-error { color: #b42318; margin: 0; }
+.fforms-response:not(:empty) { background: #edfaef; border-left: 4px solid #16853a; padding: .75rem 1rem; }
+.fforms-response.is-error { background: #fff0f0; border-left-color: #b42318; }
+.fforms-hp { border: 0 !important; clip: rect(0, 0, 0, 0) !important; height: 1px !important; margin: -1px !important; overflow: hidden !important; padding: 0 !important; position: absolute !important; white-space: nowrap !important; width: 1px !important; }

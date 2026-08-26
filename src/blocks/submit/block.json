@@ -1,0 +1,1 @@
+{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"fforms/submit","title":"Submit button","category":"widgets","textdomain":"fforms","ancestor":["fforms/form"],"attributes":{"label":{"type":"string","role":"content","default":""}},"supports":{"html":false,"visibility":false},"editorScript":"file:./index.js","render":"file:./render.php"}

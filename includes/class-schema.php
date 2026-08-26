@@ -12,6 +12,10 @@ use WP_Error;
 final class Schema {
 	private const FIELD_TYPES = array( 'text', 'textarea', 'email', 'tel', 'url', 'number', 'select', 'radio', 'checkbox', 'hidden' );
 
+	public static function is_supported_type( string $type ): bool {
+		return in_array( $type, self::FIELD_TYPES, true );
+	}
+
 	/**
 	 * Return the starter contact form schema.
 	 *
@@ -58,7 +62,7 @@ final class Schema {
 			}
 			$name = sanitize_key( (string) ( $raw_field['name'] ?? '' ) );
 			$type = sanitize_key( (string) ( $raw_field['type'] ?? 'text' ) );
-			if ( '' === $name || isset( $seen[ $name ] ) || ! in_array( $type, self::FIELD_TYPES, true ) ) {
+			if ( '' === $name || isset( $seen[ $name ] ) || ! self::is_supported_type( $type ) ) {
 				continue;
 			}
 

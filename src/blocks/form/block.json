@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fforms/form",
+  "version": "1.0.0",
+  "title": "FForms Form",
+  "category": "widgets",
+  "icon": "feedback",
+  "description": "A reusable FForms form or the form builder container.",
+  "textdomain": "fforms",
+  "attributes": {
+    "ref": { "type": "integer", "default": 0 },
+    "formId": { "type": "integer", "default": 0 },
+    "showTitle": { "type": "boolean", "default": false },
+    "submitLabel": { "type": "string", "role": "content", "default": "" }
+  },
+  "supports": {
+    "html": false,
+    "align": [ "wide", "full" ],
+    "interactivity": true
+  },
+  "allowedBlocks": [
+    "fforms/field-text", "fforms/field-textarea", "fforms/field-email", "fforms/field-tel", "fforms/field-url", "fforms/field-number", "fforms/field-select", "fforms/field-radio", "fforms/field-checkbox", "fforms/field-hidden", "fforms/submit", "core/paragraph", "core/heading", "core/group", "core/columns", "core/column", "core/spacer", "core/separator"
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.scss",
+  "style": "file:./style.scss",
+  "viewStyle": "file:./view.scss",
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./render.php"
+}
