@@ -1,0 +1,17 @@
+{
+	"name": "fforms-dev",
+	"private": true,
+	"description": "Local dev environment for the FForms WordPress plugin.",
+	"scripts": {
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:restart": "wp-env start --update",
+		"env:destroy": "wp-env destroy",
+		"env:reset": "wp-env reset all",
+		"env:logs": "wp-env logs development",
+		"wp": "wp-env run cli wp"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^11.13.0"
+	}
+}
