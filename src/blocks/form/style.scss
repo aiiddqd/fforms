@@ -10,3 +10,6 @@
 .fforms-response:not(:empty) { background: #edfaef; border-left: 4px solid #16853a; padding: .75rem 1rem; }
 .fforms-response.is-error { background: #fff0f0; border-left-color: #b42318; }
 .fforms-hp { border: 0 !important; clip: rect(0, 0, 0, 0) !important; height: 1px !important; margin: -1px !important; overflow: hidden !important; padding: 0 !important; position: absolute !important; white-space: nowrap !important; width: 1px !important; }
+.fforms-public-form__content { margin-inline: auto; max-width: 48rem; padding: 2rem 1rem 4rem; }
+.fforms-public-form__header { margin-bottom: 2rem; }
+.fforms-public-form__title { margin: 0; }

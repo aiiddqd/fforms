@@ -71,7 +71,7 @@ final class Public_Form {
 		exit;
 	}
 
-	private static function render_not_found(): never {
+	private static function render_not_found(): void {
 		global $wp_query;
 
 		$wp_query->set_404();
