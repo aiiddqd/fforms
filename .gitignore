@@ -2,3 +2,4 @@
 node_modules/
 package-lock.json
 .wp-env.override.json
+docs/rfc/jetpack
