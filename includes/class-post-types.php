@@ -15,8 +15,8 @@ final class Post_Types {
 
 	public static function boot(): void {
 		add_action( 'add_meta_boxes', array( self::class, 'add_meta_boxes' ) );
-		add_action( 'save_post_' . self::FORM, array( self::class, 'save_form' ) );
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
+		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
 		add_action( 'wp_after_insert_post', array( self::class, 'cache_compiled_schema' ), 10, 3 );
@@ -80,12 +80,12 @@ final class Post_Types {
 		register_post_meta( self::FORM, '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
 		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		register_post_meta( self::FORM, '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
-		register_post_meta( self::FORM, '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => false ) );
+		register_post_meta( self::FORM, '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
-			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
+			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
 		}
-		register_post_meta( self::FORM, '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => false ) );
+		register_post_meta( self::FORM, '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
 		foreach ( array( '_fforms_form_id', '_fforms_created_post_id' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'integer', 'single' => true, 'show_in_rest' => false ) );
 		}
@@ -95,59 +95,28 @@ final class Post_Types {
 	}
 
 	public static function add_meta_boxes(): void {
-		add_meta_box( 'fforms_form_settings', __( 'Настройки формы', 'fforms' ), array( self::class, 'render_form_meta_box' ), self::FORM, 'normal', 'high' );
 		add_meta_box( 'fforms_entry_data', __( 'Данные ответа', 'fforms' ), array( self::class, 'render_entry_meta_box' ), self::ENTRY, 'normal', 'high' );
 	}
 
-	public static function render_form_meta_box( WP_Post $post ): void {
-		wp_nonce_field( 'fforms_save_form', 'fforms_form_nonce' );
-		$type              = (string) get_post_meta( $post->ID, '_fforms_type', true );
-		$notify_to         = (string) get_post_meta( $post->ID, '_fforms_notification_to', true );
-		$notify_subject    = (string) get_post_meta( $post->ID, '_fforms_notification_subject', true );
-		$success_message   = (string) get_post_meta( $post->ID, '_fforms_success_message', true );
-		$autoreply_enabled = (bool) get_post_meta( $post->ID, '_fforms_autoreply_enabled', true );
-		$email_field       = (string) get_post_meta( $post->ID, '_fforms_autoreply_email_field', true );
-		$autoreply_subject = (string) get_post_meta( $post->ID, '_fforms_autoreply_subject', true );
-		$autoreply_message = (string) get_post_meta( $post->ID, '_fforms_autoreply_message', true );
-		$public            = Public_Form::is_enabled( $post->ID );
-		?>
-		<table class="form-table" role="presentation">
-			<tr><th><label for="fforms_type"><?php esc_html_e( 'Тип формы', 'fforms' ); ?></label></th><td><select id="fforms_type" name="fforms_type"><option value="contact" <?php selected( $type, 'contact' ); ?>><?php esc_html_e( 'Контактная', 'fforms' ); ?></option><option value="lead" <?php selected( $type, 'lead' ); ?>><?php esc_html_e( 'Лид', 'fforms' ); ?></option></select></td></tr>
-			<tr><th><?php esc_html_e( 'Структура формы', 'fforms' ); ?></th><td><p><?php esc_html_e( 'Поля редактируются в Gutenberg. Схема для API и валидации собирается из блоков автоматически.', 'fforms' ); ?></p><?php if ( \FForms\Migration\Legacy_Migration::can_migrate( $post->ID ) ) : ?><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="fforms_migrate_form"><input type="hidden" name="form_id" value="<?php echo esc_attr( $post->ID ); ?>"><?php wp_nonce_field( 'fforms_migrate_form_' . $post->ID ); ?><button class="button" type="submit"><?php esc_html_e( 'Преобразовать legacy-схему в блоки', 'fforms' ); ?></button></form><?php endif; ?></td></tr>
-			<tr><th><label for="fforms_notification_to"><?php esc_html_e( 'Получатели', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_to" name="fforms_notification_to" value="<?php echo esc_attr( $notify_to ); ?>"><p class="description"><?php esc_html_e( 'Email через запятую; если пусто — email администратора.', 'fforms' ); ?></p></td></tr>
-			<tr><th><label for="fforms_notification_subject"><?php esc_html_e( 'Тема уведомления', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" id="fforms_notification_subject" name="fforms_notification_subject" value="<?php echo esc_attr( $notify_subject ); ?>"></td></tr>
-			<tr><th><label for="fforms_success_message"><?php esc_html_e( 'Сообщение об успехе', 'fforms' ); ?></label></th><td><input class="large-text" type="text" id="fforms_success_message" name="fforms_success_message" value="<?php echo esc_attr( $success_message ); ?>" placeholder="<?php esc_attr_e( 'Спасибо! Форма отправлена.', 'fforms' ); ?>"></td></tr>
-			<tr><th><?php esc_html_e( 'Публичная форма', 'fforms' ); ?></th><td><label><input type="checkbox" name="fforms_public" value="1" <?php checked( $public ); ?>> <?php esc_html_e( 'Открыть форму по публичной ссылке', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Любой, у кого есть ссылка, сможет заполнить и отправить форму.', 'fforms' ); ?></p><?php if ( $public && 'publish' === $post->post_status ) : ?><p><input class="regular-text code" type="url" readonly value="<?php echo esc_attr( Public_Form::url( $post->ID ) ); ?>" onclick="this.select();"><a class="button button-secondary" href="<?php echo esc_url( Public_Form::url( $post->ID ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Открыть', 'fforms' ); ?></a></p><?php elseif ( $public ) : ?><p class="description"><?php esc_html_e( 'Ссылка станет доступна после публикации формы.', 'fforms' ); ?></p><?php endif; ?></td></tr>
-		</table>
-		<h3><?php esc_html_e( 'Автоответ', 'fforms' ); ?></h3>
-		<p><label><input type="checkbox" name="fforms_autoreply_enabled" value="1" <?php checked( $autoreply_enabled ); ?>> <?php esc_html_e( 'Отправлять автоответ пользователю', 'fforms' ); ?></label></p>
-		<p><label for="fforms_autoreply_email_field"><?php esc_html_e( 'Имя email-поля', 'fforms' ); ?></label><br><input class="regular-text" type="text" id="fforms_autoreply_email_field" name="fforms_autoreply_email_field" value="<?php echo esc_attr( $email_field ?: 'email' ); ?>"></p>
-		<p><label for="fforms_autoreply_subject"><?php esc_html_e( 'Тема автоответа', 'fforms' ); ?></label><br><input class="large-text" type="text" id="fforms_autoreply_subject" name="fforms_autoreply_subject" value="<?php echo esc_attr( $autoreply_subject ); ?>"></p>
-		<p><label for="fforms_autoreply_message"><?php esc_html_e( 'Текст автоответа', 'fforms' ); ?></label><br><textarea class="large-text" rows="5" id="fforms_autoreply_message" name="fforms_autoreply_message"><?php echo esc_textarea( $autoreply_message ); ?></textarea></p>
-		<?php
-	}
-
-	public static function save_form( int $post_id ): void {
-		if ( ! self::can_save( $post_id, 'fforms_form_nonce', 'fforms_save_form' ) ) {
+	public static function enqueue_form_settings_sidebar(): void {
+		$screen = get_current_screen();
+		if ( ! $screen || self::FORM !== $screen->post_type ) {
 			return;
 		}
-		$type = isset( $_POST['fforms_type'] ) ? sanitize_key( wp_unslash( $_POST['fforms_type'] ) ) : 'contact';
-		update_post_meta( $post_id, '_fforms_type', in_array( $type, array( 'contact', 'lead' ), true ) ? $type : 'contact' );
-		$fields = array(
-			'fforms_notification_to'       => '_fforms_notification_to',
-			'fforms_notification_subject'  => '_fforms_notification_subject',
-			'fforms_success_message'        => '_fforms_success_message',
-			'fforms_autoreply_email_field' => '_fforms_autoreply_email_field',
-			'fforms_autoreply_subject'     => '_fforms_autoreply_subject',
+
+		$handle = 'fforms-form-settings-sidebar';
+		wp_enqueue_script(
+			$handle,
+			FFORMS_URL . 'assets/form-settings-sidebar.js',
+			array( 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
+			FFORMS_VERSION,
+			true
 		);
-		foreach ( $fields as $request_key => $meta_key ) {
-			$value = isset( $_POST[ $request_key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $request_key ] ) ) : '';
-			update_post_meta( $post_id, $meta_key, $value );
-		}
-		$message = isset( $_POST['fforms_autoreply_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['fforms_autoreply_message'] ) ) : '';
-		update_post_meta( $post_id, '_fforms_autoreply_message', $message );
-		update_post_meta( $post_id, '_fforms_autoreply_enabled', isset( $_POST['fforms_autoreply_enabled'] ) ? '1' : '0' );
-		update_post_meta( $post_id, '_fforms_public', isset( $_POST['fforms_public'] ) ? '1' : '0' );
+		wp_add_inline_script(
+			$handle,
+			'window.fformsFormSettings = ' . wp_json_encode( array( 'publicFormUrl' => Public_Form::url( 0 ) ) ) . ';',
+			'before'
+		);
 	}
 
 	/**
