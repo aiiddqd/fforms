@@ -31,22 +31,31 @@
 Требуется Docker и Node 20+.
 
 ```bash
-npm install
-npm run env:start        # http://localhost:8890 — admin/password
+make install
+make start        # http://localhost:8890 — admin/password
+make status       # проверить, что всё поднялось
 ```
 
 Плагин монтируется в контейнер из этой папки (`"plugins": ["."]` в [.wp-env.json](.wp-env.json)),
-правки в PHP/JS видны сразу без перезапуска. Ядро WordPress качается в контейнер (`"core": null` — последний стабильный).
+правки в PHP/JS видны сразу без перезапуска. Ядро WordPress качается в контейнер
+(`"core": null` — последний стабильный).
 
-| Команда | Действие |
-| --- | --- |
-| `npm run env:start` | поднять окружение |
-| `npm run env:stop` | остановить |
-| `npm run env:restart` | пересобрать с обновлением ядра (`--update`) |
-| `npm run env:reset` | сбросить БД |
-| `npm run env:destroy` | удалить контейнеры и тома |
-| `npm run env:logs` | логи контейнера WordPress |
-| `npm run wp -- <args>` | WP-CLI, напр. `npm run wp -- plugin list` |
+Полный список целей — `make help`. Те же операции есть и как npm-скрипты:
+
+| make | npm | Действие |
+| --- | --- | --- |
+| `make start` | `npm run env:start` | поднять окружение |
+| `make stop` | `npm run env:stop` | остановить |
+| `make restart` | — | остановить и поднять заново |
+| `make update` | `npm run env:restart` | обновить ядро WordPress (`--update`) |
+| `make reset` | `npm run env:reset` | сбросить БД и переустановить WP |
+| `make destroy` | `npm run env:destroy` | удалить контейнеры и тома |
+| `make xdebug` | — | поднять с включённым Xdebug |
+| `make logs` | `npm run env:logs` | логи PHP и Docker |
+| `make tail` | — | следить за `wp-content/debug.log` |
+| `make cli CMD="plugin list"` | `npm run wp -- plugin list` | WP-CLI |
+| `make bash` | — | шелл внутри контейнера |
+| `make status` | — | версии WP/PHP, состояние плагина и блока |
 
 Порт 8890 выбран, чтобы не конфликтовать с окружением монорепо `wpcraft` на 8888.
 Тестовое окружение отключено (`"testsEnvironment": false`) — включите, когда появятся PHPUnit-тесты.
@@ -55,5 +64,5 @@ npm run env:start        # http://localhost:8890 — admin/password
 `WP_DEBUG` и `SCRIPT_DEBUG` включены, PHP-ошибки пишутся в `wp-content/debug.log` внутри контейнера:
 
 ```bash
-npx wp-env run cli sh -c 'tail -f /var/www/html/wp-content/debug.log'
+make tail
 ```
