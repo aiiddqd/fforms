@@ -6,6 +6,7 @@
     - [ ] insert form to pages as block with select of available forms
 
 - [ ] pr https://github.com/aiiddqd/fforms/pull/6 
+    - translate to english
 
 - [x] публичные формы имеют урл и открываются по урл - своя шапка и подвал минимальные и кнопка отправить - сценарий как у как Гугл Формы
 - [ ] публичные формы - поддержка вставки через iframe
