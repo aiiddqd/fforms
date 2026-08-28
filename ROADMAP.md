@@ -5,7 +5,8 @@
 - [ ] fix styles about basic forms /Users/aa/Projects/ddhq/gits/wpcraft/wp/wp-content/plugins/_fforms/docs/rfc/gutenberg-styles-and-icons.md 
     - [ ] insert form to pages as block with select of available forms
 
-    
+- [ ] pr https://github.com/aiiddqd/fforms/pull/6 
+
 - [x] публичные формы имеют урл и открываются по урл - своя шапка и подвал минимальные и кнопка отправить - сценарий как у как Гугл Формы
 - [ ] публичные формы - поддержка вставки через iframe
 - [ ] у формы должна быть кнопка перехода к записям кототрые сохранены через эту форму
