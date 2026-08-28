@@ -9,14 +9,12 @@ SITE   = http://localhost:$(PORT)
 .DEFAULT_GOAL := help
 .PHONY: help install start stop restart destroy reset update xdebug logs tail cli bash wp status
 
-help: ## show this help
-	@grep -E '^[a-z-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
+up: ## start the environment (http://localhost:8890, admin/password)
+	$(WP_ENV) start
 
 install: ## install node deps (@wordpress/env)
 	npm install
 
-start: ## start the environment (http://localhost:8890, admin/password)
-	$(WP_ENV) start
 
 stop: ## stop the environment
 	$(WP_ENV) stop
@@ -54,3 +52,6 @@ status: ## report WP/PHP versions, plugin and block state
 	@printf 'rest=%s home=%s\n' \
 	  "$$(curl -s -o /dev/null -w '%{http_code}' $(SITE)/wp-json/fforms/v1)" \
 	  "$$(curl -s -o /dev/null -w '%{http_code}' $(SITE)/)"
+
+help: ## show this help
+	@grep -E '^[a-z-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
