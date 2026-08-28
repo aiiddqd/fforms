@@ -4,9 +4,8 @@
 	var el = element.createElement;
 	var useEffect = element.useEffect;
 	var __ = i18n.__;
-	var PANEL_NAME = 'fforms-form-settings/fforms-form-settings';
-	var PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted';
-	var PanelBody = components.PanelBody;
+	var FORM_SETTINGS_PANEL_NAME = 'fforms-form-settings/form-settings';
+	var PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted-v2';
 	var SelectControl = components.SelectControl;
 	var TextControl = components.TextControl;
 	var TextareaControl = components.TextareaControl;
@@ -31,7 +30,7 @@
 				id: store.getCurrentPostId(),
 				meta: store.getEditedPostAttribute( 'meta' ) || {},
 				status: store.getEditedPostAttribute( 'status' ),
-				isPanelOpened: store.isEditorPanelOpened( PANEL_NAME )
+				isPanelOpened: store.isEditorPanelOpened( FORM_SETTINGS_PANEL_NAME )
 			};
 		}, [] );
 		var togglePanelOpened = data.useDispatch( 'core/editor' ).toggleEditorPanelOpened;
@@ -40,7 +39,7 @@
 				return;
 			}
 			window.localStorage.setItem( PANEL_DEFAULTED_KEY, '1' );
-			togglePanelOpened( PANEL_NAME );
+			togglePanelOpened( FORM_SETTINGS_PANEL_NAME );
 		}, [] );
 		var editPostMeta = data.useDispatch( 'core/editor' ).editPost;
 		var meta = editor.meta;
@@ -56,39 +55,45 @@
 			: '';
 
 		return el(
-			PluginDocumentSettingPanel,
-			{
-				name: 'fforms-form-settings',
-				title: __( 'Настройки формы', 'fforms' ),
-				className: 'fforms-form-settings'
-			},
-			el( SelectControl, {
-				label: __( 'Тип формы', 'fforms' ),
-				value: meta[ META.type ] || 'contact',
-				options: [
-					{ label: __( 'Контактная', 'fforms' ), value: 'contact' },
-					{ label: __( 'Лид', 'fforms' ), value: 'lead' }
-				],
-				onChange: function ( value ) { updateMeta( META.type, value ); }
-			} ),
-			el( TextControl, {
-				label: __( 'Получатели', 'fforms' ),
-				value: meta[ META.notificationTo ] || '',
-				help: __( 'Email через запятую; если пусто — email администратора.', 'fforms' ),
-				onChange: function ( value ) { updateMeta( META.notificationTo, value ); }
-			} ),
-			el( TextControl, {
-				label: __( 'Тема уведомления', 'fforms' ),
-				value: meta[ META.notificationSubject ] || '',
-				onChange: function ( value ) { updateMeta( META.notificationSubject, value ); }
-			} ),
-			el( TextControl, {
-				label: __( 'Сообщение об успехе', 'fforms' ),
-				value: meta[ META.successMessage ] || '',
-				placeholder: __( 'Спасибо! Форма отправлена.', 'fforms' ),
-				onChange: function ( value ) { updateMeta( META.successMessage, value ); }
-			} ),
-			el( PanelBody, { title: __( 'Публичная форма', 'fforms' ), initialOpen: false },
+			element.Fragment,
+			null,
+			el(
+				PluginDocumentSettingPanel,
+				{
+					name: 'form-settings',
+					title: __( 'Настройки формы', 'fforms' ),
+					className: 'fforms-form-settings'
+				},
+				el( SelectControl, {
+					label: __( 'Тип формы', 'fforms' ),
+					value: meta[ META.type ] || 'contact',
+					options: [
+						{ label: __( 'Контактная', 'fforms' ), value: 'contact' },
+						{ label: __( 'Лид', 'fforms' ), value: 'lead' }
+					],
+					onChange: function ( value ) { updateMeta( META.type, value ); }
+				} ),
+				el( TextControl, {
+					label: __( 'Получатели', 'fforms' ),
+					value: meta[ META.notificationTo ] || '',
+					help: __( 'Email через запятую; если пусто — email администратора.', 'fforms' ),
+					onChange: function ( value ) { updateMeta( META.notificationTo, value ); }
+				} ),
+				el( TextControl, {
+					label: __( 'Тема уведомления', 'fforms' ),
+					value: meta[ META.notificationSubject ] || '',
+					onChange: function ( value ) { updateMeta( META.notificationSubject, value ); }
+				} ),
+				el( TextControl, {
+					label: __( 'Сообщение об успехе', 'fforms' ),
+					value: meta[ META.successMessage ] || '',
+					placeholder: __( 'Спасибо! Форма отправлена.', 'fforms' ),
+					onChange: function ( value ) { updateMeta( META.successMessage, value ); }
+				} )
+			),
+			el(
+				PluginDocumentSettingPanel,
+				{ name: 'public-form', title: __( 'Публичная форма', 'fforms' ) },
 				el( ToggleControl, {
 					label: __( 'Открыть форму по публичной ссылке', 'fforms' ),
 					checked: Boolean( meta[ META.publicForm ] ),
@@ -102,7 +107,9 @@
 					? el( 'p', { className: 'components-base-control__help' }, __( 'Ссылка станет доступна после публикации формы.', 'fforms' ) )
 					: null
 			),
-			el( PanelBody, { title: __( 'Автоответ', 'fforms' ), initialOpen: false },
+			el(
+				PluginDocumentSettingPanel,
+				{ name: 'autoreply', title: __( 'Автоответ', 'fforms' ) },
 				el( ToggleControl, {
 					label: __( 'Отправлять автоответ пользователю', 'fforms' ),
 					checked: Boolean( meta[ META.autoreplyEnabled ] ),

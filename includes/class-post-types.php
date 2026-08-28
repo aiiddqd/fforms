@@ -105,11 +105,13 @@ final class Post_Types {
 		}
 
 		$handle = 'fforms-form-settings-sidebar';
+		$path   = FFORMS_DIR . 'assets/form-settings-sidebar.js';
+		$version = file_exists( $path ) ? (string) filemtime( $path ) : FFORMS_VERSION;
 		wp_enqueue_script(
 			$handle,
 			FFORMS_URL . 'assets/form-settings-sidebar.js',
 			array( 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
-			FFORMS_VERSION,
+			$version,
 			true
 		);
 		wp_add_inline_script(
