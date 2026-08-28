@@ -7,6 +7,9 @@ updated: 2026-08-28
 
 # RFC: Нативная стилизация и иконки Gutenberg-блоков FForms
 
+## туду
+- [ ] пробую добавить новую форму [http://localhost:8890/wp-admin/post-new.php?post\_type=fform](http://localhost:8890/wp-admin/post-new.php?post_type=fform) и выглядит совсем криво
+
 ## Вводные
 
 Конструктор уже выводит рабочую форму, но визуально выглядит как набор браузерных контролов: дочерние блоки не имеют собственных иконок, кнопка в editor-preview показана как disabled, а CSS частично задаёт дизайн жёсткими значениями. Рекомендуется сделать FForms участником стандартного style engine WordPress: Block Supports и Global Styles управляют дизайном, семантические классы WordPress связывают форму с `theme.json`, а CSS плагина оставляет только структуру, безопасные fallback и состояния.
