@@ -1,1 +1,20 @@
-.wp-block-fforms-form { border: 1px dashed #757575; padding: 1rem; }
+:where(.editor-styles-wrapper .wp-block-fforms-form.is-selected, .editor-styles-wrapper .wp-block-fforms-form.has-child-selected) {
+	outline: 1px solid var(--wp-admin-theme-color, currentColor);
+	outline-offset: 4px;
+}
+
+:where(.editor-styles-wrapper .wp-block-fforms-field-hidden) {
+	min-height: 2.5rem;
+}
+
+:where(.editor-styles-wrapper .fforms-hidden-field-placeholder) {
+	border: 1px dashed currentcolor;
+	font-size: 0.875em;
+	padding: 0.5rem 0.75rem;
+}
+
+:where(.editor-styles-wrapper .fforms-editor-option) {
+	border-top: 1px solid currentcolor;
+	margin-top: 1rem;
+	padding-top: 1rem;
+}

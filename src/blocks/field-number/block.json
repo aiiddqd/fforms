@@ -1,1 +1,39 @@
-{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"fforms/field-number","title":"Number field","category":"widgets","textdomain":"fforms","ancestor":["fforms/form"],"attributes":{"fieldId":{"type":"string","role":"content"},"name":{"type":"string","role":"content"},"label":{"type":"string","role":"content"},"required":{"type":"boolean","role":"content","default":false},"placeholder":{"type":"string","role":"content"},"maxLength":{"type":"number","role":"content","default":0},"options":{"type":"array","role":"content","default":[]}},"supports":{"html":false,"visibility":false},"editorScript":"file:./index.js","render":"file:./render.php"}
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "fforms/field-number",
+	"title": "Number field",
+	"category": "widgets",
+	"icon": "editor-ol",
+	"description": "Collect a numeric value.",
+	"keywords": [ "number", "numeric", "quantity" ],
+	"textdomain": "fforms",
+	"ancestor": [ "fforms/form" ],
+	"attributes": {
+		"fieldId": { "type": "string", "role": "content" },
+		"name": { "type": "string", "role": "content" },
+		"label": { "type": "string", "role": "content" },
+		"required": { "type": "boolean", "role": "content", "default": false },
+		"placeholder": { "type": "string", "role": "content" },
+		"maxLength": { "type": "number", "role": "content", "default": 0 },
+		"options": { "type": "array", "role": "content", "default": [] }
+	},
+	"supports": {
+		"html": false,
+		"visibility": false,
+		"color": { "text": true, "background": false, "gradients": false },
+		"spacing": { "margin": [ "top", "bottom" ], "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"selectors": { "root": ".wp-block-fforms-field-number" },
+	"example": {
+		"attributes": {
+			"fieldId": "guests",
+			"name": "guests",
+			"label": "Guests",
+			"placeholder": "1"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

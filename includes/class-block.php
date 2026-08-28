@@ -13,8 +13,8 @@ final class Block {
 	}
 
 	public static function register(): void {
-		$build    = FFORMS_DIR . 'build';
-		$manifest = $build . '/blocks-manifest.php';
+		$build    = FFORMS_DIR . 'build/blocks';
+		$manifest = FFORMS_DIR . 'build/blocks-manifest.php';
 		if ( ! file_exists( $manifest ) ) {
 			self::register_development_fallback();
 			return;
@@ -72,6 +72,7 @@ final class Block {
 			'editor_script' => 'fforms-fallback-editor',
 			'style' => 'fforms-fallback-style',
 			'view_script' => 'fforms-fallback-view',
+			'uses_context' => array( 'postId' ),
 			'attributes' => self::form_attributes(),
 			'render_callback' => static fn( $attributes, $content, $block ): string => \FForms\Blocks\Form_Renderer::render( $attributes, $content, $block ),
 		) );

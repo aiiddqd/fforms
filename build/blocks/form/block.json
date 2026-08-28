@@ -1,0 +1,141 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fforms/form",
+  "version": "1.0.0",
+  "title": "FForms Form",
+  "category": "widgets",
+  "icon": "feedback",
+  "description": "Build a reusable FForms form or insert a published form.",
+  "keywords": [
+    "form",
+    "contact",
+    "lead"
+  ],
+  "textdomain": "fforms",
+  "usesContext": [
+    "postId"
+  ],
+  "attributes": {
+    "ref": {
+      "type": "integer",
+      "default": 0
+    },
+    "formId": {
+      "type": "integer",
+      "default": 0
+    },
+    "showTitle": {
+      "type": "boolean",
+      "default": false
+    },
+    "submitLabel": {
+      "type": "string",
+      "role": "content",
+      "default": ""
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "color": {
+      "background": true,
+      "text": true,
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": true,
+        "padding": true
+      }
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "style": true,
+        "width": true
+      }
+    },
+    "shadow": true,
+    "interactivity": true
+  },
+  "selectors": {
+    "root": ".wp-block-fforms-form"
+  },
+  "allowedBlocks": [
+    "fforms/field-text",
+    "fforms/field-textarea",
+    "fforms/field-email",
+    "fforms/field-tel",
+    "fforms/field-url",
+    "fforms/field-number",
+    "fforms/field-select",
+    "fforms/field-radio",
+    "fforms/field-checkbox",
+    "fforms/field-hidden",
+    "fforms/submit",
+    "core/paragraph",
+    "core/heading",
+    "core/group",
+    "core/columns",
+    "core/column",
+    "core/spacer",
+    "core/separator"
+  ],
+  "example": {
+    "viewportWidth": 640,
+    "innerBlocks": [
+      {
+        "name": "fforms/field-text",
+        "attributes": {
+          "fieldId": "name",
+          "name": "name",
+          "label": "Name",
+          "required": true
+        }
+      },
+      {
+        "name": "fforms/field-email",
+        "attributes": {
+          "fieldId": "email",
+          "name": "email",
+          "label": "Email",
+          "required": true
+        }
+      },
+      {
+        "name": "fforms/submit",
+        "attributes": {
+          "label": "Send"
+        }
+      }
+    ]
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.scss",
+  "style": "file:./style.scss",
+  "viewStyle": "file:./view.scss",
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./render.php"
+}

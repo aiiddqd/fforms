@@ -1,0 +1,5 @@
+# Generated assets and third-party reference material are not plugin source.
+build
+docs/rfc/jetpack/
+node_modules/
+vendor/

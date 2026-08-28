@@ -1,7 +1,8 @@
 ---
 title: "Нативная стилизация и иконки Gutenberg-блоков FForms"
-status: draft
+status: implementing
 created: 2026-08-28
+updated: 2026-08-28
 ---
 
 # RFC: Нативная стилизация и иконки Gutenberg-блоков FForms
@@ -98,17 +99,17 @@ Legacy-формы из `_fforms_schema` получают те же control class
 
 ## Критерии приёмки
 
-- [ ] Все 12 типов блоков имеют различимые, осмысленные иконки; в List View/Inserter нет общего fallback-значка.
-- [ ] `npm run build`, `npm run lint:js` и `npm run lint:css` проходят; `build/` получен только из `src/`.
-- [ ] Form, visible field и submit выводят block wrapper classes/attributes; выбранные Block Supports одинаково работают в editor и frontend.
+- [x] Все 12 типов блоков имеют различимые, осмысленные иконки; в List View/Inserter нет общего fallback-значка.
+- [x] `npm run build`, `npm run lint:js` и `npm run lint:css` проходят; `build/` получен только из `src/`.
+- [x] Form, visible field и submit выводят block wrapper classes/attributes; выбранные Block Supports одинаково работают в editor и frontend.
 - [ ] Тестовая block theme через `theme.json` меняет form container и button на WP 6.5, а `textInput`/`select` — на WP 7.1 без CSS FForms с повышенной специфичностью.
 - [ ] На WP 6.5 форма остаётся читаемой и usable без `textInput`/`select` element styles; проверена также одна классическая тема.
-- [ ] Submit наследует `wp-element-button`; editor-preview не выглядит disabled в обычном состоянии.
-- [ ] Text, textarea, select, radio, checkbox и hidden имеют соответствующий типу preview и сохраняют frontend-семантику.
+- [x] Submit наследует `wp-element-button`; editor-preview не выглядит disabled в обычном состоянии.
+- [x] Text, textarea, select, radio, checkbox и hidden имеют соответствующий типу preview и сохраняют frontend-семантику.
 - [ ] Две reference-вставки наследуют централизованный дизайн формы, но сохраняют собственное выравнивание без двойного wrapper-дизайна.
 - [ ] Keyboard/focus-visible, contrast, error/loading/success и label association проходят ручную проверку; цвет не является единственным сигналом.
 - [ ] На странице без формы CSS/JS FForms не загружаются; legacy-render продолжает работать.
-- [ ] `docs/theming.md` содержит рабочий пример и список стабильных selectors/variables.
+- [x] `docs/theming.md` содержит рабочий пример и список стабильных selectors/variables.
 
 ## Дорожная карта
 

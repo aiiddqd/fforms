@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fforms/field-select",
+  "title": "Select field",
+  "category": "widgets",
+  "icon": "arrow-down-alt2",
+  "description": "Let visitors choose one option from a menu.",
+  "keywords": [
+    "select",
+    "dropdown",
+    "choice"
+  ],
+  "textdomain": "fforms",
+  "ancestor": [
+    "fforms/form"
+  ],
+  "attributes": {
+    "fieldId": {
+      "type": "string",
+      "role": "content"
+    },
+    "name": {
+      "type": "string",
+      "role": "content"
+    },
+    "label": {
+      "type": "string",
+      "role": "content"
+    },
+    "required": {
+      "type": "boolean",
+      "role": "content",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string",
+      "role": "content"
+    },
+    "maxLength": {
+      "type": "number",
+      "role": "content",
+      "default": 0
+    },
+    "options": {
+      "type": "array",
+      "role": "content",
+      "default": []
+    }
+  },
+  "supports": {
+    "html": false,
+    "visibility": false,
+    "color": {
+      "text": true,
+      "background": false,
+      "gradients": false
+    },
+    "spacing": {
+      "margin": [
+        "top",
+        "bottom"
+      ],
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "selectors": {
+    "root": ".wp-block-fforms-field-select"
+  },
+  "example": {
+    "attributes": {
+      "fieldId": "topic",
+      "name": "topic",
+      "label": "Topic",
+      "required": true,
+      "options": [
+        {
+          "value": "sales",
+          "label": "Sales"
+        },
+        {
+          "value": "support",
+          "label": "Support"
+        }
+      ]
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}
