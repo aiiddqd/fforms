@@ -57,6 +57,10 @@ final class Schema_Compiler {
 		return (bool) self::find_root( parse_blocks( $content ) );
 	}
 
+	public static function has_headless_schema_block( string $content ): bool {
+		return (bool) self::find_named_root( parse_blocks( $content ), self::HEADLESS_SCHEMA_BLOCK );
+	}
+
 	/** @param array<int, array<string, mixed>> $blocks */
 	private static function find_root( array $blocks ): array|false {
 		foreach ( $blocks as $block ) {

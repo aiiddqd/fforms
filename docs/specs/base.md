@@ -40,7 +40,7 @@ FForms — лёгкий WordPress-плагин для контактных фо�
 Мета формы:
 
 - `_fforms_type` — `contact` или `lead`;
-- `_fforms_mode` — `block` или `headless`; отсутствующее у ранее созданной формы значение читается как `block`;
+- `_fforms_mode` — `block` или `headless`; отсутствующее у ранее созданной формы значение читается как `block`, а `fforms/headless-schema` в контенте принудительно означает `headless`;
 - `_fforms_schema` — нормализованная JSON-схема, производный кэш схемы из блоков (и совместимый формат legacy-форм без блоков);
 - `_fforms_notifications_enabled` — включение основного уведомления для формы;
 - `_fforms_notification_to`, `_fforms_notification_subject` — получатели и тема уведомления;

@@ -109,6 +109,10 @@ final class Post_Types {
 	}
 
 	public static function form_mode( int $form_id ): string {
+		if ( \FForms\Schema\Schema_Compiler::has_headless_schema_block( (string) get_post_field( 'post_content', $form_id ) ) ) {
+			return 'headless';
+		}
+
 		return self::sanitize_form_mode( get_post_meta( $form_id, '_fforms_mode', true ) );
 	}
 
