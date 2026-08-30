@@ -19,7 +19,7 @@ final class Schema_Repository {
 			return new WP_Error( 'fforms_form_not_found', __( 'Форма не найдена.', 'fforms' ) );
 		}
 
-		if ( ! Schema_Compiler::has_form_block( $form->post_content ) ) {
+		if ( 'headless' === Post_Types::form_mode( $form_id ) || ! Schema_Compiler::has_form_block( $form->post_content ) ) {
 			return Schema::normalize( (string) get_post_meta( $form_id, '_fforms_schema', true ) );
 		}
 

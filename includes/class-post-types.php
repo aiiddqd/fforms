@@ -14,7 +14,6 @@ final class Post_Types {
 	public const ENTRY = 'fform_entry';
 
 	public static function boot(): void {
-		add_action( 'load-post-new.php', array( self::class, 'handle_new_form_request' ) );
 		add_action( 'add_meta_boxes', array( self::class, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
@@ -113,92 +112,6 @@ final class Post_Types {
 		return self::sanitize_form_mode( get_post_meta( $form_id, '_fforms_mode', true ) );
 	}
 
-	/** Show the creation choice before WordPress makes its usual auto-draft. */
-	public static function handle_new_form_request(): void {
-		if ( self::FORM !== ( $_GET['post_type'] ?? '' ) ) {
-			return;
-		}
-
-		$post_type = get_post_type_object( self::FORM );
-		if ( ! $post_type || ! current_user_can( $post_type->cap->create_posts ) ) {
-			wp_die( esc_html__( 'У вас нет прав на создание форм.', 'fforms' ), 403 );
-		}
-
-		$mode = isset( $_GET['fforms_mode'] ) ? sanitize_key( wp_unslash( $_GET['fforms_mode'] ) ) : '';
-		if ( ! in_array( $mode, array( 'block', 'headless' ), true ) ) {
-			self::render_form_mode_selector();
-			return;
-		}
-
-		$post_id = wp_insert_post(
-			array(
-				'post_type'   => self::FORM,
-				'post_status' => 'draft',
-				'post_content' => 'block' === $mode ? self::starter_block_content() : '',
-				'meta_input'  => array(
-					'_fforms_mode'   => $mode,
-					'_fforms_schema' => 'headless' === $mode ? Schema::sanitize_json( Schema::defaults() ) : '',
-				),
-			),
-			true
-		);
-		if ( is_wp_error( $post_id ) ) {
-			wp_die( esc_html( $post_id->get_error_message() ) );
-		}
-
-		wp_safe_redirect( admin_url( 'post.php?post=' . absint( $post_id ) . '&action=edit' ) );
-		exit;
-	}
-
-	private static function render_form_mode_selector(): void {
-		$block_url    = add_query_arg( array( 'post_type' => self::FORM, 'fforms_mode' => 'block' ), admin_url( 'post-new.php' ) );
-		$headless_url = add_query_arg( array( 'post_type' => self::FORM, 'fforms_mode' => 'headless' ), admin_url( 'post-new.php' ) );
-		require_once ABSPATH . 'wp-admin/admin-header.php';
-		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Какую форму создать?', 'fforms' ); ?></h1>
-			<p><?php esc_html_e( 'Выберите режим. Его нельзя изменить после создания формы.', 'fforms' ); ?></p>
-			<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:760px;margin-top:24px;">
-				<a class="card" href="<?php echo esc_url( $block_url ); ?>" style="display:block;padding:24px;text-decoration:none;">
-					<h2><?php esc_html_e( 'Block editor', 'fforms' ); ?></h2>
-					<p><?php esc_html_e( 'Полный Gutenberg-конструктор. Форму можно вставлять блоком на страницы, а также использовать через REST API.', 'fforms' ); ?></p>
-				</a>
-				<a class="card" href="<?php echo esc_url( $headless_url ); ?>" style="display:block;padding:24px;text-decoration:none;">
-					<h2><?php esc_html_e( 'Headless API', 'fforms' ); ?></h2>
-					<p><?php esc_html_e( 'Упрощённое редактирование JSON-схемы. Форма доступна через REST API и не может быть встроена Gutenberg-блоком.', 'fforms' ); ?></p>
-				</a>
-			</div>
-		</div>
-		<?php
-		require_once ABSPATH . 'wp-admin/admin-footer.php';
-		exit;
-	}
-
-	private static function starter_block_content(): string {
-		$fields = array(
-			self::block( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
-			self::block( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
-			self::block( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
-			self::block( 'fforms/submit', array( 'label' => __( 'Отправить', 'fforms' ) ) ),
-		);
-		return serialize_block( self::block( 'fforms/form', array(), $fields ) );
-	}
-
-	/**
-	 * @param array<string,mixed>             $attrs
-	 * @param array<int,array<string,mixed>> $inner_blocks
-	 * @return array<string,mixed>
-	 */
-	private static function block( string $name, array $attrs, array $inner_blocks = array() ): array {
-		return array(
-			'blockName'    => $name,
-			'attrs'        => $attrs,
-			'innerBlocks'  => $inner_blocks,
-			'innerHTML'    => '',
-			'innerContent' => array_fill( 0, count( $inner_blocks ), null ),
-		);
-	}
-
 	/** @param array<string,mixed> $settings */
 	public static function configure_headless_editor( array $settings, \WP_Block_Editor_Context $context ): array {
 		if ( ! isset( $context->post ) || ! $context->post instanceof WP_Post || self::FORM !== $context->post->post_type || 'headless' !== self::form_mode( $context->post->ID ) ) {
@@ -226,7 +139,7 @@ final class Post_Types {
 		wp_enqueue_script(
 			$handle,
 			FFORMS_URL . 'assets/form-settings-sidebar.js',
-			array( 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
+			array( 'wp-blocks', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
 			$version,
 			true
 		);

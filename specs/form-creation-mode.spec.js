@@ -7,32 +7,25 @@ test.describe( 'form creation mode', () => {
 		await login( page );
 	} );
 
-	test( 'shows a mode selector before making a form draft', async ( {
-		page,
-	} ) => {
-		await page.goto( '/wp-admin/post-new.php?post_type=fform' );
-
-		await expect(
-			page.getByRole( 'heading', { name: 'Какую форму создать?' } )
-		).toBeVisible();
-		await expect(
-			page.getByRole( 'link', { name: /^Block editor/ } )
-		).toHaveAttribute( 'href', /fforms_mode=block/ );
-		await expect(
-			page.getByRole( 'link', { name: /^Headless API/ } )
-		).toHaveAttribute( 'href', /fforms_mode=headless/ );
-	} );
-
-	test( 'headless mode opens an empty locked editor', async ( {
+	test( 'creates a Block editor form and converts it to Headless API', async ( {
 		editor,
 		page,
 	} ) => {
 		await page.goto( '/wp-admin/post-new.php?post_type=fform' );
-		await page.getByRole( 'link', { name: /^Headless API/ } ).click();
+		await expect(
+			editor.canvas.locator( '.wp-block-fforms-form' )
+		).toBeVisible();
 
-		await expect( page ).toHaveURL( /post\.php\?post=\d+&action=edit/ );
+		await page.getByLabel( 'Режим формы' ).selectOption( 'headless' );
 		await expect(
 			editor.canvas.locator( '.wp-block-fforms-form' )
 		).toHaveCount( 0 );
+		await page.getByRole( 'button', { name: 'Поля Headless API' } ).click();
+		await expect( page.getByLabel( 'JSON-схема' ) ).toHaveValue( /email/ );
+
+		await page.getByLabel( 'Режим формы' ).selectOption( 'block' );
+		await expect(
+			editor.canvas.locator( '.wp-block-fforms-form' )
+		).toBeVisible();
 	} );
 } );
