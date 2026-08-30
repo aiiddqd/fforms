@@ -35,75 +35,89 @@ final class Dashboard {
 		);
 	}
 
+	private const REPO_URL = 'https://github.com/aiiddqd/fforms';
+
 	public static function render_page(): void {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return;
 		}
 
-		$forms = get_posts(
-			array(
-				'post_type'      => Post_Types::FORM,
-				'post_status'    => array( 'publish', 'draft', 'private' ),
-				'numberposts'    => 5,
-				'orderby'        => 'modified',
-				'order'          => 'DESC',
-			)
-		);
-		$total_forms = wp_count_posts( Post_Types::FORM );
-		$total_forms = (int) ( $total_forms->publish ?? 0 ) + (int) ( $total_forms->draft ?? 0 ) + (int) ( $total_forms->private ?? 0 );
+		$post_counts = wp_count_posts( Post_Types::FORM );
+		$forms_count = (int) ( $post_counts->publish ?? 0 ) + (int) ( $post_counts->draft ?? 0 ) + (int) ( $post_counts->private ?? 0 );
 		$code_forms  = Registry\Code_Forms::all();
-
-		$can_manage_entries = current_user_can( 'manage_options' );
-		$entries            = $can_manage_entries ? get_posts(
-			array(
-				'post_type'   => Post_Types::ENTRY,
-				'post_status' => 'private',
-				'numberposts' => 5,
-				'orderby'     => 'date',
-				'order'       => 'DESC',
-			)
-		) : array();
+		$smtp        = Settings::get();
 		?>
 		<div class="wrap fforms-dashboard">
-			<h1><?php esc_html_e( 'FForms', 'fforms' ); ?></h1>
-			<p><?php esc_html_e( 'Лёгкий, headless-friendly приём форм: собирайте данные из блоков Gutenberg или из внешних сайтов через REST API.', 'fforms' ); ?></p>
+			<style>
+				.fforms-dashboard .fforms-hero { margin: 20px 0 28px; }
+				.fforms-dashboard .fforms-hero p { max-width: 640px; font-size: 14px; }
+				.fforms-dashboard .fforms-cards { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+				.fforms-dashboard .fforms-card { flex: 1 1 240px; background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 16px 20px; }
+				.fforms-dashboard .fforms-card h2 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: #646970; }
+				.fforms-dashboard .fforms-card .fforms-card-status { font-size: 20px; font-weight: 600; margin: 4px 0; }
+				.fforms-dashboard .fforms-card .fforms-card-status.is-on { color: #007017; }
+				.fforms-dashboard .fforms-card .fforms-card-status.is-off { color: #8a8a8a; }
+				.fforms-dashboard .fforms-faq { max-width: 720px; }
+				.fforms-dashboard .fforms-faq details { background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 12px 16px; margin-bottom: 8px; }
+				.fforms-dashboard .fforms-faq summary { cursor: pointer; font-weight: 600; }
+				.fforms-dashboard .fforms-faq pre { background: #f6f7f7; border: 1px solid #dcdcde; padding: 12px 16px; overflow: auto; }
+			</style>
 
-			<p class="fforms-dashboard-actions">
-				<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Добавить форму', 'fforms' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>" class="button"><?php esc_html_e( 'Все формы', 'fforms' ); ?></a>
-			</p>
+			<div class="fforms-hero">
+				<h1><?php esc_html_e( 'FForms', 'fforms' ); ?></h1>
+				<p><?php esc_html_e( 'Лёгкий, headless-friendly приём форм: собирайте данные из блоков Gutenberg или из внешних сайтов через REST API.', 'fforms' ); ?></p>
+				<p>
+					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Добавить форму', 'fforms' ); ?></a>
+					<a href="<?php echo esc_url( self::REPO_URL ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Читать документацию', 'fforms' ); ?></a>
+				</p>
+			</div>
 
-			<div id="fforms-dashboard-columns" style="display:flex; gap:20px; flex-wrap:wrap; margin-top:20px;">
-				<div style="flex:2; min-width:420px;">
-
-					<h2><?php esc_html_e( 'Формы', 'fforms' ); ?> (<?php echo esc_html( (string) ( $total_forms + count( $code_forms ) ) ); ?>)</h2>
-					<?php if ( array() === $forms && array() === $code_forms ) : ?>
-						<p><?php esc_html_e( 'Пока нет ни одной формы.', 'fforms' ); ?></p>
+			<div class="fforms-cards">
+				<div class="fforms-card">
+					<h2><?php esc_html_e( 'Формы', 'fforms' ); ?></h2>
+					<p class="fforms-card-status"><?php echo esc_html( sprintf( _n( '%d форма', '%d форм', $forms_count, 'fforms' ), $forms_count ) ); ?></p>
+					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>"><?php esc_html_e( 'Все формы →', 'fforms' ); ?></a></p>
+				</div>
+				<div class="fforms-card">
+					<h2><?php esc_html_e( 'SMTP', 'fforms' ); ?></h2>
+					<?php if ( $smtp['enabled'] ) : ?>
+						<p class="fforms-card-status is-on"><?php esc_html_e( 'Включён', 'fforms' ); ?></p>
+						<p><?php echo esc_html( $smtp['host'] ?: __( 'Хост не указан', 'fforms' ) ); ?></p>
 					<?php else : ?>
-						<table class="widefat striped">
-							<tbody>
-							<?php foreach ( $forms as $form_post ) : ?>
-								<tr>
-									<td><a href="<?php echo esc_url( get_edit_post_link( $form_post ) ); ?>"><?php echo esc_html( get_the_title( $form_post ) ); ?></a></td>
-									<td><?php echo esc_html( ucfirst( $form_post->post_status ) ); ?></td>
-									<td><?php esc_html_e( 'Gutenberg', 'fforms' ); ?></td>
-								</tr>
-							<?php endforeach; ?>
-							<?php foreach ( $code_forms as $key => $code_form ) : ?>
-								<tr>
-									<td><?php echo esc_html( $code_form->title ); ?></td>
-									<td>—</td>
-									<td><code><?php echo esc_html( (string) $key ); ?></code> (<?php esc_html_e( 'headless', 'fforms' ); ?>)</td>
-								</tr>
-							<?php endforeach; ?>
-							</tbody>
-						</table>
-						<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>"><?php esc_html_e( 'Все формы →', 'fforms' ); ?></a></p>
+						<p class="fforms-card-status is-off"><?php esc_html_e( 'Выключен', 'fforms' ); ?></p>
+						<p><?php esc_html_e( 'Письма уходят через стандартный wp_mail()', 'fforms' ); ?></p>
 					<?php endif; ?>
+					<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'Настройки →', 'fforms' ); ?></a></p>
+				</div>
+				<div class="fforms-card">
+					<h2><?php esc_html_e( 'Headless-режим', 'fforms' ); ?></h2>
+					<?php if ( array() === $code_forms ) : ?>
+						<p class="fforms-card-status is-off"><?php esc_html_e( 'Не используется', 'fforms' ); ?></p>
+					<?php else : ?>
+						<p class="fforms-card-status is-on"><?php echo esc_html( sprintf( _n( '%d форма из кода', '%d форм из кода', count( $code_forms ), 'fforms' ), count( $code_forms ) ) ); ?></p>
+					<?php endif; ?>
+					<p><a href="#fforms-faq-headless"><?php esc_html_e( 'Как подключить →', 'fforms' ); ?></a></p>
+				</div>
+			</div>
 
-					<h2><?php esc_html_e( 'Headless-форма из кода', 'fforms' ); ?></h2>
-					<p><?php esc_html_e( 'Регистрируйте форму на хуке fforms_register_forms — она станет доступна через REST API по своему ключу, без создания записи в Gutenberg.', 'fforms' ); ?></p>
-					<pre style="background:#fff; border:1px solid #dcdcde; padding:12px 16px; overflow:auto;"><code>add_action( 'fforms_register_forms', function () {
+			<h2><?php esc_html_e( 'Частые вопросы', 'fforms' ); ?></h2>
+			<div class="fforms-faq">
+				<details>
+					<summary><?php esc_html_e( 'Как быстро создать форму?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'Нажмите «Добавить форму», соберите поля блоками FForms прямо в редакторе Gutenberg и опубликуйте запись — форма сразу становится доступна на сайте и через REST API.', 'fforms' ); ?></p>
+				</details>
+				<details>
+					<summary><?php esc_html_e( 'Как настроить отправку писем?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'В разделе «Настройки» включите встроенный SMTP и укажите хост, порт и логин — либо оставьте выключенным, если почтой уже управляет другой SMTP-плагин. Уведомления и автоответы для конкретной формы настраиваются в самой форме.', 'fforms' ); ?></p>
+				</details>
+				<details>
+					<summary><?php esc_html_e( 'Как выгрузить заявки?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'В разделе «Экспорт CSV» выберите форму (или все сразу) и нажмите «Скачать CSV».', 'fforms' ); ?></p>
+				</details>
+				<details id="fforms-faq-headless">
+					<summary><?php esc_html_e( 'Как добавить headless-форму (форму из кода)?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'Зарегистрируйте форму на хуке fforms_register_forms — она станет доступна через REST API по своему ключу, без создания записи в Gutenberg.', 'fforms' ); ?></p>
+					<pre><code>add_action( 'fforms_register_forms', function () {
 	fforms_add_api_route( 'contact_astro', array(
 		'title'   =&gt; 'Контакт (Astro)',
 		'fields'  =&gt; array(
@@ -113,41 +127,14 @@ final class Dashboard {
 		'origins' =&gt; array( 'https://example.com' ),
 	) );
 } );</code></pre>
-
-					<h2><?php esc_html_e( 'Пример запроса', 'fforms' ); ?></h2>
 					<p><?php esc_html_e( 'Отправка данных формы с внешнего сайта:', 'fforms' ); ?></p>
-					<pre style="background:#fff; border:1px solid #dcdcde; padding:12px 16px; overflow:auto;"><code>curl -X POST <?php echo esc_html( rest_url( 'fforms/v1/submit' ) ); ?> \
+					<pre><code>curl -X POST <?php echo esc_html( rest_url( 'fforms/v1/submit' ) ); ?> \
 	-H "Content-Type: application/json" \
 	-d '{
 		"form_key": "contact_astro",
 		"fields": { "email": "user@example.com", "message": "Hello!" }
 	}'</code></pre>
-
-				</div>
-
-				<div style="flex:1; min-width:280px;">
-					<h2><?php esc_html_e( 'Последние заявки', 'fforms' ); ?></h2>
-					<?php if ( ! $can_manage_entries ) : ?>
-						<p><?php esc_html_e( 'Недостаточно прав для просмотра заявок.', 'fforms' ); ?></p>
-					<?php elseif ( array() === $entries ) : ?>
-						<p><?php esc_html_e( 'Заявок пока нет.', 'fforms' ); ?></p>
-					<?php else : ?>
-						<ul>
-							<?php foreach ( $entries as $entry ) : ?>
-								<?php
-								$form_id  = (int) get_post_meta( $entry->ID, '_fforms_form_id', true );
-								$form_key = (string) get_post_meta( $entry->ID, '_fforms_form_key', true );
-								$title    = $form_id ? get_the_title( $form_id ) : $form_key;
-								?>
-								<li>
-									<a href="<?php echo esc_url( get_edit_post_link( $entry ) ); ?>"><?php echo esc_html( $title ?: __( '(без формы)', 'fforms' ) ); ?></a>
-									<br><small><?php echo esc_html( get_the_date( '', $entry ) . ' ' . get_the_time( '', $entry ) ); ?></small>
-								</li>
-							<?php endforeach; ?>
-						</ul>
-						<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>" class="button"><?php esc_html_e( 'Все заявки', 'fforms' ); ?></a></p>
-					<?php endif; ?>
-				</div>
+				</details>
 			</div>
 		</div>
 		<?php
