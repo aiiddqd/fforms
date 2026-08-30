@@ -26,6 +26,7 @@ final class Plugin {
 
 	public static function activate(): void {
 		Post_Types::register();
+		Default_Forms::seed();
 		Public_Form::register_rewrite_rule();
 		flush_rewrite_rules();
 	}
