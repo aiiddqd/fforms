@@ -118,9 +118,20 @@ final class Post_Types {
 			return $settings;
 		}
 
-		$settings['template']     = array();
+		$settings['template']     = self::headless_schema_template();
 		$settings['templateLock'] = 'all';
 		return $settings;
+	}
+
+	/** @return array<int, array<int|string, mixed>> */
+	private static function headless_schema_template(): array {
+		return array(
+			array( 'fforms/headless-schema', array( 'lock' => array( 'move' => true, 'remove' => true ) ), array(
+				array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
+				array( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
+				array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
+			) ),
+		);
 	}
 
 	public static function add_meta_boxes(): void {
@@ -162,7 +173,7 @@ final class Post_Types {
 		if ( self::FORM !== $post->post_type || wp_is_post_revision( $post_id ) ) {
 			return;
 		}
-		if ( \FForms\Schema\Schema_Compiler::has_form_block( $post->post_content ) ) {
+		if ( \FForms\Schema\Schema_Compiler::has_schema_block( $post->post_content ) ) {
 			\FForms\Schema\Schema_Repository::invalidate( $post_id );
 			$schema = \FForms\Schema\Schema_Repository::for_form( $post_id );
 			if ( ! is_wp_error( $schema ) ) {
@@ -175,7 +186,7 @@ final class Post_Types {
 	public static function prevent_invalid_publish( array $data, array $postarr ): array {
 		// wp_insert_post_data provides slashed data; unslash before parsing block JSON attributes.
 		$content = wp_unslash( (string) ( $data['post_content'] ?? '' ) );
-		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_form_block( $content ) ) {
+		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_schema_block( $content ) ) {
 			return $data;
 		}
 		$schema = \FForms\Schema\Schema_Compiler::compile( $content );

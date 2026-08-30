@@ -135,11 +135,39 @@
 		},
 	} );
 
+	blocks.registerBlockType( 'fforms/headless-schema', {
+		title: __( 'Headless API fields', 'fforms' ),
+		icon: 'database',
+		category: 'widgets',
+		edit() {
+			return el(
+				'div',
+				useBlockProps( { className: 'fforms-headless-schema' } ),
+				el(
+					'p',
+					null,
+					__(
+						'Поля ниже определяют схему формы для REST API. Этот блок не выводится на сайте.',
+						'fforms'
+					)
+				),
+				el( InnerBlocks, {
+					allowedBlocks: FIELDS.map( function ( type ) {
+						return 'fforms/field-' + type;
+					} ),
+				} )
+			);
+		},
+		save() {
+			return el( InnerBlocks.Content );
+		},
+	} );
+
 	FIELDS.forEach( function ( type ) {
 		blocks.registerBlockType( 'fforms/field-' + type, {
 			title: __( type + ' field', 'fforms' ),
 			category: 'widgets',
-			parent: [ 'fforms/form' ],
+			parent: [ 'fforms/form', 'fforms/headless-schema' ],
 			attributes: {
 				fieldId: { type: 'string' },
 				name: { type: 'string' },

@@ -12,8 +12,9 @@ use WP_Error;
 use WP_Post;
 
 final class Schema_Compiler {
-	private const FORM_BLOCK   = 'fforms/form';
-	private const SUBMIT_BLOCK = 'fforms/submit';
+	private const FORM_BLOCK            = 'fforms/form';
+	private const HEADLESS_SCHEMA_BLOCK = 'fforms/headless-schema';
+	private const SUBMIT_BLOCK          = 'fforms/submit';
 
 	/**
 	 * @return array{fields: array<int, array<string, mixed>>}|WP_Error
@@ -32,7 +33,7 @@ final class Schema_Compiler {
 		$submit = 0;
 		self::walk( $root['innerBlocks'] ?? array(), $fields, $names, $errors, $submit );
 
-		if ( 1 !== $submit ) {
+		if ( self::FORM_BLOCK === $root['blockName'] && 1 !== $submit ) {
 			$errors[] = __( 'В форме должна быть ровно одна кнопка отправки.', 'fforms' );
 		}
 		if ( array() === $fields ) {
@@ -46,13 +47,30 @@ final class Schema_Compiler {
 	}
 
 	public static function has_form_block( string $content ): bool {
+		return (bool) self::find_named_root( parse_blocks( $content ), self::FORM_BLOCK );
+	}
+
+	/**
+	 * Whether the post contains either editor representation of an FForms schema.
+	 */
+	public static function has_schema_block( string $content ): bool {
 		return (bool) self::find_root( parse_blocks( $content ) );
 	}
 
 	/** @param array<int, array<string, mixed>> $blocks */
 	private static function find_root( array $blocks ): array|false {
 		foreach ( $blocks as $block ) {
-			if ( self::FORM_BLOCK === ( $block['blockName'] ?? '' ) ) {
+			if ( in_array( $block['blockName'] ?? '', array( self::FORM_BLOCK, self::HEADLESS_SCHEMA_BLOCK ), true ) ) {
+				return $block;
+			}
+		}
+		return false;
+	}
+
+	/** @param array<int, array<string, mixed>> $blocks */
+	private static function find_named_root( array $blocks, string $name ): array|false {
+		foreach ( $blocks as $block ) {
+			if ( $name === ( $block['blockName'] ?? '' ) ) {
 				return $block;
 			}
 		}

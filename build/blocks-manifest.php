@@ -16,7 +16,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -102,7 +103,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -189,7 +191,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -255,7 +258,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -341,7 +345,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -437,7 +442,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -533,7 +539,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -620,7 +627,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -707,7 +715,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -794,7 +803,8 @@ return array(
 		),
 		'textdomain' => 'fforms',
 		'ancestor' => array(
-			'fforms/form'
+			'fforms/form',
+			'fforms/headless-schema'
 		),
 		'attributes' => array(
 			'fieldId' => array(
@@ -1004,6 +1014,36 @@ return array(
 		'style' => 'file:./style-index.css',
 		'viewStyle' => 'file:./view.css',
 		'viewScriptModule' => 'file:./view.js',
+		'render' => 'file:./render.php'
+	),
+	'headless-schema' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'fforms/headless-schema',
+		'version' => '1.0.0',
+		'title' => 'Headless API fields',
+		'category' => 'widgets',
+		'icon' => 'database',
+		'description' => 'Define the fields exposed by an FForms Headless API form.',
+		'textdomain' => 'fforms',
+		'allowedBlocks' => array(
+			'fforms/field-text',
+			'fforms/field-textarea',
+			'fforms/field-email',
+			'fforms/field-tel',
+			'fforms/field-url',
+			'fforms/field-number',
+			'fforms/field-select',
+			'fforms/field-radio',
+			'fforms/field-checkbox',
+			'fforms/field-hidden'
+		),
+		'supports' => array(
+			'html' => false,
+			'inserter' => false,
+			'reusable' => false
+		),
+		'editorScript' => 'file:./index.js',
 		'render' => 'file:./render.php'
 	),
 	'submit' => array(

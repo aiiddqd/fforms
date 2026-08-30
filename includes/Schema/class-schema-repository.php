@@ -19,23 +19,23 @@ final class Schema_Repository {
 			return new WP_Error( 'fforms_form_not_found', __( 'Форма не найдена.', 'fforms' ) );
 		}
 
-		if ( 'headless' === Post_Types::form_mode( $form_id ) || ! Schema_Compiler::has_form_block( $form->post_content ) ) {
-			return Schema::normalize( (string) get_post_meta( $form_id, '_fforms_schema', true ) );
-		}
-
-		$hash = hash( 'sha256', $form->post_content );
-		if ( $hash === (string) get_post_meta( $form_id, '_fforms_schema_hash', true ) ) {
-			$cached = json_decode( (string) get_post_meta( $form_id, '_fforms_schema', true ), true );
-			if ( is_array( $cached ) ) {
-				return $cached;
+		if ( Schema_Compiler::has_schema_block( $form->post_content ) ) {
+			$hash = hash( 'sha256', $form->post_content );
+			if ( $hash === (string) get_post_meta( $form_id, '_fforms_schema_hash', true ) ) {
+				$cached = json_decode( (string) get_post_meta( $form_id, '_fforms_schema', true ), true );
+				if ( is_array( $cached ) ) {
+					return Schema::normalize( $cached );
+				}
 			}
+
+			$schema = Schema_Compiler::compile( $form );
+			if ( ! is_wp_error( $schema ) ) {
+				self::store_cache( $form_id, $schema, $hash );
+			}
+			return $schema;
 		}
 
-		$schema = Schema_Compiler::compile( $form );
-		if ( ! is_wp_error( $schema ) ) {
-			self::store_cache( $form_id, $schema, $hash );
-		}
-		return $schema;
+		return Schema::normalize( (string) get_post_meta( $form_id, '_fforms_schema', true ) );
 	}
 
 	/** @param array{fields: array<int, array<string, mixed>>} $schema */

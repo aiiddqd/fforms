@@ -64,32 +64,15 @@
 		autoreplyMessage: '_fforms_autoreply_message',
 	};
 
-	function schemaFromMeta( value ) {
-		try {
-			const schema = JSON.parse( value || '' );
-			if ( Array.isArray( schema.fields ) ) {
-				const fields = schema.fields.filter(
-					( field ) =>
-						field &&
-						field.name &&
-						FIELD_TYPES.includes( field.type )
-				);
-				if ( fields.length ) {
-					return Object.assign( {}, schema, { fields } );
-				}
-			}
-		} catch {
-			// The server also falls back to the starter schema for invalid JSON.
-		}
-		return DEFAULT_SCHEMA;
-	}
-
-	function findFormBlock( blockList ) {
+	function findSchemaBlock( blockList ) {
 		for ( const block of blockList ) {
-			if ( 'fforms/form' === block.name ) {
+			if (
+				'fforms/form' === block.name ||
+				'fforms/headless-schema' === block.name
+			) {
 				return block;
 			}
-			const nested = findFormBlock( block.innerBlocks || [] );
+			const nested = findSchemaBlock( block.innerBlocks || [] );
 			if ( nested ) {
 				return nested;
 			}
@@ -100,7 +83,7 @@
 	function schemaFromBlockEditor() {
 		const blockEditor = data.select( 'core/block-editor' );
 		const form = blockEditor
-			? findFormBlock( blockEditor.getBlocks() )
+			? findSchemaBlock( blockEditor.getBlocks() )
 			: null;
 		if ( ! form ) {
 			return DEFAULT_SCHEMA;
@@ -133,8 +116,8 @@
 		return fields.length ? { fields } : DEFAULT_SCHEMA;
 	}
 
-	function blocksFromSchema( schema ) {
-		const innerBlocks = schema.fields
+	function fieldBlocksFromSchema( schema ) {
+		return schema.fields
 			.filter( ( field ) => FIELD_TYPES.includes( field.type ) )
 			.map( ( field ) =>
 				blocks.createBlock( `fforms/field-${ field.type }`, {
@@ -147,12 +130,26 @@
 					options: field.options || undefined,
 				} )
 			);
+	}
+
+	function blocksFromSchema( schema ) {
+		const innerBlocks = fieldBlocksFromSchema( schema );
 		innerBlocks.push(
 			blocks.createBlock( 'fforms/submit', {
 				label: __( 'Отправить', 'fforms' ),
 			} )
 		);
 		return [ blocks.createBlock( 'fforms/form', {}, innerBlocks ) ];
+	}
+
+	function headlessBlocksFromSchema( schema ) {
+		return [
+			blocks.createBlock(
+				'fforms/headless-schema',
+				{ lock: { move: true, remove: true } },
+				fieldBlocksFromSchema( schema )
+			),
+		];
 	}
 
 	function FormSettings() {
@@ -203,14 +200,14 @@
 			if ( 'headless' === mode ) {
 				const schema = schemaFromBlockEditor();
 				nextMeta[ META.schema ] = JSON.stringify( schema, null, 2 );
-				data.dispatch( 'core/block-editor' ).resetBlocks( [
-					blocks.createBlock( 'core/paragraph' ),
-				] );
+				data.dispatch( 'core/block-editor' ).resetBlocks(
+					headlessBlocksFromSchema( schema )
+				);
 				editPostMeta( { meta: nextMeta } );
 				return;
 			}
 			data.dispatch( 'core/block-editor' ).resetBlocks(
-				blocksFromSchema( schemaFromMeta( meta[ META.schema ] ) )
+				blocksFromSchema( schemaFromBlockEditor() )
 			);
 			editPostMeta( {
 				meta: nextMeta,
@@ -223,8 +220,6 @@
 						String( editor.id ) + '/'
 				  )
 				: '';
-		const isHeadless = 'headless' === ( meta[ META.mode ] || 'block' );
-
 		return el(
 			element.Fragment,
 			null,
@@ -336,34 +331,6 @@
 					},
 				} )
 			),
-			isHeadless
-				? el(
-						PluginDocumentSettingPanel,
-						{
-							name: 'headless-schema',
-							title: __( 'Поля Headless API', 'fforms' ),
-						},
-						el(
-							'p',
-							{ className: 'components-base-control__help' },
-							__(
-								'Схема используется только REST API. Поддерживаются те же типы полей, что и в Gutenberg-форме.',
-								'fforms'
-							)
-						),
-						el( TextareaControl, {
-							label: __( 'JSON-схема', 'fforms' ),
-							value: meta[ META.schema ] || '',
-							help: __(
-								'При сохранении схема будет нормализована на сервере.',
-								'fforms'
-							),
-							onChange( value ) {
-								updateMeta( META.schema, value );
-							},
-						} )
-				  )
-				: null,
 			el(
 				PluginDocumentSettingPanel,
 				{

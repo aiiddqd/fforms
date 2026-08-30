@@ -76,6 +76,11 @@ final class Block {
 			'attributes' => self::form_attributes(),
 			'render_callback' => static fn( $attributes, $content, $block ): string => \FForms\Blocks\Form_Renderer::render( $attributes, $content, $block ),
 		) );
+		register_block_type( 'fforms/headless-schema', array(
+			'api_version'   => 3,
+			'editor_script' => 'fforms-fallback-editor',
+			'render_callback' => static fn(): string => '',
+		) );
 		foreach ( array( 'text', 'textarea', 'email', 'tel', 'url', 'number', 'select', 'radio', 'checkbox', 'hidden' ) as $type ) {
 			register_block_type( 'fforms/field-' . $type, array(
 				'api_version' => 3,
