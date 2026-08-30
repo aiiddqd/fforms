@@ -42,6 +42,7 @@ final class Form_Renderer {
 		$wrapper = $is_reference ? self::reference_wrapper_attributes() : '';
 		$form = get_post( $form_id );
 		if ( ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Выберите опубликованную форму в настройках блока.', 'fforms' ) . '</p>' : '', $wrapper );
+		if ( 'headless' === Post_Types::form_mode( $form_id ) ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Выберите опубликованную форму в настройках блока.', 'fforms' ) . '</p>' : '', $wrapper );
 		if ( isset( self::$resolving[ $form_id ] ) ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Обнаружена циклическая ссылка формы.', 'fforms' ) . '</p>' : '', $wrapper );
 		self::$resolving[ $form_id ] = true;
 		$previous = self::$source_form_id;

@@ -1,6 +1,6 @@
 ---
 title: "Выбор режима формы при создании: Block editor vs Headless API"
-status: draft
+status: implementing
 created: 2026-08-30
 ---
 

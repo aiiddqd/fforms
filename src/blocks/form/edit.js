@@ -74,10 +74,15 @@ export default function Edit( { attributes, setAttributes } ) {
 	const options = [
 		{ label: __( 'Выберите опубликованную форму', 'fforms' ), value: 0 },
 	].concat(
-		( forms || [] ).map( ( form ) => ( {
-			label: form.title.rendered || `#${ form.id }`,
-			value: form.id,
-		} ) )
+		( forms || [] )
+			.filter(
+				( form ) =>
+					( form.meta?._fforms_mode || 'block' ) !== 'headless'
+			)
+			.map( ( form ) => ( {
+				label: form.title.rendered || `#${ form.id }`,
+				value: form.id,
+			} ) )
 	);
 	const control = (
 		<SelectControl

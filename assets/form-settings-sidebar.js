@@ -17,6 +17,8 @@
 	);
 	const META = {
 		type: '_fforms_type',
+		mode: '_fforms_mode',
+		schema: '_fforms_schema',
 		notificationTo: '_fforms_notification_to',
 		notificationSubject: '_fforms_notification_subject',
 		notificationsEnabled: '_fforms_notifications_enabled',
@@ -75,8 +77,9 @@
 				? window.fformsFormSettings.publicFormUrl.replace(
 						/0\/?$/,
 						String( editor.id ) + '/'
-				  )
+					  )
 				: '';
+		const isHeadless = 'headless' === ( meta[ META.mode ] || 'block' );
 
 		return el(
 			element.Fragment,
@@ -170,6 +173,34 @@
 					},
 				} )
 			),
+			isHeadless
+				? el(
+						PluginDocumentSettingPanel,
+						{
+							name: 'headless-schema',
+							title: __( 'Поля Headless API', 'fforms' ),
+						},
+						el(
+							'p',
+							{ className: 'components-base-control__help' },
+							__(
+								'Схема используется только REST API. Поддерживаются те же типы полей, что и в Gutenberg-форме.',
+								'fforms'
+							)
+						),
+						el( TextareaControl, {
+							label: __( 'JSON-схема', 'fforms' ),
+							value: meta[ META.schema ] || '',
+							help: __(
+								'При сохранении схема будет нормализована на сервере.',
+								'fforms'
+							),
+							onChange( value ) {
+								updateMeta( META.schema, value );
+							},
+						} )
+					)
+				: null,
 			el(
 				PluginDocumentSettingPanel,
 				{

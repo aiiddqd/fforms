@@ -206,6 +206,7 @@ final class REST_Controller {
 			'id'              => $form->post_id,
 			'key'             => $form->key,
 			'source'          => $form->source,
+			'mode'            => 'post' === $form->source ? Post_Types::form_mode( $form->post_id ) : 'headless',
 			'title'           => $form->title,
 			'type'            => 'post' === $form->source ? ( get_post_meta( $form->post_id, '_fforms_type', true ) ?: 'contact' ) : 'contact',
 			'schema'          => $form->schema,
