@@ -11,10 +11,15 @@
 	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
 	const PluginDocumentSettingPanel = editPost.PluginDocumentSettingPanel;
+	const notificationSettingsEnabled = Boolean(
+		window.fformsFormSettings &&
+			window.fformsFormSettings.notificationSettingsEnabled
+	);
 	const META = {
 		type: '_fforms_type',
 		notificationTo: '_fforms_notification_to',
 		notificationSubject: '_fforms_notification_subject',
+		notificationsEnabled: '_fforms_notifications_enabled',
 		successMessage: '_fforms_success_message',
 		publicForm: '_fforms_public',
 		autoreplyEnabled: '_fforms_autoreply_enabled',
@@ -97,24 +102,65 @@
 						updateMeta( META.type, value );
 					},
 				} ),
-				el( TextControl, {
-					label: __( 'Получатели', 'fforms' ),
-					value: meta[ META.notificationTo ] || '',
-					help: __(
-						'Email через запятую; если пусто — email администратора.',
-						'fforms'
-					),
-					onChange( value ) {
-						updateMeta( META.notificationTo, value );
-					},
-				} ),
-				el( TextControl, {
-					label: __( 'Тема уведомления', 'fforms' ),
-					value: meta[ META.notificationSubject ] || '',
-					onChange( value ) {
-						updateMeta( META.notificationSubject, value );
-					},
-				} ),
+				notificationSettingsEnabled
+					? el(
+							element.Fragment,
+							null,
+							el( ToggleControl, {
+								label: __(
+									'Отправлять уведомления о заявках',
+									'fforms'
+								),
+								checked: Boolean(
+									meta[ META.notificationsEnabled ]
+								),
+								onChange( value ) {
+									updateMeta(
+										META.notificationsEnabled,
+										value
+									);
+								},
+							} ),
+							meta[ META.notificationsEnabled ]
+								? el(
+										element.Fragment,
+										null,
+										el( TextControl, {
+											label: __( 'Получатели', 'fforms' ),
+											value:
+												meta[ META.notificationTo ] ||
+												'',
+											help: __(
+												'Email через запятую; если пусто — email администратора.',
+												'fforms'
+											),
+											onChange( value ) {
+												updateMeta(
+													META.notificationTo,
+													value
+												);
+											},
+										} ),
+										el( TextControl, {
+											label: __(
+												'Тема уведомления',
+												'fforms'
+											),
+											value:
+												meta[
+													META.notificationSubject
+												] || '',
+											onChange( value ) {
+												updateMeta(
+													META.notificationSubject,
+													value
+												);
+											},
+										} )
+								  )
+								: null
+					  )
+					: null,
 				el( TextControl, {
 					label: __( 'Сообщение об успехе', 'fforms' ),
 					value: meta[ META.successMessage ] || '',
@@ -169,48 +215,71 @@
 					  )
 					: null
 			),
-			el(
-				PluginDocumentSettingPanel,
-				{ name: 'autoreply', title: __( 'Автоответ', 'fforms' ) },
-				el( ToggleControl, {
-					label: __( 'Отправлять автоответ пользователю', 'fforms' ),
-					checked: Boolean( meta[ META.autoreplyEnabled ] ),
-					onChange( value ) {
-						updateMeta( META.autoreplyEnabled, value );
-					},
-				} ),
-				meta[ META.autoreplyEnabled ]
-					? el(
-							element.Fragment,
-							null,
-							el( TextControl, {
-								label: __( 'Имя email-поля', 'fforms' ),
-								value:
-									meta[ META.autoreplyEmailField ] || 'email',
-								onChange( value ) {
-									updateMeta(
-										META.autoreplyEmailField,
-										value
-									);
-								},
-							} ),
-							el( TextControl, {
-								label: __( 'Тема автоответа', 'fforms' ),
-								value: meta[ META.autoreplySubject ] || '',
-								onChange( value ) {
-									updateMeta( META.autoreplySubject, value );
-								},
-							} ),
-							el( TextareaControl, {
-								label: __( 'Текст автоответа', 'fforms' ),
-								value: meta[ META.autoreplyMessage ] || '',
-								onChange( value ) {
-									updateMeta( META.autoreplyMessage, value );
-								},
-							} )
-					  )
-					: null
-			)
+			notificationSettingsEnabled
+				? el(
+						PluginDocumentSettingPanel,
+						{
+							name: 'autoreply',
+							title: __( 'Автоответ', 'fforms' ),
+						},
+						el( ToggleControl, {
+							label: __(
+								'Отправлять автоответ пользователю',
+								'fforms'
+							),
+							checked: Boolean( meta[ META.autoreplyEnabled ] ),
+							onChange( value ) {
+								updateMeta( META.autoreplyEnabled, value );
+							},
+						} ),
+						meta[ META.autoreplyEnabled ]
+							? el(
+									element.Fragment,
+									null,
+									el( TextControl, {
+										label: __( 'Имя email-поля', 'fforms' ),
+										value:
+											meta[ META.autoreplyEmailField ] ||
+											'email',
+										onChange( value ) {
+											updateMeta(
+												META.autoreplyEmailField,
+												value
+											);
+										},
+									} ),
+									el( TextControl, {
+										label: __(
+											'Тема автоответа',
+											'fforms'
+										),
+										value:
+											meta[ META.autoreplySubject ] || '',
+										onChange( value ) {
+											updateMeta(
+												META.autoreplySubject,
+												value
+											);
+										},
+									} ),
+									el( TextareaControl, {
+										label: __(
+											'Текст автоответа',
+											'fforms'
+										),
+										value:
+											meta[ META.autoreplyMessage ] || '',
+										onChange( value ) {
+											updateMeta(
+												META.autoreplyMessage,
+												value
+											);
+										},
+									} )
+							  )
+							: null
+				  )
+				: null
 		);
 	}
 

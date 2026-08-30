@@ -8,7 +8,9 @@ updated: 2026-08-28
 # RFC: Нативная стилизация и иконки Gutenberg-блоков FForms
 
 ## туду
-- [ ] пробую добавить новую форму [http://localhost:8890/wp-admin/post-new.php?post\_type=fform](http://localhost:8890/wp-admin/post-new.php?post_type=fform) и выглядит совсем криво
+- [x] Добавление новой формы в [редакторе](http://localhost:8890/wp-admin/post-new.php?post_type=fform): preview полей располагается вертикально, кнопка активна; проверено Playwright.
+![alt text](image.png)
+
 
 ## Вводные
 

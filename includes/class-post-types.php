@@ -81,6 +81,7 @@ final class Post_Types {
 		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		register_post_meta( self::FORM, '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		register_post_meta( self::FORM, '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
+		register_post_meta( self::FORM, '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
 			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
@@ -116,7 +117,12 @@ final class Post_Types {
 		);
 		wp_add_inline_script(
 			$handle,
-			'window.fformsFormSettings = ' . wp_json_encode( array( 'publicFormUrl' => Public_Form::url( 0 ) ) ) . ';',
+			'window.fformsFormSettings = ' . wp_json_encode(
+				array(
+					'publicFormUrl'          => Public_Form::url( 0 ),
+					'notificationSettingsEnabled' => ! empty( Settings::get()['notifications'] ),
+				)
+			) . ';',
 			'before'
 		);
 	}

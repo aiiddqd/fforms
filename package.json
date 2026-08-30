@@ -31,6 +31,7 @@
 		"@wordpress/interactivity": "wp-6.5"
 	},
 	"devDependencies": {
+		"@wordpress/e2e-test-utils-playwright": "^0.19.3",
 		"@wordpress/env": "^11.13.0",
 		"@wordpress/scripts": "^34.1.0"
 	}

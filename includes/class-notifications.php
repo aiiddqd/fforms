@@ -16,25 +16,28 @@ final class Notifications {
 			return false;
 		}
 
-		$raw_recipients = (string) get_post_meta( $form_id, '_fforms_notification_to', true );
-		$recipients     = array_filter( array_map( 'sanitize_email', preg_split( '/\s*,\s*/', $raw_recipients ) ?: array() ), 'is_email' );
-		if ( array() === $recipients ) {
-			$recipients = array( sanitize_email( (string) get_option( 'admin_email' ) ) );
-		}
+		$sent = false;
+		if ( get_post_meta( $form_id, '_fforms_notifications_enabled', true ) ) {
+			$raw_recipients = (string) get_post_meta( $form_id, '_fforms_notification_to', true );
+			$recipients     = array_filter( array_map( 'sanitize_email', preg_split( '/\s*,\s*/', $raw_recipients ) ?: array() ), 'is_email' );
+			if ( array() === $recipients ) {
+				$recipients = array( sanitize_email( (string) get_option( 'admin_email' ) ) );
+			}
 
-		$subject = (string) get_post_meta( $form_id, '_fforms_notification_subject', true );
-		if ( '' === $subject ) {
-			$subject = sprintf( __( 'Новый ответ: %s', 'fforms' ), get_the_title( $form_id ) );
-		}
+			$subject = (string) get_post_meta( $form_id, '_fforms_notification_subject', true );
+			if ( '' === $subject ) {
+				$subject = sprintf( __( 'Новый ответ: %s', 'fforms' ), get_the_title( $form_id ) );
+			}
 
-		$lines = array( sprintf( __( 'Форма: %s', 'fforms' ), get_the_title( $form_id ) ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
-		$schema = \FForms\Schema\Schema_Repository::for_form( $form_id );
-		$labels = ! is_wp_error( $schema ) ? wp_list_pluck( $schema['fields'], 'label', 'name' ) : array();
-		foreach ( $data as $key => $value ) {
-			$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
-		}
+			$lines = array( sprintf( __( 'Форма: %s', 'fforms' ), get_the_title( $form_id ) ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
+			$schema = \FForms\Schema\Schema_Repository::for_form( $form_id );
+			$labels = ! is_wp_error( $schema ) ? wp_list_pluck( $schema['fields'], 'label', 'name' ) : array();
+			foreach ( $data as $key => $value ) {
+				$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
+			}
 
-		$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );
+			$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );
+		}
 		self::send_autoreply( $form_id, $data );
 		return $sent;
 	}

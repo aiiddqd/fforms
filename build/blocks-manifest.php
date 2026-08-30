@@ -1000,9 +1000,9 @@ return array(
 			)
 		),
 		'editorScript' => 'file:./index.js',
-		'editorStyle' => 'file:./editor.scss',
-		'style' => 'file:./style.scss',
-		'viewStyle' => 'file:./view.scss',
+		'editorStyle' => 'file:./index.css',
+		'style' => 'file:./style-index.css',
+		'viewStyle' => 'file:./view.css',
 		'viewScriptModule' => 'file:./view.js',
 		'render' => 'file:./render.php'
 	),

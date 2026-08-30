@@ -1,4 +1,5 @@
 import { getContext, store } from '@wordpress/interactivity';
+import './view.scss';
 
 const fieldPayload = ( form ) => {
 	const fields = {};

@@ -52,7 +52,7 @@ final class Settings {
 	public static function get(): array {
 		return wp_parse_args(
 			(array) get_option( self::OPTION, array() ),
-			array( 'enabled' => false, 'host' => '', 'port' => 587, 'encryption' => 'tls', 'auth' => true, 'username' => '', 'password' => '', 'from_email' => '', 'from_name' => get_bloginfo( 'name' ), 'notifications' => true )
+			array( 'enabled' => false, 'host' => '', 'port' => 587, 'encryption' => 'tls', 'auth' => true, 'username' => '', 'password' => '', 'from_email' => '', 'from_name' => get_bloginfo( 'name' ), 'notifications' => false )
 		);
 	}
 
@@ -84,7 +84,7 @@ final class Settings {
 		<p><?php esc_html_e( 'Встроенный SMTP включайте только в том случае, если отправкой почты не управляет другой SMTP-плагин.', 'fforms' ); ?></p>
 		<form action="options.php" method="post"><?php settings_fields( 'fforms_settings' ); ?>
 		<table class="form-table" role="presentation">
-		<tr><th><?php esc_html_e( 'Уведомления', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Отправлять уведомления и автоответы', 'fforms' ); ?></label></td></tr>
+		<tr><th><?php esc_html_e( 'Уведомления', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Включить настройки уведомлений и автоответов для форм', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'После включения настройте отправку уведомлений и автоответы отдельно для каждой формы.', 'fforms' ); ?></p></td></tr>
 		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Использовать SMTP FForms', 'fforms' ); ?></label></td></tr>
 		<?php self::input_row( 'host', __( 'SMTP host', 'fforms' ), $s['host'] ); ?>
 		<?php self::input_row( 'port', __( 'Порт', 'fforms' ), (string) $s['port'], 'number' ); ?>
