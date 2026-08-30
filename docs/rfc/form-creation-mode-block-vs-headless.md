@@ -46,6 +46,7 @@ created: 2026-08-30
 - [x] Переключатель в боковой панели переводит Block editor в Headless API и переносит актуальные поля в жёстко заданный `fforms/headless-schema`.
 - [x] Переключатель в боковой панели переводит Headless API в Block editor и собирает из полей `fforms/headless-schema` корневой блок с теми же полями.
 - [x] В режиме Headless API схема редактируется блоками полей внутри `fforms/headless-schema`; верхнеуровневый блок нельзя заменить или удалить, JSON-textarea отсутствует.
+- [x] Gutenberg REST может опубликовать headless-форму вместе с `_fforms_type`, `_fforms_mode` и `_fforms_schema`; protected meta доступна только пользователю с `edit_post`.
 - [x] У существующих (созданных до фичи) форм `_fforms_mode` читается как `block`, их работа не меняется.
 - [x] `GET /fforms/v1/forms` и `GET /fforms/v1/forms/{id}` возвращают поле `mode` для каждой формы.
 - [x] `POST /fforms/v1/submit` и чтение схемы работают одинаково для `block` и `headless` форм — режим не влияет на REST-контракт.

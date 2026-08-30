@@ -85,23 +85,36 @@ final class Post_Types {
 	}
 
 	private static function register_meta(): void {
-		register_post_meta( self::FORM, '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
-		register_post_meta( self::FORM, '_fforms_mode', array( 'type' => 'string', 'single' => true, 'default' => 'block', 'show_in_rest' => true, 'sanitize_callback' => array( self::class, 'sanitize_form_mode' ) ) );
-		register_post_meta( self::FORM, '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
-		register_post_meta( self::FORM, '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
-		register_post_meta( self::FORM, '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
-		register_post_meta( self::FORM, '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
+		self::register_form_meta( '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
+		self::register_form_meta( '_fforms_mode', array( 'type' => 'string', 'single' => true, 'default' => 'block', 'show_in_rest' => true, 'sanitize_callback' => array( self::class, 'sanitize_form_mode' ) ) );
+		self::register_form_meta( '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
+		self::register_form_meta( '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
+		self::register_form_meta( '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
+		self::register_form_meta( '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
-			register_post_meta( self::FORM, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
+			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
 		}
-		register_post_meta( self::FORM, '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
+		self::register_form_meta( '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
 		foreach ( array( '_fforms_form_id', '_fforms_created_post_id' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'integer', 'single' => true, 'show_in_rest' => false ) );
 		}
 		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		}
+	}
+
+	/** @param array<string, mixed> $args */
+	private static function register_form_meta( string $key, array $args ): void {
+		$args['auth_callback'] = array( self::class, 'can_edit_form_meta' );
+		register_post_meta( self::FORM, $key, $args );
+	}
+
+	/**
+	 * Protected form meta is exposed to Gutenberg REST only for users who can edit the form.
+	 */
+	public static function can_edit_form_meta( mixed $allowed, string $meta_key, int $post_id ): bool {
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	public static function sanitize_form_mode( mixed $value ): string {
