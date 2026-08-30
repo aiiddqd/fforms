@@ -42,10 +42,12 @@ final class Dashboard {
 			return;
 		}
 
-		$post_counts = wp_count_posts( Post_Types::FORM );
-		$forms_count = (int) ( $post_counts->publish ?? 0 ) + (int) ( $post_counts->draft ?? 0 ) + (int) ( $post_counts->private ?? 0 );
-		$code_forms  = Registry\Code_Forms::all();
-		$smtp        = Settings::get();
+		$post_counts    = wp_count_posts( Post_Types::FORM );
+		$forms_count    = (int) ( $post_counts->publish ?? 0 ) + (int) ( $post_counts->draft ?? 0 ) + (int) ( $post_counts->private ?? 0 );
+		$code_forms     = Registry\Code_Forms::all();
+		$smtp           = Settings::get();
+		$can_view_entries = current_user_can( 'manage_options' );
+		$entries_count    = $can_view_entries ? (int) ( wp_count_posts( Post_Types::ENTRY )->private ?? 0 ) : 0;
 		?>
 		<div class="wrap fforms-dashboard">
 			<style>
@@ -67,7 +69,7 @@ final class Dashboard {
 				<h1><?php esc_html_e( 'FForms', 'fforms' ); ?></h1>
 				<p><?php esc_html_e( 'Лёгкий, headless-friendly приём форм: собирайте данные из блоков Gutenberg или из внешних сайтов через REST API.', 'fforms' ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Добавить форму', 'fforms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Добавить форму', 'fforms' ); ?></a>
 					<a href="<?php echo esc_url( self::REPO_URL ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Читать документацию', 'fforms' ); ?></a>
 				</p>
 			</div>
@@ -98,6 +100,13 @@ final class Dashboard {
 					<?php endif; ?>
 					<p><a href="#fforms-faq-headless"><?php esc_html_e( 'Как подключить →', 'fforms' ); ?></a></p>
 				</div>
+				<?php if ( $can_view_entries ) : ?>
+				<div class="fforms-card">
+					<h2><?php esc_html_e( 'Заявки', 'fforms' ); ?></h2>
+					<p class="fforms-card-status <?php echo esc_attr( $entries_count > 0 ? 'is-on' : 'is-off' ); ?>"><?php echo esc_html( sprintf( _n( '%d заявка', '%d заявок', $entries_count, 'fforms' ), $entries_count ) ); ?></p>
+					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>"><?php esc_html_e( 'Все заявки →', 'fforms' ); ?></a></p>
+				</div>
+				<?php endif; ?>
 			</div>
 
 			<h2><?php esc_html_e( 'Частые вопросы', 'fforms' ); ?></h2>
