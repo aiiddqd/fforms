@@ -6,7 +6,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-checkbox',
 		'title' => 'Checkbox field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'yes-alt',
 		'description' => 'Collect one or more confirmed options.',
 		'keywords' => array(
@@ -93,7 +93,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-email',
 		'title' => 'Email field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'email',
 		'description' => 'Collect and validate an email address.',
 		'keywords' => array(
@@ -181,7 +181,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-hidden',
 		'title' => 'Hidden field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'hidden',
 		'description' => 'Send a value without showing a control to visitors.',
 		'keywords' => array(
@@ -248,7 +248,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-number',
 		'title' => 'Number field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'editor-ol',
 		'description' => 'Collect a numeric value.',
 		'keywords' => array(
@@ -335,7 +335,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-radio',
 		'title' => 'Radio field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'editor-ul',
 		'description' => 'Let visitors choose one visible option.',
 		'keywords' => array(
@@ -432,7 +432,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-select',
 		'title' => 'Select field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'arrow-down-alt2',
 		'description' => 'Let visitors choose one option from a menu.',
 		'keywords' => array(
@@ -529,7 +529,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-tel',
 		'title' => 'Phone field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'phone',
 		'description' => 'Collect a telephone number.',
 		'keywords' => array(
@@ -617,7 +617,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-text',
 		'title' => 'Text field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'editor-paragraph',
 		'description' => 'Collect a short line of text.',
 		'keywords' => array(
@@ -705,7 +705,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-textarea',
 		'title' => 'Textarea field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'editor-alignleft',
 		'description' => 'Collect a longer multi-line response.',
 		'keywords' => array(
@@ -793,7 +793,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/field-url',
 		'title' => 'URL field',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'admin-links',
 		'description' => 'Collect and validate a web address.',
 		'keywords' => array(
@@ -881,7 +881,7 @@ return array(
 		'name' => 'fforms/form',
 		'version' => '1.0.0',
 		'title' => 'FForms Form',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'feedback',
 		'description' => 'Build a reusable FForms form or insert a published form.',
 		'keywords' => array(
@@ -1022,7 +1022,7 @@ return array(
 		'name' => 'fforms/headless-schema',
 		'version' => '1.0.0',
 		'title' => 'Headless API fields',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'database',
 		'description' => 'Define the fields exposed by an FForms Headless API form.',
 		'textdomain' => 'fforms',
@@ -1051,7 +1051,7 @@ return array(
 		'apiVersion' => 3,
 		'name' => 'fforms/submit',
 		'title' => 'Submit button',
-		'category' => 'widgets',
+		'category' => 'fforms',
 		'icon' => 'controls-play',
 		'description' => 'Add the button that submits this FForms form.',
 		'keywords' => array(

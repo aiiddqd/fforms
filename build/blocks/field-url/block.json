@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-url",
   "title": "URL field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "admin-links",
   "description": "Collect and validate a web address.",
   "keywords": [

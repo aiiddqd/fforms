@@ -32,6 +32,9 @@ final class Schema_Compiler {
 		$errors = array();
 		$submit = 0;
 		self::walk( $root['innerBlocks'] ?? array(), $fields, $names, $errors, $submit );
+		if ( self::HEADLESS_SCHEMA_BLOCK === $root['blockName'] ) {
+			self::validate_headless_children( $root['innerBlocks'] ?? array(), $errors );
+		}
 
 		if ( self::FORM_BLOCK === $root['blockName'] && 1 !== $submit ) {
 			$errors[] = __( 'В форме должна быть ровно одна кнопка отправки.', 'fforms' );
@@ -44,6 +47,24 @@ final class Schema_Compiler {
 		}
 
 		return array( 'fields' => $fields );
+	}
+
+	/**
+	 * A headless schema is a strict field allowlist. Apart from keeping the
+	 * editor predictable, this prevents content blocks from being silently
+	 * omitted by the REST validation schema.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks
+	 * @param array<int, string>               $errors
+	 */
+	private static function validate_headless_children( array $blocks, array &$errors ): void {
+		foreach ( $blocks as $block ) {
+			$name = (string) ( $block['blockName'] ?? '' );
+			if ( ! str_starts_with( $name, 'fforms/field-' ) || ! empty( $block['innerBlocks'] ) ) {
+				$errors[] = __( 'Headless API form may contain only FForms field blocks.', 'fforms' );
+				return;
+			}
+		}
 	}
 
 	public static function has_form_block( string $content ): bool {

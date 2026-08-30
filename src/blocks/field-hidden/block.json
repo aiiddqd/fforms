@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "fforms/field-hidden",
 	"title": "Hidden field",
-	"category": "widgets",
+	"category": "fforms",
 	"icon": "hidden",
 	"description": "Send a value without showing a control to visitors.",
 	"keywords": [ "hidden", "metadata", "tracking" ],

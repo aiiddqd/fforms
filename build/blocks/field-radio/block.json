@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-radio",
   "title": "Radio field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "editor-ul",
   "description": "Let visitors choose one visible option.",
   "keywords": [

@@ -57,7 +57,7 @@
 	blocks.registerBlockType( 'fforms/form', {
 		title: __( 'FForms Form', 'fforms' ),
 		icon: 'feedback',
-		category: 'widgets',
+		category: 'fforms',
 		attributes: {
 			ref: { type: 'integer', default: 0 },
 			formId: { type: 'integer', default: 0 },
@@ -138,7 +138,7 @@
 	blocks.registerBlockType( 'fforms/headless-schema', {
 		title: __( 'Headless API fields', 'fforms' ),
 		icon: 'database',
-		category: 'widgets',
+		category: 'fforms',
 		edit() {
 			return el(
 				'div',
@@ -166,7 +166,7 @@
 	FIELDS.forEach( function ( type ) {
 		blocks.registerBlockType( 'fforms/field-' + type, {
 			title: __( type + ' field', 'fforms' ),
-			category: 'widgets',
+			category: 'fforms',
 			parent: [ 'fforms/form', 'fforms/headless-schema' ],
 			attributes: {
 				fieldId: { type: 'string' },
@@ -258,7 +258,7 @@
 	} );
 	blocks.registerBlockType( 'fforms/submit', {
 		title: __( 'Submit button', 'fforms' ),
-		category: 'widgets',
+		category: 'fforms',
 		parent: [ 'fforms/form' ],
 		attributes: { label: { type: 'string', default: '' } },
 		edit( props ) {

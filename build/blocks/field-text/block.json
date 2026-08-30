@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-text",
   "title": "Text field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "editor-paragraph",
   "description": "Collect a short line of text.",
   "keywords": [

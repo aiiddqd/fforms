@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-select",
   "title": "Select field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "arrow-down-alt2",
   "description": "Let visitors choose one option from a menu.",
   "keywords": [

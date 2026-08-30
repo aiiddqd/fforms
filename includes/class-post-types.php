@@ -18,6 +18,7 @@ final class Post_Types {
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
 		add_filter( 'block_editor_settings_all', array( self::class, 'configure_headless_editor' ), 10, 2 );
+		add_filter( 'allowed_block_types_all', array( self::class, 'limit_internal_blocks_to_form_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
 		add_action( 'restrict_manage_posts', array( self::class, 'render_entries_form_filter' ) );
@@ -138,6 +139,32 @@ final class Post_Types {
 		$settings['template']     = self::headless_schema_template();
 		$settings['templateLock'] = 'all';
 		return $settings;
+	}
+
+	/**
+	 * Field-definition blocks build a form schema and have no meaning in posts
+	 * or pages. Keep them available exclusively while editing an FForms CPT.
+	 *
+	 * @param bool|array<int, string> $allowed_block_types Allowed block names.
+	 * @return bool|array<int, string>
+	 */
+	public static function limit_internal_blocks_to_form_editor( bool|array $allowed_block_types, \WP_Block_Editor_Context $context ): bool|array {
+		if ( isset( $context->post ) && $context->post instanceof WP_Post && self::FORM === $context->post->post_type ) {
+			return $allowed_block_types;
+		}
+		if ( ! is_array( $allowed_block_types ) && true !== $allowed_block_types ) {
+			return $allowed_block_types;
+		}
+
+		$internal_blocks = array_merge(
+			array( 'fforms/headless-schema', 'fforms/submit' ),
+			array_map( static fn( string $type ): string => 'fforms/field-' . $type, array( 'text', 'textarea', 'email', 'tel', 'url', 'number', 'select', 'radio', 'checkbox', 'hidden' ) )
+		);
+		if ( true === $allowed_block_types ) {
+			$allowed_block_types = array_keys( \WP_Block_Type_Registry::get_instance()->get_all_registered() );
+		}
+
+		return array_values( array_diff( $allowed_block_types, $internal_blocks ) );
 	}
 
 	/** @return array<int, array<int|string, mixed>> */

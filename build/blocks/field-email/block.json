@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-email",
   "title": "Email field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "email",
   "description": "Collect and validate an email address.",
   "keywords": [

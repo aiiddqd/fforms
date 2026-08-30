@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "fforms/submit",
 	"title": "Submit button",
-	"category": "widgets",
+	"category": "fforms",
 	"icon": "controls-play",
 	"description": "Add the button that submits this FForms form.",
 	"keywords": [ "submit", "button", "send" ],

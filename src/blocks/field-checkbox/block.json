@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "fforms/field-checkbox",
 	"title": "Checkbox field",
-	"category": "widgets",
+	"category": "fforms",
 	"icon": "yes-alt",
 	"description": "Collect one or more confirmed options.",
 	"keywords": [ "checkbox", "consent", "choice" ],

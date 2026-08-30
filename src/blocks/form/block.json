@@ -4,7 +4,7 @@
 	"name": "fforms/form",
 	"version": "1.0.0",
 	"title": "FForms Form",
-	"category": "widgets",
+	"category": "fforms",
 	"icon": "feedback",
 	"description": "Build a reusable FForms form or insert a published form.",
 	"keywords": [ "form", "contact", "lead" ],

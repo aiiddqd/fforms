@@ -4,7 +4,7 @@
   "name": "fforms/headless-schema",
   "version": "1.0.0",
   "title": "Headless API fields",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "database",
   "description": "Define the fields exposed by an FForms Headless API form.",
   "textdomain": "fforms",

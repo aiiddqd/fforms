@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-textarea",
   "title": "Textarea field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "editor-alignleft",
   "description": "Collect a longer multi-line response.",
   "keywords": [

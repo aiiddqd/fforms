@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-tel",
   "title": "Phone field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "phone",
   "description": "Collect a telephone number.",
   "keywords": [

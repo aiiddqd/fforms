@@ -10,6 +10,32 @@ namespace FForms;
 final class Block {
 	public static function boot(): void {
 		add_action( 'init', array( self::class, 'register' ), 20 );
+		add_filter( 'block_categories_all', array( self::class, 'register_category' ) );
+	}
+
+	/**
+	 * Keep FForms blocks out of the generic Widgets group in the inserter.
+	 *
+	 * @param array<int, array<string, mixed>> $categories Block categories.
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function register_category( array $categories ): array {
+		foreach ( $categories as $category ) {
+			if ( 'fforms' === ( $category['slug'] ?? '' ) ) {
+				return $categories;
+			}
+		}
+
+		array_unshift(
+			$categories,
+			array(
+				'slug'  => 'fforms',
+				'title' => __( 'FForms', 'fforms' ),
+				'icon'  => 'feedback',
+			)
+		);
+
+		return $categories;
 	}
 
 	public static function register(): void {

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/field-number",
   "title": "Number field",
-  "category": "widgets",
+  "category": "fforms",
   "icon": "editor-ol",
   "description": "Collect a numeric value.",
   "keywords": [
