@@ -8,7 +8,6 @@ created: 2026-08-30
 
 ## туду
 - [x] broke link Settings in wp admin - http://localhost:8890/wp-admin/fforms-settings
-- [x] `includes/test-fixtures.php` перенесён в `tests/test-fixtures.php`
 
 ## Вводные
 
@@ -93,7 +92,7 @@ Entry code-формы сохраняет `_fforms_form_key`, а `_fforms_form_id
 - [x] Письмо и автоответ по code-форме уходят при включённых настройках и не уходят при выключенном глобальном тумблере.
 - [x] Запрос с разрешённого origin получает `Access-Control-Allow-Origin`; с чужого — нет; `OPTIONS` возвращает 204 с корректными заголовками.
 - [x] Существующий submit по `form_id` из блока `fforms/form` не сломан; `php -l`, `npm run lint:js`, `npm run lint:css` проходят. (`lint:css` сообщает только о ранее существовавших ошибках в `docs/rfc/archive/mvp/jetpack/jetpack_vendor/**` — не связано с этим PR.)
-- [x] add auto tests - for send and check records — `specs/headless-code-forms.spec.js` (Playwright, 7 тестов), фикстура `tests/test-fixtures.php` за флагом `FFORMS_TEST_FIXTURES`.
+- [x] Тестовые формы и параметры не добавляются кодом или конфигурацией FForms: E2E создаёт CPT-формы через wp-admin. Проверка программно зарегистрированной формы выполняется в интеграционных тестах потребляющей темы/плагина.
 - [x] `docs/specs/api-route-headless-cms-mode.md` дополнен разделом о code-формах и обновлённым REST-контрактом.
 
 ## Дорожная карта

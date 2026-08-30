@@ -2,13 +2,6 @@ const { expect, test } = require( '@wordpress/e2e-test-utils-playwright' );
 
 const { login } = require( './support/login' );
 
-const HEADLESS_SCHEMA_CONTENT = [
-	'<!-- wp:fforms/headless-schema -->',
-	'<!-- wp:fforms/field-text {"fieldId":"name","name":"name","label":"Name","required":true} /-->',
-	'<!-- wp:fforms/field-email {"fieldId":"email","name":"email","label":"Email","required":true} /-->',
-	'<!-- /wp:fforms/headless-schema -->',
-].join( '\n' );
-
 test.describe( 'form creation mode', () => {
 	test.beforeEach( async ( { page } ) => {
 		await login( page );
@@ -41,51 +34,22 @@ test.describe( 'form creation mode', () => {
 	} );
 } );
 
-test( 'publishes a Headless API form with protected form meta', async ( {
+test( 'publishes a Headless API form configured in wp-admin', async ( {
+	page,
 	request,
-	requestUtils,
 } ) => {
-	const headers = { 'X-WP-Nonce': await requestUtils.login() };
-	const title = `headless-meta-${ Date.now() }`;
-	const created = await requestUtils.request.post( '/wp-json/wp/v2/fforms', {
-		headers,
-		data: { status: 'draft', title },
-	} );
-	expect( created.status() ).toBe( 201 );
-	const form = await created.json();
+	await login( page );
+	await page.goto( '/wp-admin/post-new.php?post_type=fform' );
+	await page.locator( '.editor-post-title__input' ).fill( `headless-${ Date.now() }` );
+	await page.getByLabel( 'Режим формы' ).selectOption( 'headless' );
+	await page.locator( '.editor-post-publish-button' ).click();
+	await page.locator( '.editor-post-publish-panel__publish-button' ).click();
+	await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/editor' ).getCurrentPostAttribute( 'status' ) ) ).toBe( 'publish' );
 
-	const published = await requestUtils.request.post(
-		`/wp-json/wp/v2/fforms/${ form.id }`,
-		{
-			headers,
-			data: {
-				content: HEADLESS_SCHEMA_CONTENT,
-				meta: {
-					_fforms_type: 'contact',
-					_fforms_mode: 'headless',
-					_fforms_schema: JSON.stringify( {
-						fields: [
-							{
-								name: 'name',
-								label: 'Name',
-								type: 'text',
-								required: true,
-							},
-						],
-					} ),
-				},
-				status: 'publish',
-			},
-		}
+	const formId = await page.evaluate( () =>
+		window.wp.data.select( 'core/editor' ).getCurrentPostId()
 	);
-	expect( published.status() ).toBe( 200 );
-	const publishedForm = await published.json();
-	expect( publishedForm.meta._fforms_type ).toBe( 'contact' );
-	expect( publishedForm.meta._fforms_mode ).toBe( 'headless' );
-
-	const publicForm = await request.get(
-		`/wp-json/fforms/v1/forms/${ form.id }`
-	);
+	const publicForm = await request.get( `/wp-json/fforms/v1/forms/${ formId }` );
 	expect( publicForm.ok() ).toBeTruthy();
 	expect( ( await publicForm.json() ).mode ).toBe( 'headless' );
 } );
