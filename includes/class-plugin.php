@@ -21,6 +21,7 @@ final class Plugin {
 		Public_Form::boot();
 		Block::boot();
 		Export::boot();
+		Dashboard::boot();
 	}
 
 	public static function activate(): void {

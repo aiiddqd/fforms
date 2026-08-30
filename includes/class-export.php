@@ -14,7 +14,7 @@ final class Export {
 	}
 
 	public static function admin_menu(): void {
-		add_submenu_page( 'edit.php?post_type=' . Post_Types::FORM, __( 'Экспорт ответов', 'fforms' ), __( 'Экспорт CSV', 'fforms' ), 'manage_options', 'fforms-export', array( self::class, 'render_page' ) );
+		add_submenu_page( 'fforms', __( 'Экспорт ответов', 'fforms' ), __( 'Экспорт CSV', 'fforms' ), 'manage_options', 'fforms-export', array( self::class, 'render_page' ) );
 	}
 
 	public static function render_page(): void {

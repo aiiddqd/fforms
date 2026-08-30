@@ -17,7 +17,7 @@ final class Settings {
 	}
 
 	public static function admin_menu(): void {
-		add_submenu_page( 'edit.php?post_type=' . Post_Types::FORM, __( 'Настройки FForms', 'fforms' ), __( 'Настройки', 'fforms' ), 'manage_options', 'fforms-settings', array( self::class, 'render_page' ) );
+		add_submenu_page( 'fforms', __( 'Настройки FForms', 'fforms' ), __( 'Настройки', 'fforms' ), 'manage_options', 'fforms-settings', array( self::class, 'render_page' ) );
 	}
 
 	public static function register_settings(): void {
