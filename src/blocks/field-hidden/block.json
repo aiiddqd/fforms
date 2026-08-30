@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "fforms/field-hidden",
+	"title": "Hidden field",
+	"category": "fforms",
+	"icon": "hidden",
+	"description": "Send a value without showing a control to visitors.",
+	"keywords": [ "hidden", "metadata", "tracking" ],
+	"textdomain": "fforms",
+	"ancestor": [ "fforms/form", "fforms/headless-schema" ],
+	"attributes": {
+		"fieldId": { "type": "string", "role": "content" },
+		"name": { "type": "string", "role": "content" },
+		"label": { "type": "string", "role": "content" },
+		"required": { "type": "boolean", "role": "content", "default": false },
+		"placeholder": { "type": "string", "role": "content" },
+		"maxLength": { "type": "number", "role": "content", "default": 0 },
+		"options": { "type": "array", "role": "content", "default": [] }
+	},
+	"supports": { "html": false, "visibility": false },
+	"example": {
+		"attributes": {
+			"fieldId": "source",
+			"name": "source",
+			"label": "Campaign source"
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

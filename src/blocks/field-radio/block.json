@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "fforms/field-radio",
+	"title": "Radio field",
+	"category": "fforms",
+	"icon": "editor-ul",
+	"description": "Let visitors choose one visible option.",
+	"keywords": [ "radio", "choice", "option" ],
+	"textdomain": "fforms",
+	"ancestor": [ "fforms/form", "fforms/headless-schema" ],
+	"attributes": {
+		"fieldId": { "type": "string", "role": "content" },
+		"name": { "type": "string", "role": "content" },
+		"label": { "type": "string", "role": "content" },
+		"required": { "type": "boolean", "role": "content", "default": false },
+		"placeholder": { "type": "string", "role": "content" },
+		"maxLength": { "type": "number", "role": "content", "default": 0 },
+		"options": { "type": "array", "role": "content", "default": [] }
+	},
+	"supports": {
+		"html": false,
+		"visibility": false,
+		"color": { "text": true, "background": false, "gradients": false },
+		"spacing": { "margin": [ "top", "bottom" ], "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"selectors": { "root": ".wp-block-fforms-field-radio" },
+	"example": {
+		"attributes": {
+			"fieldId": "contact",
+			"name": "contact",
+			"label": "Preferred contact method",
+			"required": true,
+			"options": [
+				{ "value": "email", "label": "Email" },
+				{ "value": "phone", "label": "Phone" }
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

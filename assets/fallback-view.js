@@ -1,0 +1,53 @@
+( function () {
+	document.addEventListener( 'submit', function ( event ) {
+		const form = event.target.closest( '.fforms-form' );
+		if ( ! form ) {
+			return;
+		}
+		event.preventDefault();
+		const context = JSON.parse(
+			form.getAttribute( 'data-wp-context' ) || '{}'
+		);
+		const fields = {};
+		new FormData( form ).forEach( function ( value, name ) {
+			const match = name.match( /^fields\[([^\]]+)\](\[\])?$/ );
+			if ( ! match ) {
+				return;
+			}
+			if ( match[ 2 ] ) {
+				fields[ match[ 1 ] ] = fields[ match[ 1 ] ] || [];
+				fields[ match[ 1 ] ].push( value );
+			} else {
+				fields[ match[ 1 ] ] = value;
+			}
+		} );
+		fetch( context.endpoint, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'same-origin',
+			body: JSON.stringify( {
+				form_id: context.formId,
+				fields,
+				website: new FormData( form ).get( 'website' ) || '',
+				source: window.location.href,
+			} ),
+		} )
+			.then( function ( response ) {
+				return response.json().then( function ( body ) {
+					if ( ! response.ok ) {
+						throw body;
+					}
+					return body;
+				} );
+			} )
+			.then( function ( body ) {
+				form.reset();
+				form.querySelector( '.fforms-response' ).textContent =
+					body.message || 'Спасибо! Форма отправлена.';
+			} )
+			.catch( function ( error ) {
+				form.querySelector( '.fforms-response' ).textContent =
+					error.message || 'Не удалось отправить форму.';
+			} );
+	} );
+} )();

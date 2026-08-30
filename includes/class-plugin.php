@@ -13,14 +13,22 @@ final class Plugin {
 		add_action( 'init', array( Post_Types::class, 'register' ) );
 
 		Post_Types::boot();
+		Registry\Code_Forms::boot();
+		Migration\Legacy_Migration::boot();
+		Migration\Mode_Migration::boot();
+		Dashboard::boot();
 		Settings::boot();
 		REST_Controller::boot();
+		CORS::boot();
+		Public_Form::boot();
 		Block::boot();
 		Export::boot();
 	}
 
 	public static function activate(): void {
 		Post_Types::register();
+		Default_Forms::seed();
+		Public_Form::register_rewrite_rule();
 		flush_rewrite_rules();
 	}
 

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fforms/submit",
+  "title": "Submit button",
+  "category": "fforms",
+  "icon": "controls-play",
+  "description": "Add the button that submits this FForms form.",
+  "keywords": [
+    "submit",
+    "button",
+    "send"
+  ],
+  "textdomain": "fforms",
+  "ancestor": [
+    "fforms/form"
+  ],
+  "attributes": {
+    "label": {
+      "type": "string",
+      "role": "content",
+      "default": ""
+    }
+  },
+  "supports": {
+    "html": false,
+    "visibility": false,
+    "color": {
+      "background": true,
+      "text": true,
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    },
+    "spacing": {
+      "padding": [
+        "horizontal",
+        "vertical"
+      ],
+      "__experimentalDefaultControls": {
+        "padding": true
+      }
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "style": true,
+        "width": true
+      }
+    },
+    "shadow": true
+  },
+  "selectors": {
+    "root": ".wp-block-fforms-submit"
+  },
+  "example": {
+    "attributes": {
+      "label": "Send"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

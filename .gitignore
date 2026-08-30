@@ -1,2 +1,6 @@
 *.code-workspace
 node_modules/
+test-results/
+.wp-env.override.json
+docs/rfc/jetpack
+.env

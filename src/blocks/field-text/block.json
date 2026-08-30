@@ -1,0 +1,40 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "fforms/field-text",
+	"title": "Text field",
+	"category": "fforms",
+	"icon": "editor-paragraph",
+	"description": "Collect a short line of text.",
+	"keywords": [ "text", "input", "name" ],
+	"textdomain": "fforms",
+	"ancestor": [ "fforms/form", "fforms/headless-schema" ],
+	"attributes": {
+		"fieldId": { "type": "string", "role": "content" },
+		"name": { "type": "string", "role": "content" },
+		"label": { "type": "string", "role": "content" },
+		"required": { "type": "boolean", "role": "content", "default": false },
+		"placeholder": { "type": "string", "role": "content" },
+		"maxLength": { "type": "number", "role": "content", "default": 0 },
+		"options": { "type": "array", "role": "content", "default": [] }
+	},
+	"supports": {
+		"html": false,
+		"visibility": false,
+		"color": { "text": true, "background": false, "gradients": false },
+		"spacing": { "margin": [ "top", "bottom" ], "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"selectors": { "root": ".wp-block-fforms-field-text" },
+	"example": {
+		"attributes": {
+			"fieldId": "name",
+			"name": "name",
+			"label": "Name",
+			"placeholder": "Your name",
+			"required": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

@@ -1,0 +1,43 @@
+:where(.fforms-form[aria-busy="true"]) {
+	cursor: progress;
+}
+
+:where(.fforms-submit:disabled) {
+	cursor: wait;
+	opacity: 0.65;
+}
+
+:where(.fforms-field :is(input, textarea, select)[aria-invalid="true"]) {
+	border-color: var(--fforms-error-color, #b42318);
+	border-style: solid;
+	outline: 2px solid var(--fforms-error-color, #b42318);
+	outline-offset: 2px;
+}
+
+:where(.fforms-field-error:not(:empty)) {
+	color: var(--fforms-error-color, #b42318);
+	margin: 0;
+}
+
+:where(.fforms-response:not(:empty)) {
+	background: var(--fforms-success-background, #edfaef);
+	border-inline-start: 4px solid var(--fforms-success-color, #16853a);
+	padding: var(--fforms-response-padding, 0.75rem 1rem);
+}
+
+:where(.fforms-response.is-error) {
+	background: var(--fforms-error-background, #fff0f0);
+	border-inline-start-color: var(--fforms-error-color, #b42318);
+}
+
+:where(.fforms-hp) {
+	border: 0 !important;
+	clip: rect(0, 0, 0, 0) !important;
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	white-space: nowrap !important;
+	width: 1px !important;
+}

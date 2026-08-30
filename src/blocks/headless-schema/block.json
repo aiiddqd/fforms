@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "fforms/headless-schema",
+	"version": "1.0.0",
+	"title": "Headless API fields",
+	"category": "fforms",
+	"icon": "database",
+	"description": "Define the fields exposed by an FForms Headless API form.",
+	"textdomain": "fforms",
+	"allowedBlocks": [
+		"fforms/field-text",
+		"fforms/field-textarea",
+		"fforms/field-email",
+		"fforms/field-tel",
+		"fforms/field-url",
+		"fforms/field-number",
+		"fforms/field-select",
+		"fforms/field-radio",
+		"fforms/field-checkbox",
+		"fforms/field-hidden"
+	],
+	"supports": {
+		"html": false,
+		"inserter": false,
+		"reusable": false
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}
