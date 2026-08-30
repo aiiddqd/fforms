@@ -57,7 +57,6 @@
 		notificationSubject: '_fforms_notification_subject',
 		notificationsEnabled: '_fforms_notifications_enabled',
 		successMessage: '_fforms_success_message',
-		publicForm: '_fforms_public',
 		autoreplyEnabled: '_fforms_autoreply_enabled',
 		autoreplyEmailField: '_fforms_autoreply_email_field',
 		autoreplySubject: '_fforms_autoreply_subject',
@@ -195,7 +194,10 @@
 			} );
 		};
 		const updateMode = function ( value ) {
-			const mode = 'headless' === value ? 'headless' : 'block';
+			const mode = [ 'headless', 'public' ].includes( value )
+				? value
+				: 'block';
+			const currentMode = meta[ META.mode ] || 'block';
 			const nextMeta = Object.assign( {}, meta, { [ META.mode ]: mode } );
 			if ( 'headless' === mode ) {
 				const schema = schemaFromBlockEditor();
@@ -206,9 +208,11 @@
 				editPostMeta( { meta: nextMeta } );
 				return;
 			}
-			data.dispatch( 'core/block-editor' ).resetBlocks(
-				blocksFromSchema( schemaFromBlockEditor() )
-			);
+			if ( 'headless' === currentMode ) {
+				data.dispatch( 'core/block-editor' ).resetBlocks(
+					blocksFromSchema( schemaFromBlockEditor() )
+				);
+			}
 			editPostMeta( {
 				meta: nextMeta,
 			} );
@@ -239,6 +243,10 @@
 							value: 'block',
 						},
 						{
+							label: __( 'Share via URL', 'fforms' ),
+							value: 'public',
+						},
+						{
 							label: __( 'Headless API', 'fforms' ),
 							value: 'headless',
 						},
@@ -249,6 +257,34 @@
 					),
 					onChange: updateMode,
 				} ),
+				'public' === ( meta[ META.mode ] || 'block' ) &&
+					'publish' === editor.status &&
+					publicUrl
+					? el(
+							'p',
+							null,
+							el(
+								'a',
+								{
+									href: publicUrl,
+									target: '_blank',
+									rel: 'noopener noreferrer',
+								},
+								__( 'Открыть публичную форму', 'fforms' )
+							)
+					  )
+					: null,
+				'public' === ( meta[ META.mode ] || 'block' ) &&
+					'publish' !== editor.status
+					? el(
+							'p',
+							{ className: 'components-base-control__help' },
+							__(
+								'Ссылка станет доступна после публикации формы.',
+								'fforms'
+							)
+					  )
+					: null,
 				el( SelectControl, {
 					label: __( 'Тип формы', 'fforms' ),
 					value: meta[ META.type ] || 'contact',
@@ -330,51 +366,6 @@
 						updateMeta( META.successMessage, value );
 					},
 				} )
-			),
-			el(
-				PluginDocumentSettingPanel,
-				{
-					name: 'public-form',
-					title: __( 'Публичная форма', 'fforms' ),
-				},
-				el( ToggleControl, {
-					label: __( 'Открыть форму по публичной ссылке', 'fforms' ),
-					checked: Boolean( meta[ META.publicForm ] ),
-					help: __(
-						'Любой, у кого есть ссылка, сможет заполнить и отправить форму.',
-						'fforms'
-					),
-					onChange( value ) {
-						updateMeta( META.publicForm, value );
-					},
-				} ),
-				meta[ META.publicForm ] &&
-					'publish' === editor.status &&
-					publicUrl
-					? el(
-							'p',
-							null,
-							el(
-								'a',
-								{
-									href: publicUrl,
-									target: '_blank',
-									rel: 'noopener noreferrer',
-								},
-								__( 'Открыть публичную форму', 'fforms' )
-							)
-					  )
-					: null,
-				meta[ META.publicForm ] && 'publish' !== editor.status
-					? el(
-							'p',
-							{ className: 'components-base-control__help' },
-							__(
-								'Ссылка станет доступна после публикации формы.',
-								'fforms'
-							)
-					  )
-					: null
 			),
 			notificationSettingsEnabled
 				? el(

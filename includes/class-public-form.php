@@ -45,7 +45,7 @@ final class Public_Form {
 	}
 
 	public static function is_enabled( int $form_id ): bool {
-		return (bool) get_post_meta( $form_id, '_fforms_public', true );
+		return 'public' === Post_Types::form_mode( $form_id );
 	}
 
 	public static function render(): void {

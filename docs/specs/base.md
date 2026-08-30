@@ -1,6 +1,6 @@
 ---
 status: current
-updated: 2026-08-26
+updated: 2026-08-30
 ---
 
 # FForms: базовая спецификация
@@ -40,7 +40,7 @@ FForms — лёгкий WordPress-плагин для контактных фо�
 Мета формы:
 
 - `_fforms_type` — `contact` или `lead`;
-- `_fforms_mode` — `block` или `headless`; отсутствующее у ранее созданной формы значение читается как `block`, а `fforms/headless-schema` в контенте принудительно означает `headless`;
+- `_fforms_mode` — `block`, `public` или `headless`; отсутствующее у ранее созданной формы значение читается как `block`, а `fforms/headless-schema` в контенте принудительно означает `headless` независимо от значения меты. `public` технически идентичен `block` везде, кроме `Public_Form`: та же блочная разметка, тот же рендер, та же доступность в пикере `ref` — единственное отличие в том, что `Public_Form::is_enabled()` считает форму доступной по публичной ссылке;
 - `_fforms_schema` — нормализованная JSON-схема, производный кэш схемы из блоков (и совместимый формат legacy-форм без блоков);
 - `_fforms_notifications_enabled` — включение основного уведомления для формы;
 - `_fforms_notification_to`, `_fforms_notification_subject` — получатели и тема уведомления;
@@ -99,6 +99,10 @@ Namespace: `fforms/v1`.
 | `GET /forms/{id}/schema` | публичный | Только нормализованная схема опубликованной формы. |
 | `GET /entries` | `manage_options` | Ответы с пагинацией и фильтрами `form_id`/`status`. |
 | `POST /entries/{id}/status` | `manage_options` | Смена workflow-статуса ответа. |
+
+### 5.1. Публичная страница формы
+
+Форма в режиме `public` дополнительно доступна без авторизации по адресу `/forms/{id}/` (`Public_Form`, rewrite-правило `^forms/([0-9]+)/?$`). Страница рендерит ту же блочную разметку, что и обычный блок `fforms/form` на сайте, внутри разметки текущей темы (`get_header()`/`get_footer()`). Доступ проверяется по `status === 'publish'` и `Post_Types::form_mode( $id ) === 'public'`; при отсутствии формы, другом статусе или другом режиме отдаётся страница 404. Для форм в режимах `block` и `headless` этот URL всегда отдаёт 404.
 
 Публичный submit принимает:
 

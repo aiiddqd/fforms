@@ -90,7 +90,6 @@ final class Post_Types {
 		self::register_form_meta( '_fforms_mode', array( 'type' => 'string', 'single' => true, 'default' => 'block', 'show_in_rest' => true, 'sanitize_callback' => array( self::class, 'sanitize_form_mode' ) ) );
 		self::register_form_meta( '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		self::register_form_meta( '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
-		self::register_form_meta( '_fforms_public', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 		self::register_form_meta( '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
@@ -119,7 +118,7 @@ final class Post_Types {
 	}
 
 	public static function sanitize_form_mode( mixed $value ): string {
-		return 'headless' === $value ? 'headless' : 'block';
+		return in_array( $value, array( 'headless', 'public' ), true ) ? $value : 'block';
 	}
 
 	public static function form_mode( int $form_id ): string {
