@@ -5,10 +5,10 @@
 - [ ] при добавлении формы новой - выбирать режим - Block editor vs Headless API
     - если Headless API - то форма будет доступна только через REST API и не будет отображаться в блоках Gutenberg. и интерфейс сильно проще
     - если выбираем Block editor - то форма будет доступна как блок Gutenberg и через REST API тоже, интерфейс полный
-    
+- [ ] insert form to pages as block with select of available forms
+
 - [x] добавить 2 формы по умолчанию - при активации плагина
     - контактная форма и лид форма
-    - [ ] insert form to pages as block with select of available forms
     - формы можно отключить
 
 - [x] в коллекции ответов (заявок) - важно иметь возможность фильтрации заявок по форме
