@@ -19,6 +19,9 @@ final class Post_Types {
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
+		add_action( 'restrict_manage_posts', array( self::class, 'render_entries_form_filter' ) );
+		add_action( 'pre_get_posts', array( self::class, 'filter_entries_by_form' ) );
+		add_filter( 'post_row_actions', array( self::class, 'add_view_entries_row_action' ), 10, 2 );
 		add_filter( 'the_title', array( self::class, 'append_entry_id_to_title' ), 10, 2 );
 		add_filter( 'display_post_states', array( self::class, 'hide_entry_post_state' ), 10, 2 );
 		add_action( 'wp_after_insert_post', array( self::class, 'cache_compiled_schema' ), 10, 3 );
@@ -229,6 +232,54 @@ final class Post_Types {
 			$data = json_decode( (string) get_post_meta( $post_id, '_fforms_data', true ), true );
 			echo esc_html( self::stringify( is_array( $data ) ? array_slice( $data, 0, 3, true ) : array() ) );
 		}
+	}
+
+	public static function render_entries_form_filter(): void {
+		global $typenow;
+		if ( self::ENTRY !== $typenow ) {
+			return;
+		}
+		$current = isset( $_GET['form_ref'] ) ? sanitize_text_field( wp_unslash( $_GET['form_ref'] ) ) : '';
+		$forms   = get_posts( array( 'post_type' => self::FORM, 'post_status' => array( 'publish', 'draft', 'private' ), 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC' ) );
+		?>
+		<label class="screen-reader-text" for="fforms-filter-form"><?php esc_html_e( 'Фильтр по форме', 'fforms' ); ?></label>
+		<select id="fforms-filter-form" name="form_ref">
+			<option value=""><?php esc_html_e( 'Все формы', 'fforms' ); ?></option>
+			<?php foreach ( $forms as $form ) : ?>
+				<option value="post:<?php echo esc_attr( $form->ID ); ?>" <?php selected( $current, 'post:' . $form->ID ); ?>><?php echo esc_html( get_the_title( $form ) ); ?></option>
+			<?php endforeach; ?>
+			<?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?>
+				<option value="code:<?php echo esc_attr( $key ); ?>" <?php selected( $current, 'code:' . $key ); ?>><?php echo esc_html( $code_form->title ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	public static function filter_entries_by_form( \WP_Query $query ): void {
+		global $pagenow, $typenow;
+		if ( ! is_admin() || 'edit.php' !== $pagenow || self::ENTRY !== $typenow || ! $query->is_main_query() ) {
+			return;
+		}
+		$form_ref = isset( $_GET['form_ref'] ) ? sanitize_text_field( wp_unslash( $_GET['form_ref'] ) ) : '';
+		if ( str_starts_with( $form_ref, 'post:' ) ) {
+			$query->set( 'meta_key', '_fforms_form_id' );
+			$query->set( 'meta_value', absint( substr( $form_ref, 5 ) ) );
+		} elseif ( str_starts_with( $form_ref, 'code:' ) ) {
+			$query->set( 'meta_key', '_fforms_form_key' );
+			$query->set( 'meta_value', sanitize_key( substr( $form_ref, 5 ) ) );
+		}
+	}
+
+	/** @param array<string, string> $actions */
+	public static function add_view_entries_row_action( array $actions, WP_Post $post ): array {
+		if ( self::FORM === $post->post_type && current_user_can( 'manage_options' ) ) {
+			$url = add_query_arg(
+				array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post->ID ),
+				admin_url( 'edit.php' )
+			);
+			$actions['fforms_view_entries'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Смотреть заявки', 'fforms' ) . '</a>';
+		}
+		return $actions;
 	}
 
 	public static function stringify( mixed $value ): string {
