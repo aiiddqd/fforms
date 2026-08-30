@@ -1,7 +1,4 @@
-const {
-	expect,
-	test,
-} = require( '@wordpress/e2e-test-utils-playwright' );
+const { expect, test } = require( '@wordpress/e2e-test-utils-playwright' );
 
 const login = async ( page ) => {
 	await page.goto( '/wp-login.php' );
@@ -44,7 +41,5 @@ test( 'new form editor loads styles and stacks field controls', async ( {
 		expect( controlBox.y ).toBeGreaterThan( labelBox.y );
 	}
 
-	await expect(
-		form.locator( '.fforms-submit' )
-	).toBeEnabled();
+	await expect( form.locator( '.fforms-submit' ) ).toBeEnabled();
 } );
