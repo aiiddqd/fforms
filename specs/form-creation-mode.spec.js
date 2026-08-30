@@ -32,13 +32,11 @@ test.describe( 'form creation mode', () => {
 			editor.canvas.locator( '.wp-block-fforms-form' )
 		).toBeVisible();
 	} );
-} );
 
 test( 'publishes a Headless API form configured in wp-admin', async ( {
 	page,
 	request,
 } ) => {
-	await login( page );
 	await page.goto( '/wp-admin/post-new.php?post_type=fform' );
 	await page.locator( '.editor-post-title__input' ).fill( `headless-${ Date.now() }` );
 	await page.getByLabel( 'Режим формы' ).selectOption( 'headless' );
@@ -52,4 +50,5 @@ test( 'publishes a Headless API form configured in wp-admin', async ( {
 	const publicForm = await request.get( `/wp-json/fforms/v1/forms/${ formId }` );
 	expect( publicForm.ok() ).toBeTruthy();
 	expect( ( await publicForm.json() ).mode ).toBe( 'headless' );
+} );
 } );
