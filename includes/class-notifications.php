@@ -11,48 +11,47 @@ final class Notifications {
 	/**
 	 * @param array<string, mixed> $data Sanitized submission data.
 	 */
-	public static function send( int $form_id, int $entry_id, array $data ): bool {
+	public static function send( Form_Ref $form, int $entry_id, array $data ): bool {
 		if ( empty( Settings::get()['notifications'] ) ) {
 			return false;
 		}
 
 		$sent = false;
-		if ( get_post_meta( $form_id, '_fforms_notifications_enabled', true ) ) {
-			$raw_recipients = (string) get_post_meta( $form_id, '_fforms_notification_to', true );
+		if ( ! empty( $form->notifications['enabled'] ) ) {
+			$raw_recipients = (string) $form->notifications['to'];
 			$recipients     = array_filter( array_map( 'sanitize_email', preg_split( '/\s*,\s*/', $raw_recipients ) ?: array() ), 'is_email' );
 			if ( array() === $recipients ) {
 				$recipients = array( sanitize_email( (string) get_option( 'admin_email' ) ) );
 			}
 
-			$subject = (string) get_post_meta( $form_id, '_fforms_notification_subject', true );
+			$subject = (string) $form->notifications['subject'];
 			if ( '' === $subject ) {
-				$subject = sprintf( __( 'Новый ответ: %s', 'fforms' ), get_the_title( $form_id ) );
+				$subject = sprintf( __( 'Новый ответ: %s', 'fforms' ), $form->title );
 			}
 
-			$lines = array( sprintf( __( 'Форма: %s', 'fforms' ), get_the_title( $form_id ) ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
-			$schema = \FForms\Schema\Schema_Repository::for_form( $form_id );
-			$labels = ! is_wp_error( $schema ) ? wp_list_pluck( $schema['fields'], 'label', 'name' ) : array();
+			$lines  = array( sprintf( __( 'Форма: %s', 'fforms' ), $form->title ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
+			$labels = wp_list_pluck( $form->schema['fields'], 'label', 'name' );
 			foreach ( $data as $key => $value ) {
 				$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
 			}
 
 			$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );
 		}
-		self::send_autoreply( $form_id, $data );
+		self::send_autoreply( $form, $data );
 		return $sent;
 	}
 
-	private static function send_autoreply( int $form_id, array $data ): void {
-		if ( ! get_post_meta( $form_id, '_fforms_autoreply_enabled', true ) ) {
+	private static function send_autoreply( Form_Ref $form, array $data ): void {
+		if ( empty( $form->notifications['autoreply_enabled'] ) ) {
 			return;
 		}
-		$field   = sanitize_key( (string) get_post_meta( $form_id, '_fforms_autoreply_email_field', true ) ) ?: 'email';
+		$field   = $form->notifications['autoreply_email_field'] ?: 'email';
 		$address = sanitize_email( (string) ( $data[ $field ] ?? '' ) );
 		if ( ! is_email( $address ) ) {
 			return;
 		}
-		$subject = (string) get_post_meta( $form_id, '_fforms_autoreply_subject', true );
-		$message = (string) get_post_meta( $form_id, '_fforms_autoreply_message', true );
+		$subject = (string) $form->notifications['autoreply_subject'];
+		$message = (string) $form->notifications['autoreply_message'];
 		wp_mail( $address, $subject ?: sprintf( __( 'Мы получили ваше сообщение — %s', 'fforms' ), get_bloginfo( 'name' ) ), $message ?: __( 'Спасибо! Мы получили ваше сообщение и скоро ответим.', 'fforms' ) );
 	}
 }

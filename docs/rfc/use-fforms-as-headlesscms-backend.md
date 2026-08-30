@@ -1,6 +1,6 @@
 ---
 title: "Программная регистрация форм для headless-бэкенда"
-status: draft
+status: implementing
 created: 2026-08-30
 ---
 

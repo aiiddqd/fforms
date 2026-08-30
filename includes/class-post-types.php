@@ -90,7 +90,7 @@ final class Post_Types {
 		foreach ( array( '_fforms_form_id', '_fforms_created_post_id' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'integer', 'single' => true, 'show_in_rest' => false ) );
 		}
-		foreach ( array( '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent' ) as $key ) {
+		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		}
 	}
@@ -194,8 +194,16 @@ final class Post_Types {
 
 	public static function render_entry_column( string $column, int $post_id ): void {
 		if ( 'fforms_form' === $column ) {
-			$form_id = (int) get_post_meta( $post_id, '_fforms_form_id', true );
-			echo $form_id ? '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . esc_html( get_the_title( $form_id ) ) . '</a>' : '—';
+			$form_id  = (int) get_post_meta( $post_id, '_fforms_form_id', true );
+			$form_key = (string) get_post_meta( $post_id, '_fforms_form_key', true );
+			if ( $form_id ) {
+				echo '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . esc_html( get_the_title( $form_id ) ) . '</a>';
+			} elseif ( '' !== $form_key ) {
+				$ref = Form_Locator::resolve( $form_key );
+				echo esc_html( is_wp_error( $ref ) ? $form_key : $ref->title );
+			} else {
+				echo '—';
+			}
 		} elseif ( 'fforms_status' === $column ) {
 			echo esc_html( (string) get_post_meta( $post_id, '_fforms_status', true ) );
 		} elseif ( 'fforms_preview' === $column ) {
