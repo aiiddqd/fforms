@@ -134,6 +134,7 @@ final class Post_Types {
 			array(
 				'post_type'   => self::FORM,
 				'post_status' => 'draft',
+				'post_content' => 'block' === $mode ? self::starter_block_content() : '',
 				'meta_input'  => array(
 					'_fforms_mode'   => $mode,
 					'_fforms_schema' => 'headless' === $mode ? Schema::sanitize_json( Schema::defaults() ) : '',
@@ -171,6 +172,31 @@ final class Post_Types {
 		<?php
 		require_once ABSPATH . 'wp-admin/admin-footer.php';
 		exit;
+	}
+
+	private static function starter_block_content(): string {
+		$fields = array(
+			self::block( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
+			self::block( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
+			self::block( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
+			self::block( 'fforms/submit', array( 'label' => __( 'Отправить', 'fforms' ) ) ),
+		);
+		return serialize_block( self::block( 'fforms/form', array(), $fields ) );
+	}
+
+	/**
+	 * @param array<string,mixed>             $attrs
+	 * @param array<int,array<string,mixed>> $inner_blocks
+	 * @return array<string,mixed>
+	 */
+	private static function block( string $name, array $attrs, array $inner_blocks = array() ): array {
+		return array(
+			'blockName'    => $name,
+			'attrs'        => $attrs,
+			'innerBlocks'  => $inner_blocks,
+			'innerHTML'    => '',
+			'innerContent' => array_fill( 0, count( $inner_blocks ), null ),
+		);
 	}
 
 	/** @param array<string,mixed> $settings */

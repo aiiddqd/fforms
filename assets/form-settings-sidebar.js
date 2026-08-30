@@ -77,7 +77,7 @@
 				? window.fformsFormSettings.publicFormUrl.replace(
 						/0\/?$/,
 						String( editor.id ) + '/'
-					  )
+				  )
 				: '';
 		const isHeadless = 'headless' === ( meta[ META.mode ] || 'block' );
 
@@ -199,7 +199,7 @@
 								updateMeta( META.schema, value );
 							},
 						} )
-					)
+				  )
 				: null,
 			el(
 				PluginDocumentSettingPanel,
