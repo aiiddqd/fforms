@@ -8,12 +8,6 @@ updated: 2026-08-28
 # RFC: Нативная стилизация и иконки Gutenberg-блоков FForms
 
 ## туду
-- [ ] беда с категорией полей ![alt text](image-1.png) http://localhost:8890/wp-admin/post-new.php?post_type=fform
-    - поля должны быть в своей категории FForms
-    - доступны только внутри блока формы - тип поста формы
-    - если это обычные страницы или посты в блоге - поля недоступны
-
-
 - [x] Добавление новой формы в [редакторе](http://localhost:8890/wp-admin/post-new.php?post_type=fform): preview полей располагается вертикально, кнопка активна; проверено Playwright.
 ![alt text](image.png)
 

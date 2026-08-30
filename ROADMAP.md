@@ -2,12 +2,21 @@
 
 ## Next
 
-- [ ] fix styles about basic forms /Users/aa/Projects/ddhq/gits/wpcraft/wp/wp-content/plugins/_fforms/docs/rfc/gutenberg-styles-and-icons.md 
 
 - [ ] добавить 2 формы по умолчанию - при активации плагина
     - контактная форма и лид форма
     - [ ] insert form to pages as block with select of available forms
     - формы можно отключить
+- [ ] при добавлении формы новой - выбирать режим - Block editor vs Headless API
+- [ ] беда с категорией полей ![alt text](image-1.png) http://localhost:8890/wp-admin/post-new.php?post_type=fform
+    - поля должны быть в своей категории FForms
+    - доступны только внутри блока формы - тип поста формы
+    - если это обычные страницы или посты в блоге - поля недоступны
+
+
+
+
+- [x] fix styles about basic forms /Users/aa/Projects/ddhq/gits/wpcraft/wp/wp-content/plugins/_fforms/docs/rfc/gutenberg-styles-and-icons.md 
 
 - [ ] pr https://github.com/aiiddqd/fforms/pull/6 
     - translate to english
