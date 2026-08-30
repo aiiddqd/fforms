@@ -67,13 +67,6 @@ make status       # проверить, что всё поднялось
 Тестовое окружение отключено (`"testsEnvironment": false`) — включите, когда появятся PHPUnit-тесты.
 Локальные переопределения — в `.wp-env.override.json` (в git не попадает).
 
-Скопируйте `.env.example` в `.env`, чтобы управлять `WP_DEBUG`, `WP_DEBUG_LOG`,
-`WP_DEBUG_DISPLAY` и `SCRIPT_DEBUG`. Перед запуском `make start`, `make update`,
-`make xdebug` и соответствующих npm-скриптов эти значения приводятся к boolean и
-записываются в локальный `.wp-env.override.json`. После изменения `.env` выполните
-`make restart`; `${NAME}` в `config` не используется, поскольку wp-env не раскрывает
-такие подстановки.
-
 `WP_DEBUG` и `SCRIPT_DEBUG` включены, PHP-ошибки пишутся в `wp-content/debug.log` внутри контейнера:
 
 ```bash

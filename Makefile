@@ -3,7 +3,6 @@
 
 # http://localhost:8890
 WP_ENV = npx wp-env
-WP_ENV_PREPARE = npm run env:prepare --silent
 PORT   = 8890
 SITE   = http://localhost:$(PORT)
 
@@ -11,7 +10,7 @@ SITE   = http://localhost:$(PORT)
 .PHONY: help install up start stop restart destroy reset update xdebug logs tail cli bash wp status
 
 up: ## start the environment (http://localhost:8890, admin/password)
-	$(WP_ENV_PREPARE) && $(WP_ENV) start
+	$(WP_ENV) start
 
 start: up ## alias for `make up`
 
@@ -25,16 +24,16 @@ stop: ## stop the environment
 restart: stop start ## stop then start
 
 update: ## restart pulling the latest WordPress core
-	$(WP_ENV_PREPARE) && $(WP_ENV) start --update
+	$(WP_ENV) start --update
 
 reset: ## wipe the database and reinstall WordPress
-	$(WP_ENV) reset all && $(WP_ENV_PREPARE) && $(WP_ENV) start
+	$(WP_ENV) reset all && $(WP_ENV) start
 
 destroy: ## remove containers and volumes
 	$(WP_ENV) destroy
 
 xdebug: ## start with Xdebug enabled
-	$(WP_ENV_PREPARE) && $(WP_ENV) start --xdebug
+	$(WP_ENV) start --xdebug
 
 logs: ## tail PHP and Docker logs
 	$(WP_ENV) logs development
