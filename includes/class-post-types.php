@@ -19,6 +19,8 @@ final class Post_Types {
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
+		add_filter( 'the_title', array( self::class, 'append_entry_id_to_title' ), 10, 2 );
+		add_filter( 'display_post_states', array( self::class, 'hide_entry_post_state' ), 10, 2 );
 		add_action( 'wp_after_insert_post', array( self::class, 'cache_compiled_schema' ), 10, 3 );
 		add_filter( 'wp_insert_post_data', array( self::class, 'prevent_invalid_publish' ), 20, 2 );
 		add_action( 'admin_notices', array( self::class, 'render_validation_notice' ) );
@@ -192,6 +194,21 @@ final class Post_Types {
 
 	public static function entry_columns( array $columns ): array {
 		return array( 'cb' => $columns['cb'] ?? '<input type="checkbox" />', 'title' => __( 'Ответ', 'fforms' ), 'fforms_form' => __( 'Форма', 'fforms' ), 'fforms_status' => __( 'Статус', 'fforms' ), 'fforms_preview' => __( 'Данные', 'fforms' ), 'date' => $columns['date'] ?? __( 'Дата', 'fforms' ) );
+	}
+
+	public static function append_entry_id_to_title( string $title, int $post_id ): string {
+		if ( is_admin() && self::ENTRY === get_post_type( $post_id ) ) {
+			$title .= ' (#' . $post_id . ')';
+		}
+		return $title;
+	}
+
+	/** @param array<string, string> $states */
+	public static function hide_entry_post_state( array $states, WP_Post $post ): array {
+		if ( self::ENTRY === $post->post_type ) {
+			unset( $states['private'] );
+		}
+		return $states;
 	}
 
 	public static function render_entry_column( string $column, int $post_id ): void {

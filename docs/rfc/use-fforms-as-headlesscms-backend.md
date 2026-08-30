@@ -7,6 +7,7 @@ created: 2026-08-30
 # RFC: FForms как backend для headless CMS через REST API
 
 ## туду
+- [ ] broke link Settings in wp admin - http://localhost:8890/wp-admin/fforms-settings
 - [x] `includes/test-fixtures.php` перенесён в `tests/test-fixtures.php`
 
 ## Вводные
