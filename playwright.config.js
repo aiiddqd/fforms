@@ -1,5 +1,7 @@
 const { defineConfig } = require( '@playwright/test' );
 
+require( 'dotenv' ).config( { path: __dirname + '/.env' } );
+
 module.exports = defineConfig( {
 	testDir: './specs',
 	testMatch: '**/*.spec.js',

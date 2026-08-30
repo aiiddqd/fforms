@@ -1,17 +1,6 @@
 const { expect, test } = require( '@wordpress/e2e-test-utils-playwright' );
 
-const login = async ( page ) => {
-	await page.goto( '/wp-login.php' );
-
-	if ( ! page.url().includes( 'wp-login.php' ) ) {
-		return;
-	}
-
-	await page.getByLabel( /username or email address/i ).fill( 'admin' );
-	await page.getByLabel( /^password$/i ).fill( 'password' );
-	await page.getByRole( 'button', { name: /log in/i } ).click();
-	await expect( page ).toHaveURL( /wp-admin/ );
-};
+const { login } = require( './support/login' );
 
 test( 'new form editor loads styles and stacks field controls', async ( {
 	admin,

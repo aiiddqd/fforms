@@ -15,13 +15,13 @@ final class Plugin {
 		Post_Types::boot();
 		Registry\Code_Forms::boot();
 		Migration\Legacy_Migration::boot();
+		Dashboard::boot();
 		Settings::boot();
 		REST_Controller::boot();
 		CORS::boot();
 		Public_Form::boot();
 		Block::boot();
 		Export::boot();
-		Dashboard::boot();
 	}
 
 	public static function activate(): void {
