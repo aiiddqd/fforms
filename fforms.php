@@ -39,6 +39,10 @@ require_once FFORMS_DIR . 'includes/class-block.php';
 require_once FFORMS_DIR . 'includes/class-export.php';
 require_once FFORMS_DIR . 'includes/class-plugin.php';
 
+if ( defined( 'FFORMS_TEST_FIXTURES' ) && FFORMS_TEST_FIXTURES ) {
+	require_once FFORMS_DIR . 'tests/test-fixtures.php';
+}
+
 register_activation_hook( __FILE__, array( Plugin::class, 'activate' ) );
 
 Plugin::boot();

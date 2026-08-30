@@ -6,6 +6,9 @@ created: 2026-08-30
 
 # RFC: FForms как backend для headless CMS через REST API
 
+## туду
+- [x] `includes/test-fixtures.php` перенесён в `tests/test-fixtures.php`
+
 ## Вводные
 
 Сегодня форма существует только как запись CPT `fform`, а весь submit-путь завязан на числовой `form_id`. Для headless-фронтенда (AstroJS) это неудобно: форму надо создавать руками в админке, а ключ формы в коде фронтенда — это post ID, который меняется между окружениями. Предлагается добавить программную регистрацию форм: `fforms_add_api_route( $key, $args )` объявляет форму в PHP, она становится доступной по строковому ключу через `fforms/v1` и принимает заявки с внешнего домена.
@@ -79,18 +82,18 @@ Entry code-формы сохраняет `_fforms_form_key`, а `_fforms_form_id
 
 ## Критерии приемки (checklist)
 
-- [ ] `fforms_add_api_route()` регистрирует форму; повторный ключ, невалидный ключ и пустые `fields` возвращают `WP_Error` и не ломают загрузку сайта.
-- [ ] `GET /fforms/v1/forms` содержит и CPT-, и code-формы; у каждой есть `key` и `source`.
-- [ ] `GET /fforms/v1/forms/{key}` и `/schema` отдают схему code-формы; числовой `GET /forms/{id}` работает как раньше.
-- [ ] `POST /submit` с `form_key` создаёт entry; ответ 201 с `entry_id` и сообщением формы.
-- [ ] `POST /submit` без `form_id` и без `form_key` возвращает 400; с несуществующим ключом — 404.
-- [ ] Валидация, honeypot (200 без entry), rate limit 429 и лимит размера тела работают для code-форм так же, как для CPT-форм.
-- [ ] Entry code-формы виден в админке и в `GET /entries?form_key=...`, показывает человекочитаемое название и выгружается в CSV с колонкой `form_key`.
-- [ ] Письмо и автоответ по code-форме уходят при включённых настройках и не уходят при выключенном глобальном тумблере.
-- [ ] Запрос с разрешённого origin получает `Access-Control-Allow-Origin`; с чужого — нет; `OPTIONS` возвращает 204 с корректными заголовками.
-- [ ] Существующий submit по `form_id` из блока `fforms/form` не сломан; `php -l`, `npm run lint:js`, `npm run lint:css` проходят.
-- [ ] add auto tests - for send and check records
-- [ ] `docs/specs/api-route-headless-cms-mode.md` дополнен разделом о code-формах и обновлённым REST-контрактом.
+- [x] `fforms_add_api_route()` регистрирует форму; повторный ключ, невалидный ключ и пустые `fields` возвращают `WP_Error` и не ломают загрузку сайта.
+- [x] `GET /fforms/v1/forms` содержит и CPT-, и code-формы; у каждой есть `key` и `source`.
+- [x] `GET /fforms/v1/forms/{key}` и `/schema` отдают схему code-формы; числовой `GET /forms/{id}` работает как раньше.
+- [x] `POST /submit` с `form_key` создаёт entry; ответ 201 с `entry_id` и сообщением формы.
+- [x] `POST /submit` без `form_id` и без `form_key` возвращает 400; с несуществующим ключом — 404.
+- [x] Валидация, honeypot (200 без entry), rate limit 429 и лимит размера тела работают для code-форм так же, как для CPT-форм.
+- [x] Entry code-формы виден в админке и в `GET /entries?form_key=...`, показывает человекочитаемое название и выгружается в CSV с колонкой `form_key`.
+- [x] Письмо и автоответ по code-форме уходят при включённых настройках и не уходят при выключенном глобальном тумблере.
+- [x] Запрос с разрешённого origin получает `Access-Control-Allow-Origin`; с чужого — нет; `OPTIONS` возвращает 204 с корректными заголовками.
+- [x] Существующий submit по `form_id` из блока `fforms/form` не сломан; `php -l`, `npm run lint:js`, `npm run lint:css` проходят. (`lint:css` сообщает только о ранее существовавших ошибках в `docs/rfc/archive/mvp/jetpack/jetpack_vendor/**` — не связано с этим PR.)
+- [x] add auto tests - for send and check records — `specs/headless-code-forms.spec.js` (Playwright, 7 тестов), фикстура `tests/test-fixtures.php` за флагом `FFORMS_TEST_FIXTURES`.
+- [x] `docs/specs/api-route-headless-cms-mode.md` дополнен разделом о code-формах и обновлённым REST-контрактом.
 
 ## Дорожная карта
 

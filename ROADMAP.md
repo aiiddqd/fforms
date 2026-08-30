@@ -4,7 +4,10 @@
 
 - [ ] fix styles about basic forms /Users/aa/Projects/ddhq/gits/wpcraft/wp/wp-content/plugins/_fforms/docs/rfc/gutenberg-styles-and-icons.md 
 
-- [ ] insert form to pages as block with select of available forms
+- [ ] добавить 2 формы по умолчанию - при активации плагина
+    - контактная форма и лид форма
+    - [ ] insert form to pages as block with select of available forms
+    - формы можно отключить
 
 - [ ] pr https://github.com/aiiddqd/fforms/pull/6 
     - translate to english
