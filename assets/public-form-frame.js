@@ -19,11 +19,30 @@
 
 	let last = 0;
 
+	/**
+	 * Measure the content itself rather than documentElement, whose box can be
+	 * pinned to the frame's viewport and would then report the wrong height.
+	 *
+	 * @return {number} Content height in pixels.
+	 */
+	function measure() {
+		const content = document.querySelector( '.fforms-embed__content' );
+		if ( ! content ) {
+			return Math.ceil( document.body.scrollHeight );
+		}
+		const top = document.documentElement.getBoundingClientRect().top;
+		return Math.ceil( content.getBoundingClientRect().bottom - top );
+	}
+
 	function report() {
-		const height = Math.ceil(
-			document.documentElement.getBoundingClientRect().height
-		);
-		if ( ! height || height === last ) {
+		const height = measure();
+		if ( ! height ) {
+			return;
+		}
+		// Re-send an unchanged height while the frame still does not match it:
+		// the parent may have sized us before the layout settled, and a repeat
+		// message is the only way that gets corrected.
+		if ( height === last && Math.abs( window.innerHeight - height ) <= 1 ) {
 			return;
 		}
 		last = height;
@@ -34,10 +53,18 @@
 	}
 
 	if ( window.ResizeObserver ) {
-		new window.ResizeObserver( report ).observe( document.documentElement );
+		const observer = new window.ResizeObserver( report );
+		observer.observe( document.body );
+		const content = document.querySelector( '.fforms-embed__content' );
+		if ( content ) {
+			observer.observe( content );
+		}
 	}
 	window.addEventListener( 'load', report );
 	window.addEventListener( 'resize', report );
 	document.addEventListener( 'fforms:resize', report );
+
+	// Late web fonts and block styles can shift the layout after load.
+	[ 300, 1000, 2500 ].forEach( ( delay ) => setTimeout( report, delay ) );
 	report();
 } )();

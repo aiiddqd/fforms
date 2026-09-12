@@ -39,6 +39,18 @@
 		return match ? match[ 1 ] : '';
 	}
 
+	/**
+	 * Set the height as an inline style too: a host stylesheet rule for iframes
+	 * would otherwise beat the height attribute and clip the form.
+	 *
+	 * @param {HTMLIFrameElement} frame  The embedded frame.
+	 * @param {string|number}     height Height in pixels.
+	 */
+	function setHeight( frame, height ) {
+		frame.height = String( height );
+		frame.style.height = String( height ) + 'px';
+	}
+
 	const script = currentScript();
 	if ( ! script ) {
 		return;
@@ -63,8 +75,7 @@
 	iframe.style.width = '100%';
 	iframe.style.border = '0';
 	iframe.style.display = 'block';
-	iframe.height = script.getAttribute( 'data-fforms-height' ) || '600';
-	iframe.setAttribute( 'scrolling', 'no' );
+	setHeight( iframe, script.getAttribute( 'data-fforms-height' ) || '600' );
 
 	if ( script.parentNode ) {
 		script.parentNode.insertBefore( iframe, script );
@@ -84,7 +95,7 @@
 		}
 		const height = parseInt( data.height, 10 );
 		if ( height > 0 ) {
-			iframe.height = String( height );
+			setHeight( iframe, height );
 		}
 	} );
 } )();
