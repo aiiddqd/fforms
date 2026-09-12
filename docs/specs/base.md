@@ -3,79 +3,79 @@ status: current
 updated: 2026-08-30
 ---
 
-# FForms: базовая спецификация
+# FForms: base specification
 
-## 1. Назначение и границы
+## 1. Purpose and scope
 
-FForms — лёгкий WordPress-плагин для контактных форм и сбора лидов. Он хранит формы и ответы внутри WordPress, принимает отправки через REST API, выводит формы динамическим Gutenberg-блоком и отправляет почтовые уведомления.
+FForms is a lightweight WordPress plugin for contact forms and lead capture. It stores forms and entries inside WordPress, accepts submissions over the REST API, renders forms through a dynamic Gutenberg block, and sends email notifications.
 
-Эта спецификация описывает фактически реализованное состояние версии `1.0.0`. Идеи из `ROADMAP.md` и активных RFC сюда не входят.
+This specification describes what version `1.0.0` actually implements. Ideas from `ROADMAP.md` and from active RFCs are out of scope here.
 
-Текущие системные требования:
+Current system requirements:
 
-- WordPress 6.5 или новее;
-- PHP 8.0 или новее;
-- JavaScript в браузере для отправки формы из Gutenberg-блока.
+- WordPress 6.5 or newer;
+- PHP 8.0 or newer;
+- JavaScript in the browser to submit a form rendered by the Gutenberg block.
 
-## 2. Основной пользовательский сценарий
+## 2. Primary user flow
 
-1. Пользователь создаёт запись в **FForms → Добавить форму** — по умолчанию это режим `block`.
-2. В боковой панели может переключить режим: в `block` редактирует `fforms/form`, в `headless` — жёстко заданный `fforms/headless-schema` с теми же блоками полей. При переключении набор полей преобразуется между корневыми блоками; JSON-схема остаётся производным кэшем и REST-форматом.
-3. При включённых глобальных настройках почты включает уведомление для конкретной формы, настраивает получателей, сообщение об успехе и при необходимости автоответ.
-4. Публикует форму и размещает динамический блок `fforms/form` на странице либо использует REST API напрямую.
-5. Публичная отправка валидируется на сервере и сохраняется как приватный ответ со статусом `new`.
-6. Администратор просматривает ответ, меняет его статус и при необходимости выгружает данные в CSV.
+1. The user creates a post under **FForms → Add form** — `block` mode by default.
+2. The sidebar can switch the mode: `block` edits `fforms/form`, `headless` edits a locked `fforms/headless-schema` holding the same field blocks. Switching converts the field set between the two root blocks; the JSON schema stays a derived cache and the REST format.
+3. With global mail settings enabled, the user turns on the notification for that specific form and configures recipients, the success message, and optionally an autoreply.
+4. The user publishes the form and either places the dynamic `fforms/form` block on a page or calls the REST API directly.
+5. A public submission is validated server-side and stored as a private entry with status `new`.
+6. An administrator reviews the entry, changes its status, and exports the data to CSV when needed.
 
-Типы `contact` и `lead` сейчас отличаются только сохранённым значением типа; обработка отправки у них одинаковая.
+The `contact` and `lead` types currently differ only by the stored type value; submission handling is identical for both.
 
-## 3. Модель данных
+## 3. Data model
 
-Плагин использует два Custom Post Type.
+The plugin uses two custom post types and one taxonomy.
 
-| Сущность | Хранение | Особенности |
+| Entity | Storage | Notes |
 | --- | --- | --- |
-| Форма | `fform` | Не публичный CPT с интерфейсом в админке и поддержкой REST. Содержит заголовок, тип, JSON-схему и настройки писем. |
-| Ответ | `fform_entry` | Приватная запись без публичного REST WordPress. Создание из админки запрещено; просмотр и управление требуют `manage_options`. |
-| Тип формы | `fform_type` | Непубличная плоская таксономия для `fform_entry` и `fform`: бизнес-смысл заявки («Заявка на консультацию»), не зависящий от того, какая форма её приняла. См. §3.1. |
+| Form | `fform` | Non-public CPT with an admin UI and REST support. Holds the title, type, JSON schema, and mail settings. |
+| Entry | `fform_entry` | Private post with no public WordPress REST exposure. Creating one from the admin is forbidden; viewing and managing require `manage_options`. |
+| Form type | `fform_type` | Non-public flat taxonomy for `fform_entry` and `fform`: the business meaning of a submission ("Consultation request"), independent of which form received it. See §3.1. |
 
-Мета формы:
+Form meta:
 
-- `_fforms_type` — `contact` или `lead`;
-- `_fforms_mode` — `block`, `public` или `headless`; отсутствующее у ранее созданной формы значение читается как `block`, а `fforms/headless-schema` в контенте принудительно означает `headless` независимо от значения меты. `public` технически идентичен `block` везде, кроме `Public_Form`: та же блочная разметка, тот же рендер, та же доступность в пикере `ref` — единственное отличие в том, что `Public_Form::is_enabled()` считает форму доступной по публичной ссылке;
-- `_fforms_schema` — нормализованная JSON-схема, производный кэш схемы из блоков (и совместимый формат legacy-форм без блоков);
-- `_fforms_notifications_enabled` — включение основного уведомления для формы;
-- `_fforms_notification_to`, `_fforms_notification_subject` — получатели и тема уведомления;
-- `_fforms_success_message` — сообщение после успешной отправки;
-- `_fforms_autoreply_*` — включение, email-поле, тема и текст автоответа.
+- `_fforms_type` — `contact` or `lead`;
+- `_fforms_mode` — `block`, `public`, or `headless`. A missing value on a previously created form reads as `block`, and an `fforms/headless-schema` block in the content forces `headless` regardless of the meta value. `public` is technically identical to `block` everywhere except `Public_Form`: same block markup, same rendering, same availability in the `ref` picker — the only difference is that `Public_Form::is_enabled()` treats the form as reachable through its public link;
+- `_fforms_schema` — the normalized JSON schema: a derived cache of the schema compiled from blocks, and the compatible format for legacy forms that have no blocks;
+- `_fforms_notifications_enabled` — enables the main notification for the form;
+- `_fforms_notification_to`, `_fforms_notification_subject` — notification recipients and subject;
+- `_fforms_success_message` — message shown after a successful submission;
+- `_fforms_autoreply_*` — autoreply toggle, email field, subject, and body.
 
-Мета ответа:
+Entry meta:
 
-- `_fforms_form_id` — связь с формой;
-- `_fforms_data` — прошедшие валидацию данные в JSON;
-- `_fforms_status` — `new`, `read`, `replied` или `spam`;
-- `_fforms_form_key` — ключ code-формы или встроенной главной формы (`main`), если ответ пришёл не в CPT-форму;
-- `_fforms_source`, `_fforms_ip`, `_fforms_user_agent` — источник и технические данные запроса;
-- `_fforms_custom` — JSON полей вне схемы (`customFields` маршрута `POST /main`): не более 20 ключей, только скаляры, до 2 000 символов на значение;
-- `_fforms_meta` — JSON произвольного контекста запроса: глубина не более 3, не более 8 KiB после кодирования;
-- `_fforms_ref` — метка перехода (`utm_source`, `ref`), до 200 символов;
-- `_fforms_user_id` — идентификатор пользователя со стороны клиента; никаких прав не даёт и в админке рендерится ссылкой только если такой пользователь существует;
-- `_fforms_form_type_raw` — входное значение типа формы, сохранённое, когда термин не был создан из-за лимита;
-- `_fforms_created_post_id` зарегистрирован для будущих content-форм, но сейчас не используется.
+- `_fforms_form_id` — link to the form;
+- `_fforms_data` — validated data as JSON;
+- `_fforms_status` — `new`, `read`, `replied`, or `spam`;
+- `_fforms_form_key` — key of the code form or of the built-in main form (`main`) when the entry did not go to a CPT form;
+- `_fforms_source`, `_fforms_ip`, `_fforms_user_agent` — request source and technical data;
+- `_fforms_custom` — JSON of off-schema fields (`customFields` on the `POST /main` route): at most 20 keys, scalars only, up to 2,000 characters per value;
+- `_fforms_meta` — JSON of arbitrary request context: depth at most 3, at most 8 KiB once encoded;
+- `_fforms_ref` — referral marker (`utm_source`, `ref`), up to 200 characters;
+- `_fforms_user_id` — client-supplied user identifier. It grants nothing, and the admin renders it as a link only when such a user exists;
+- `_fforms_form_type_raw` — the incoming form type value, kept when no term was created because the limit was reached;
+- `_fforms_created_post_id` is registered for future content forms but is currently unused.
 
-### 3.1. Таксономия `fform_type`
+### 3.1. The `fform_type` taxonomy
 
-`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, плоская, `show_admin_column => true`; все capabilities — `manage_options`. Экран «Типы форм» добавлен в меню FForms один раз, после «Ответы». Существующая мета формы `_fforms_type` (`contact`/`lead`) с таксономией не связана.
+`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Entries". The existing `_fforms_type` form meta (`contact`/`lead`) is unrelated to this taxonomy.
 
-- Нормализация значения: `sanitize_key`, паттерн `^[a-z0-9_-]{1,32}$`; иначе HTTP 422 `fforms_invalid_form_type`.
-- Upsert по slug: неизвестный slug создаёт термин с `name = slug` и метой `_fforms_autocreated`. Переименование термина в админке не влияет на привязку — связь идёт по slug.
-- Лимит автосоздания — 50 терминов (фильтр `fforms_max_form_types`). Сверх лимита термин не создаётся, заявка сохраняется, значение уходит в `_fforms_form_type_raw`.
-- Строгий режим (настройка «Принимать только существующие типы») отвечает 422 `fforms_unknown_form_type` на неизвестный slug и не создаёт entry.
-- **Форма и термин связаны в обе стороны.** Публикация CPT-формы создаёт термин со slug = `post_name` (при занятом slug — числовой суффикс) и `name` = заголовок формы, назначает термин самой форме и пишет ID формы в мету термина `_fforms_form_id`. Переименование формы меняет только `name` термина, slug остаётся стабильным. Удаление формы термин не удаляет — заявки сохраняют классификацию, очищается только `_fforms_form_id`. Формы, опубликованные до появления таксономии, получают термин при следующем сохранении.
-- Заявка из блока, шорткода и `POST /submit` наследует термин своей формы; форма без термина сохраняет entry без типа.
+- Value normalization: `sanitize_key`, pattern `^[a-z0-9_-]{1,32}$`; anything else returns HTTP 422 `fforms_invalid_form_type`.
+- Upsert by slug: an unknown slug creates a term with `name = slug` and the `_fforms_autocreated` meta. Renaming the term in the admin does not affect matching — the link is by slug.
+- The autocreation limit is 50 terms (`fforms_max_form_types` filter). Beyond the limit no term is created, the submission is still stored, and the value goes to `_fforms_form_type_raw`.
+- Strict mode (the "Accept existing types only" setting) answers 422 `fforms_unknown_form_type` for an unknown slug and creates no entry.
+- **The form and its term are linked both ways.** Publishing a CPT form creates a term with `slug = post_name` (a numeric suffix is appended when the slug is taken) and `name` = the form title, assigns the term to the form itself, and writes the form ID into the term meta `_fforms_form_id`. Renaming the form changes only the term `name`; the slug stays stable. Deleting the form does not delete the term — entries keep their classification and only `_fforms_form_id` is cleared. Forms published before the taxonomy existed get their term on the next save.
+- Entries from the block, the shortcode, and `POST /submit` inherit their form's term; a form without a term stores entries without a type.
 
-## 4. Схема формы и валидация
+## 4. Form schema and validation
 
-Схема хранится в формате:
+The schema is stored in this format:
 
 ```json
 {
@@ -92,38 +92,38 @@ FForms — лёгкий WordPress-плагин для контактных фо�
 }
 ```
 
-Поддерживаются типы `text`, `textarea`, `email`, `tel`, `url`, `number`, `select`, `radio`, `checkbox`, `hidden`. Для полей выбора свойство `options` принимает строки или объекты `{"value":"...","label":"..."}`.
+Supported types are `text`, `textarea`, `email`, `tel`, `url`, `number`, `select`, `radio`, `checkbox`, `hidden`. For choice fields the `options` property accepts strings or `{"value":"...","label":"..."}` objects.
 
-Особенности нормализации:
+Normalization rules:
 
-- имя поля приводится к безопасному ключу WordPress;
-- дубли, поля без имени и неизвестные типы отбрасываются;
-- максимум 50 полей в форме и 100 вариантов у одного поля;
-- `max_length` ограничен диапазоном 1–10 000;
-- некорректная или пустая схема заменяется стандартными полями «Имя», «Email», «Сообщение»;
-- лишние ключи входного `fields`, которых нет в схеме, не сохраняются;
-- обязательность, email, URL, число и допустимые варианты проверяются на сервере;
-- значения очищаются и обрезаются: по умолчанию до 2 000 символов, `textarea` — до 10 000.
+- a field name is reduced to a safe WordPress key;
+- duplicates, unnamed fields, and unknown types are dropped;
+- at most 50 fields per form and 100 options per field;
+- `max_length` is clamped to the 1–10,000 range;
+- an invalid or empty schema falls back to the default "Name", "Email", "Message" fields;
+- incoming `fields` keys that are not in the schema are not stored;
+- required, email, URL, number, and allowed-option constraints are checked server-side;
+- values are sanitized and truncated: 2,000 characters by default, 10,000 for `textarea`.
 
 ## 5. REST API
 
 Namespace: `fforms/v1`.
 
-| Метод и маршрут | Доступ | Назначение |
+| Method and route | Access | Purpose |
 | --- | --- | --- |
-| `POST /submit` | публичный | Валидация и сохранение ответа; строгий контракт `form_id`/`form_key` + `fields`. |
-| `POST /main` | публичный | Лояльный плоский payload встроенной главной формы. См. §5.2. |
-| `GET /forms` | публичный | Встроенная главная форма плюс до 100 опубликованных форм по алфавиту; каждая CPT-форма содержит `mode`. |
-| `GET /forms/{id\|key}` | публичный | Форма, её `mode`, схема, сообщение об успехе и submit URL. `key` — ключ code-формы, `main` или slug термина формы. |
-| `GET /forms/{id\|key}/schema` | публичный | Только нормализованная схема формы. |
-| `GET /entries` | `manage_options` | Ответы с пагинацией и фильтрами `form_id`/`form_key`/`form_type`/`status`. |
-| `POST /entries/{id}/status` | `manage_options` | Смена workflow-статуса ответа. |
+| `POST /submit` | public | Validates and stores an entry; strict contract of `form_id`/`form_key` plus `fields`. |
+| `POST /main` | public | Lenient flat payload of the built-in main form. See §5.2. |
+| `GET /forms` | public | The built-in main form plus up to 100 published forms in alphabetical order; every CPT form carries `mode`. |
+| `GET /forms/{id\|key}` | public | The form, its `mode`, schema, success message, and submit URL. `key` is a code-form key, `main`, or the slug of the form's term. |
+| `GET /forms/{id\|key}/schema` | public | The normalized schema only. |
+| `GET /entries` | `manage_options` | Entries with pagination and `form_id`/`form_key`/`form_type`/`status` filters. |
+| `POST /entries/{id}/status` | `manage_options` | Changes the workflow status of an entry. |
 
-### 5.1. Публичная страница формы
+### 5.1. Public form page
 
-Форма в режиме `public` дополнительно доступна без авторизации по адресу `/forms/{id}/` (`Public_Form`, rewrite-правило `^forms/([0-9]+)/?$`). Страница рендерит ту же блочную разметку, что и обычный блок `fforms/form` на сайте, внутри разметки текущей темы (`get_header()`/`get_footer()`). Доступ проверяется по `status === 'publish'` и `Post_Types::form_mode( $id ) === 'public'`; при отсутствии формы, другом статусе или другом режиме отдаётся страница 404. Для форм в режимах `block` и `headless` этот URL всегда отдаёт 404.
+A form in `public` mode is additionally reachable without authentication at `/forms/{id}/` (`Public_Form`, rewrite rule `^forms/([0-9]+)/?$`). The page renders the same block markup as a regular `fforms/form` block on the site, inside the current theme's markup (`get_header()`/`get_footer()`). Access is checked by `status === 'publish'` and `Post_Types::form_mode( $id ) === 'public'`; a missing form, a different status, or a different mode returns a 404 page. For forms in `block` and `headless` mode this URL always returns 404.
 
-Публичный submit принимает:
+The public submit accepts:
 
 ```json
 {
@@ -134,146 +134,146 @@ Namespace: `fforms/v1`.
 }
 ```
 
-Успешная отправка возвращает HTTP 201, `entry_id`, пользовательское сообщение и результат отправки основного уведомления. Ошибки валидации возвращают HTTP 422 и объект ошибок по полям. Также предусмотрены ответы 404, 413, 429 и 500.
+A successful submission returns HTTP 201, `entry_id`, the custom message, and the result of sending the main notification. Validation errors return HTTP 422 and a per-field error object. Responses 404, 413, 429, and 500 are also defined.
 
-### 5.2. Встроенная главная форма и `POST /main`
+### 5.2. The built-in main form and `POST /main`
 
-Главная форма существует только в памяти (`Registry\Main_Form`): `post_id = 0`, `key = main`, `source = builtin`, схема из четырёх необязательных полей (`name` text, `email` email, `phone` tel, `message` textarea). Записи в БД она не создаёт, в админке не редактируется и блоком не встраивается; ключ `main` зарезервирован — `fforms_add_api_route( 'main', … )` возвращает `WP_Error` `fforms_reserved_key`. Работает сразу после активации, без создания формы.
+The main form exists only in memory (`Registry\Main_Form`): `post_id = 0`, `key = main`, `source = builtin`, and a schema of four optional fields (`name` text, `email` email, `phone` tel, `message` textarea). It creates no database records, is not editable in the admin, and cannot be embedded by the block. The `main` key is reserved — `fforms_add_api_route( 'main', … )` returns a `WP_Error` with code `fforms_reserved_key`. It works right after activation, with no form to create first.
 
-`POST /main` принимает плоский camelCase-payload; все параметры опциональны:
+`POST /main` accepts a flat camelCase payload; every parameter is optional:
 
-| Параметр | Назначение |
+| Parameter | Purpose |
 | --- | --- |
-| `formType` (алиасы `formId`, `form_type`, `form_id`) | Одновременно адрес формы и её тип. Разные значения в алиасах — 400 `fforms_form_ref_conflict`. |
-| поля схемы адресованной формы | Проходят обычную `Schema::validate_submission()`. |
-| `customFields`, `meta`, `ref`, `userId` | Данные вне схемы, см. меты в §3. |
-| `_hp` | Honeypot этого маршрута: заполнен — 200 без entry. На `/submit` honeypot остаётся `website`. |
-| `source` | Как в `/submit`; при отсутствии берётся `Referer`. |
-| `attachments` | Не принимаются: 400 `fforms_attachments_require_multipart` в JSON и 400 `fforms_attachments_disabled` для `multipart` с файлами. |
+| `formType` (aliases `formId`, `form_type`, `form_id`) | Both the form address and its type. Aliases carrying different values return 400 `fforms_form_ref_conflict`. |
+| schema fields of the addressed form | Go through the regular `Schema::validate_submission()`. |
+| `customFields`, `meta`, `ref`, `userId` | Off-schema data; see the meta keys in §3. |
+| `_hp` | Honeypot for this route: when filled, returns 200 with no entry. On `/submit` the honeypot is still `website`. |
+| `source` | Same as on `/submit`; falls back to `Referer` when absent. |
+| `attachments` | Not accepted: 400 `fforms_attachments_require_multipart` in JSON, and 400 `fforms_attachments_disabled` for `multipart` with files. |
 
-Неизвестные ключи верхнего уровня не отбрасываются, а сохраняются как `customFields` — поэтому honeypot здесь называется `_hp`, а не `website`: в плоском payload `website` — нормальное пользовательское поле.
+Unknown top-level keys are not discarded — they are stored as `customFields`. That is why the honeypot here is named `_hp` rather than `website`: in a flat payload `website` is a perfectly ordinary user field.
 
-**Адресация и классификация независимы.** Значение резолвится в форму в порядке: число → post ID, ключ code-формы, slug термина `fform_type` с непустым `_fforms_form_id`. Если форма не найдена, заявка идёт во встроенную главную форму. Затем тип назначается термином: у CPT-формы — её собственный термин, у code-формы — её аргумент `type` либо сам ключ, у главной формы — нормализованное входное значение. Побочный эффект: slug термина становится стабильным строковым ключом CPT-формы вместо post ID, который отличается между окружениями.
+**Addressing and classification are independent.** The value is resolved to a form in this order: a number → post ID, a code-form key, the slug of an `fform_type` term with a non-empty `_fforms_form_id`. If no form matches, the submission goes to the built-in main form. The type is then assigned as a term: a CPT form contributes its own term, a code form its `type` argument or the key itself, and the main form the normalized incoming value. A useful side effect is that the term slug becomes a stable string key for a CPT form, replacing the post ID that differs between environments.
 
-Для главной формы дополнительно действует правило против пустых заявок: непустым должно быть хотя бы одно из `email`, `phone`, `message`, иначе 422 `fforms_empty_submission`. Rate limit считается по ключу `code:main`.
+The main form also enforces a rule against empty submissions: at least one of `email`, `phone`, `message` must be non-empty, otherwise 422 `fforms_empty_submission`. The rate limit is counted under the key `code:main`.
 
-Успешный ответ — 201 с `entry_id`, сообщением и, если тип определён, `form_type`.
+A successful response is 201 with `entry_id`, the message, and — when a type was determined — `form_type`.
 
-## 6. Обработка отправки и антиспам
+## 6. Submission handling and anti-spam
 
-Последовательность обработки:
+Processing order:
 
-1. Проверка размера тела запроса — по умолчанию не более 256 KiB.
-2. Проверка существования опубликованной формы.
-3. Резолв формы и, для `POST /main`, типа формы.
-4. Honeypot (`website` на `/submit`, `_hp` на `/main`): заполненный honeypot получает ложный успешный ответ HTTP 200, но entry, термин и письма не создаются.
-5. Rate limit — по умолчанию 5 попыток за 60 секунд для пары «форма + IP».
-6. Нормализация и серверная валидация данных.
-7. Создание приватного `fform_entry` и сохранение source, IP и User-Agent; данные вне схемы пишутся отдельными метами и в `_fforms_data` не попадают.
-8. Назначение термина `fform_type`.
-9. Отправка уведомлений и вызов action `fforms_entry_created`.
+1. Request body size check — at most 256 KiB by default.
+2. Check that a published form exists.
+3. Resolve the form and, for `POST /main`, the form type.
+4. Honeypot (`website` on `/submit`, `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created.
+5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
+6. Data normalization and server-side validation.
+7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; off-schema data is written to separate meta keys and never enters `_fforms_data`.
+8. Assignment of the `fform_type` term.
+9. Sending notifications and firing the `fforms_entry_created` action.
 
-Rate limit учитывает и невалидные попытки, но не honeypot. IP берётся из `REMOTE_ADDR`; прокси-заголовки автоматически не считаются доверенными.
+The rate limit counts invalid attempts too, but not honeypot hits. The IP comes from `REMOTE_ADDR`; proxy headers are not trusted automatically.
 
-## 7. Gutenberg-блок и фронтенд
+## 7. Gutenberg block and frontend
 
-Динамический блок `fforms/form` позволяет для опубликованной формы режима `block`:
+For a published form in `block` mode, the dynamic `fforms/form` block lets an editor:
 
-- выбрать одну из опубликованных форм;
-- показать или скрыть её заголовок;
-- изменить текст кнопки отправки;
-- использовать выравнивание `wide` и `full`.
+- pick one of the published forms;
+- show or hide its title;
+- change the submit button label;
+- use `wide` and `full` alignment.
 
-Разметка генерируется на сервере по актуальной схеме. Поля имеют связанные `label`, обязательные поля — `required`/`aria-required`, сообщение результата — `role="status"` и `aria-live="polite"`. Клиентский скрипт собирает данные, отправляет JSON через `fetch`, блокирует кнопку на время запроса, показывает результат и очищает форму после успеха.
+Markup is generated server-side from the current schema. Fields have associated `label` elements, required fields carry `required`/`aria-required`, and the result message uses `role="status"` and `aria-live="polite"`. The client script collects the data, posts JSON through `fetch`, disables the button while the request is in flight, shows the result, and clears the form after success.
 
-Headless-формы остаются полностью доступны через `fforms/v1`, но не предлагаются в picker блока и серверный рендер отклоняет вручную проставленную `ref` на такую форму. CSS и frontend JavaScript подключаются только когда блок реально отрендерил опубликованную форму. Стили минимальны и не зависят от конкретной темы, но отдельной интеграции с `theme.json` и Global Styles пока нет. Без JavaScript форма показывает предупреждение и не отправляется.
+Headless forms remain fully available through `fforms/v1` but are not offered in the block picker, and server-side rendering rejects a manually set `ref` pointing at one. CSS and frontend JavaScript are enqueued only when the block actually rendered a published form. Styles are minimal and theme-agnostic, but there is no dedicated `theme.json`/Global Styles integration yet. Without JavaScript the form shows a warning and does not submit.
 
-### 7.1. Шорткод `[fform id=123]`
+### 7.1. The `[fform id=123]` shortcode
 
-Вторая точка вставки формы — шорткод `[fform id=123]`. Единственный атрибут — `id`, это post ID CPT `fform`; варианты `[fform id=123]` и `[fform id="123"]` равнозначны. Шорткод не дублирует разметку, а вызывает тот же серверный рендер `Form_Renderer::render_form()`, что и публичная страница формы, поэтому разметка, ассеты и поведение submit совпадают с блоком `fforms/form` с `ref=123` — с точностью до внешнего wrapper'а блока.
+The second insertion point is the `[fform id=123]` shortcode. Its only attribute is `id`, the post ID of the `fform` CPT; `[fform id=123]` and `[fform id="123"]` are equivalent. The shortcode does not duplicate markup — it calls the same server-side `Form_Renderer::render_form()` as the public form page, so markup, assets, and submit behavior match the `fforms/form` block with `ref=123`, down to the block's outer wrapper.
 
-Политика недоступной формы общая с блоком: отсутствующий или несуществующий `id`, пост другого типа, черновик и режим `headless` не выводят форму — гость видит пустоту, пользователь с `edit_posts` — текстовое сообщение. Code-формы (`post_id=0`) через шорткод недоступны. `[fform id=X]` внутри содержимого самой формы X попадает в общий guard рекурсии и отдаёт сообщение о циклической ссылке.
+The unavailable-form policy is shared with the block: a missing or nonexistent `id`, a post of another type, a draft, and `headless` mode render nothing — a visitor sees nothing, a user with `edit_posts` sees a text message. Code forms (`post_id=0`) are not reachable through the shortcode. `[fform id=X]` inside the content of form X itself hits the shared recursion guard and returns a circular-reference message.
 
-Ассеты подключаются двумя путями: на `wp_enqueue_scripts` по `has_shortcode()` в содержимом текущего поста (чтобы стили попали в `wp_head`) и повторно, идемпотентно, в самом callback — на случай рендера из виджета или шаблона темы. На странице без формы ассеты не подключаются.
+Assets are enqueued along two paths: on `wp_enqueue_scripts` via `has_shortcode()` against the current post content (so styles land in `wp_head`), and again, idempotently, inside the callback itself — for renders coming from a widget or a theme template. On a page without a form no assets are enqueued.
 
-В боковой панели опубликованной формы режимов `block`/`public` показано готовое значение `[fform id=<ID>]`; для `headless`-формы поле не выводится.
+The sidebar of a published form in `block`/`public` mode shows the ready-to-copy `[fform id=<ID>]` value; for a `headless` form the field is not rendered.
 
-Шорткод и блок вставляют форму в `post_content`. Страницы, которые рендерятся кодом темы в обход `the_content()`, ни тем, ни другим не обслуживаются — такой шаблон должен звать `do_shortcode()` или `Form_Renderer::render_form()` сам.
+Both the shortcode and the block insert the form into `post_content`. Pages rendered by theme code that bypasses `the_content()` are served by neither — such a template must call `do_shortcode()` or `Form_Renderer::render_form()` itself.
 
-### 7.2. Внешняя вставка: iframe и js-script
+### 7.2. External embedding: iframe and js-script
 
-Для вставки на сторонний сайт есть два сниппета поверх публичной страницы формы `/forms/{id}/`, поэтому оба доступны только для опубликованной формы в режиме `public` («Share via URL»):
+Two snippets sit on top of the public form page `/forms/{id}/` for embedding on a third-party site, so both are available only for a published form in `public` mode ("Share via URL"):
 
-- `<iframe src="{home}/forms/{id}?fforms_embed=1" style="width:100%;border:0" height="600" loading="lazy">` — простая вставка с фиксированной высотой;
-- `<script src="{plugin}/assets/embed.js" data-fforms-form="{id}" data-fforms-origin="{home}" data-fforms-src="{embed_url}"></script>` — скрипт подставляет iframe на место тега и подгоняет его высоту.
+- `<iframe src="{home}/forms/{id}?fforms_embed=1" style="width:100%;border:0" height="600" loading="lazy">` — a simple embed with a fixed height;
+- `<script src="{plugin}/assets/embed.js" data-fforms-form="{id}" data-fforms-origin="{home}" data-fforms-src="{embed_url}"></script>` — the script replaces the tag with an iframe and keeps its height in sync.
 
-Публичная страница формы, открытая во фрейме, шлёт родителю `postMessage` `{ type: 'fforms:height', formId, height }`; `assets/embed.js` применяет высоту только для сообщений от `contentWindow` своего iframe с совпадающим `formId` и ставит её и атрибутом, и inline-стилем, чтобы правило темы для `iframe` не переопределило высоту.
+The public form page, when opened inside a frame, sends the parent a `postMessage` of `{ type: 'fforms:height', formId, height }`. `assets/embed.js` applies the height only for messages coming from its own iframe's `contentWindow` with a matching `formId`, and sets it both as an attribute and as an inline style so a theme rule for `iframe` cannot override it.
 
-Голый документ принудительно сбрасывает `height`, `min-height` и `overflow` у `html`/`body`: темы обычно задают им `height:100%` и собственный `overflow`, и внутри фрейма это превращает body в отдельный скролл-контейнер — документ начинает сообщать высоту фрейма вместо своей, форма не может быть измерена и обрезается.
+The bare document force-resets `height`, `min-height`, and `overflow` on `html`/`body`: themes usually give them `height:100%` and their own `overflow`, which inside a frame turns body into a separate scroll container — the document then reports the frame's height instead of its own, so the form cannot be measured and gets clipped.
 
-Высота измеряется по контенту (`.fforms-embed__content`), а не по `documentElement`, чья высота привязана к вьюпорту фрейма; дополнительно берётся максимум со `scrollHeight`, чтобы пережить тему, которая всё-таки сделала body скролл-контейнером. Неизменившаяся высота отправляется повторно, пока фрейм ей не соответствует: иначе фрейм, один раз оказавшийся короче контента, так и остался бы обрезанным — отправлять было бы нечего, ведь высота контента не менялась. Кроме высоты, страница наружу ничего не передаёт, обратного канала нет, поэтому `targetOrigin` — `'*'` (домен встраивающей страницы заранее неизвестен). Вне фрейма репортер высоты не активируется.
+Height is measured from the content (`.fforms-embed__content`) rather than from `documentElement`, whose height is tied to the frame viewport; the maximum with `scrollHeight` is taken as well, to survive a theme that made body a scroll container anyway. An unchanged height is re-sent until the frame matches it: otherwise a frame that once ended up shorter than its content would stay clipped forever, because there would be nothing to send — the content height never changed. The page sends nothing outward besides the height and has no return channel, so `targetOrigin` is `'*'` (the embedding page's domain is not known in advance). Outside a frame the height reporter does not activate.
 
-`assets/embed.js` исполняется на чужих сайтах: без зависимостей, без сборки, не создаёт глобальных переменных и выдерживает несколько вставок разных форм на одной странице. Точный URL фрейма приходит в `data-fforms-src`; если атрибута нет, скрипт собирает его из `data-fforms-origin` и `data-fforms-form`.
+`assets/embed.js` runs on other people's sites: no dependencies, no build step, no global variables, and it survives several embeds of different forms on one page. The exact frame URL arrives in `data-fforms-src`; without that attribute the script assembles it from `data-fforms-origin` and `data-fforms-form`.
 
-Параметр `fforms_embed=1` переключает публичную страницу в «голый» режим: минимальный HTML-документ без шапки, подвала и админ-бара, но с `wp_head()`/`wp_footer()`, поэтому block-стили, Global Styles и Interactivity-рантайм работают как обычно. Без параметра `/forms/{id}` остаётся полноценной страницей темы — это по-прежнему ссылка для шаринга. Отступы в голом режиме нулевые: расстояния задаёт встраивающая страница.
+The `fforms_embed=1` parameter switches the public page into "bare" mode: a minimal HTML document with no header, footer, or admin bar, but still with `wp_head()`/`wp_footer()`, so block styles, Global Styles, and the Interactivity runtime work as usual. Without the parameter, `/forms/{id}` stays a full theme page — it remains the link to share. Padding in bare mode is zero: spacing is the embedding page's job.
 
-Все точки вставки собраны в боковой панели конструктора формы: шорткод (`block`/`public`), публичная ссылка, iframe и js-script (только `public`); для `headless` не показывается ничего.
+All insertion points are collected in the form editor sidebar: the shortcode (`block`/`public`), the public link, the iframe and the js-script (`public` only); for `headless` nothing is shown.
 
-## 8. Админка, почта и экспорт
+## 8. Admin, mail, and export
 
-В админке реализованы:
+The admin implements:
 
-- создание и редактирование форм через стандартный интерфейс CPT;
-- режим `Block editor` или `Headless API` в боковой панели; новая форма создаётся как `Block editor`, а смена режима преобразует текущие поля между блоками и JSON-схемой. В `Headless API` контейнер принимает только блоки полей FForms, поэтому схема REST не расходится с содержимым редактора;
-- обзорная страница `admin.php?page=fforms-dashboard` открывается первым вопросом FAQ «Как быстро добавить приём сообщений через REST API?»: реальный URL `POST /fforms/v1/main`, состояние настроек, список типов форм и четыре готовых примера запроса с кнопкой «Скопировать». Верхнеуровневый slug меню остаётся `fforms` (его используют оба CPT и страницы настроек и экспорта), а `admin.php?page=fforms` редиректит на новый адрес;
-- экран «Типы форм» в меню FForms; у термина, связанного с формой, есть ссылка на форму, а у формы — действие «Смотреть заявки», ведущее на список, отфильтрованный по её термину;
-- список ответов с формой, типом формы, статусом и кратким превью; фильтры по форме и по типу работают вместе с фильтром по статусу;
-- просмотр полных данных ответа, source, IP и User-Agent, плюс блок «Дополнительно» с типом формы, `ref`, `user_id`, `customFields` и `meta`;
-- ручная смена статуса ответа;
-- CSV-экспорт всех ответов, ответов выбранной формы или выбранного типа формы.
+- creating and editing forms through the standard CPT interface;
+- a `Block editor` or `Headless API` mode in the sidebar. A new form starts as `Block editor`, and switching the mode converts the current fields between blocks and the JSON schema. In `Headless API` the container accepts FForms field blocks only, so the REST schema cannot drift from the editor content;
+- an overview page at `admin.php?page=fforms-dashboard` that opens with the first FAQ question, "How do I start accepting messages over the REST API?": the real `POST /fforms/v1/main` URL, the current settings state, the list of form types, and four ready-made request examples with a "Copy" button. The top-level menu slug stays `fforms` (both CPTs and the settings and export pages use it as their parent), and `admin.php?page=fforms` redirects to the new address;
+- a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View entries" action leading to the list filtered by its term;
+- the entry list with the form, form type, status, and a short preview; the form and type filters work together with the status filter;
+- a view of the full entry data, source, IP, and User-Agent, plus an "Additional" block with the form type, `ref`, `user_id`, `customFields`, and `meta`;
+- manual status changes on an entry;
+- CSV export of all entries, of a selected form's entries, or of a selected form type's entries.
 
-CSV имеет UTF-8 BOM, объединяет поля всех выбранных записей в общий набор колонок и защищает значения от spreadsheet formula injection. Помимо полей схемы он содержит колонки `form_type`, `ref`, `user_id`, `custom_fields` и `meta`.
+The CSV carries a UTF-8 BOM, merges the fields of every selected record into a shared column set, and guards values against spreadsheet formula injection. Besides the schema fields it contains the `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns.
 
-Настройки FForms содержат также разрешённые origins главной формы, получателей её уведомлений и строгий режим типов форм. Глобальная настройка включает доступ к настройкам уведомлений и автоответов в редакторе форм; по умолчанию она выключена. Основное уведомление также выключено по умолчанию и включается отдельно для каждой формы. Получателей можно перечислить через запятую; при пустом значении используется `admin_email`. Автоответ включается и настраивается в самой форме, затем отправляется на значение настроенного email-поля. Тип формы и данные вне схемы попадают в письмо отдельным блоком после полей формы.
+FForms settings also hold the allowed origins of the main form, the recipients of its notifications, and the strict form-type mode. A global setting unlocks the notification and autoreply settings in the form editor; it is off by default. The main notification is off by default too and is enabled per form. Recipients can be listed comma-separated; an empty value falls back to `admin_email`. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
 
-Встроенный SMTP опционален и настраивает глобальный `PHPMailer` WordPress. Поэтому при включении он влияет на все письма сайта, а не только на FForms, и не должен использоваться одновременно с другим SMTP-плагином. SMTP-пароль хранится в WordPress option `fforms_smtp` без дополнительного шифрования со стороны плагина.
+The built-in SMTP is optional and configures the global WordPress `PHPMailer`. Enabling it therefore affects every email on the site, not only FForms, and it must not be used alongside another SMTP plugin. The SMTP password is stored in the `fforms_smtp` WordPress option without any additional encryption by the plugin.
 
-## 9. Расширяемость
+## 9. Extensibility
 
-Доступны следующие точки расширения:
+The following extension points are available:
 
-- `fforms_max_request_bytes` — максимальный размер submit-запроса;
-- `fforms_rate_limit` — число попыток в окне;
-- `fforms_rate_window` — длительность окна rate limit;
-- `fforms_client_ip` — вычисленный IP клиента;
-- `fforms_entry_created` — действие после сохранения entry и попытки отправить письма.
+- `fforms_max_request_bytes` — the maximum submit request size;
+- `fforms_rate_limit` — the number of attempts per window;
+- `fforms_rate_window` — the rate limit window length;
+- `fforms_client_ip` — the computed client IP;
+- `fforms_entry_created` — an action fired after the entry is stored and the emails have been attempted.
 
-REST-контракт версионирован namespace `v1`. Специальной настройки CORS в плагине нет: headless-клиенты работают в рамках стандартной CORS-политики WordPress или конфигурации сайта.
+The REST contract is versioned through the `v1` namespace. CORS for the `fforms/v1` namespace is handled by the plugin itself, under an exact-match per-form allowlist; see `api-route-headless-cms-mode.md` §6, which also documents the extension points layered on top of this section.
 
-## 10. Безопасность и приватность
+## 10. Security and privacy
 
-- Публично отдаются только опубликованные формы и их схемы.
-- Ответы, настройки SMTP и экспорт доступны только пользователям с `manage_options`.
-- Сохранение из админки защищено nonce и capability checks.
-- Входные данные проходят allowlist, очистку и серверную валидацию.
-- Публичный submit намеренно не требует nonce или авторизации.
-- По умолчанию сохраняются IP, User-Agent и source; автоматического срока хранения, анонимизации, WordPress privacy exporter/eraser и удаления ответов при удалении формы пока нет.
+- Only published forms and their schemas are served publicly.
+- Entries, SMTP settings, and export are available only to users with `manage_options`.
+- Admin saves are protected by nonce and capability checks.
+- Input goes through an allowlist, sanitization, and server-side validation.
+- The public submit deliberately requires neither a nonce nor authentication.
+- IP, User-Agent, and source are stored by default; there is no automatic retention period, anonymization, WordPress privacy exporter/eraser, or deletion of entries when a form is deleted.
 
-## 11. Что пока не входит в базовую версию
+## 11. Not part of the base version yet
 
-- визуальный конструктор полей и вложенные Gutenberg-блоки полей;
-- типы `content` и `survey`;
-- условная логика, multi-step и загрузка файлов;
-- CAPTCHA/Turnstile, webhooks и внешние интеграции;
-- аналитика, роли на уровне отдельных форм и политика retention;
-- серверный fallback для отправки без JavaScript;
-- отдельная автоматизированная PHPUnit/JavaScript test suite.
+- a visual field builder and nested Gutenberg field blocks;
+- the `content` and `survey` types;
+- conditional logic, multi-step, and file uploads;
+- CAPTCHA/Turnstile, webhooks, and external integrations;
+- analytics, per-form roles, and a retention policy;
+- a server-side fallback for submitting without JavaScript;
+- a dedicated automated PHPUnit/JavaScript test suite.
 
-## 12. Текущее подтверждение работоспособности
+## 12. Current verification status
 
-Пользовательские параметры в E2E настраиваются тем же путём, что и на сайте — через wp-admin. Плагин не добавляет тестовые формы, фильтры или константы в PHP/bootstrap-конфигурацию.
+User-facing settings in E2E are configured the same way as on a real site — through wp-admin. The plugin adds no test forms, filters, or constants to the PHP/bootstrap configuration.
 
-- Все PHP-файлы проходят `php -l`.
-- Оба JavaScript-файла проходят `node --check`.
-- В рамках MVP ранее проверены активация в `wp-env`, регистрация блока, SSR-разметка, публичное чтение формы, успешный submit, ошибки 422, honeypot, защита entries и rate limit.
-- Локальное окружение описано в `.wp-env.json`, `Makefile` и `README.md`; тестовое окружение wp-env отключено до появления PHPUnit-тестов.
+- All PHP files pass `php -l`.
+- Both JavaScript files pass `node --check`.
+- During the MVP, activation in `wp-env`, block registration, SSR markup, public form reads, a successful submit, 422 errors, the honeypot, entry protection, and the rate limit were verified.
+- The local environment is described in `.wp-env.json`, the `Makefile`, and `README.md`; the wp-env testing environment is disabled until PHPUnit tests exist.

@@ -3,101 +3,101 @@ status: current
 updated: 2026-08-30
 ---
 
-# FForms: headless-режим (code-формы)
+# FForms: headless mode (code forms)
 
-Дополняет [`base.md`](base.md): описывает программную регистрацию форм в коде и связанные изменения REST-контракта, введённые RFC `use-fforms-as-headlesscms-backend`. Базовый сценарий с CPT-формами (`base.md`) не меняется — code-формы работают как второй, полностью равноправный способ адресовать форму.
+Supplements [`base.md`](base.md): describes registering forms programmatically in code and the related REST contract changes introduced by the `use-fforms-as-headlesscms-backend` RFC. The base flow with CPT forms (`base.md`) is unchanged — code forms are a second, fully equal way to address a form.
 
-## 1. Назначение
+## 1. Purpose
 
-Headless-фронтенд (например, AstroJS) не может полагаться на post ID как на стабильный идентификатор формы между окружениями. Code-формы решают это: форма описывается в PHP темы/плагина (название, ключ, поля) без записи в БД, и становится доступна через `fforms/v1` по строковому ключу.
+A headless frontend (AstroJS, for example) cannot rely on a post ID as a stable form identifier across environments. Code forms solve that: a form is described in the PHP of a theme or plugin (title, key, fields) with no database record, and becomes reachable through `fforms/v1` by a string key.
 
-Есть ещё два пути, появившихся вместе с главной формой (`base.md` §5.2): встроенная форма с ключом `main`, которая работает сразу после активации и не требует регистрации вообще, и slug термина `fform_type`, который даёт CPT-форме стабильный строковый ключ вместо post ID.
+Two more paths arrived with the main form (`base.md` §5.2): the built-in form with the key `main`, which works right after activation and needs no registration at all, and the slug of an `fform_type` term, which gives a CPT form a stable string key in place of its post ID.
 
-## 2. Регистрация
+## 2. Registration
 
 ```php
 add_action( 'fforms_register_forms', function () {
 	fforms_add_api_route( 'contact_astro', array(
-		'title'           => 'Контакт (Astro)',
+		'title'           => 'Contact (Astro)',
 		'fields'          => array(
 			array( 'name' => 'email', 'label' => 'Email', 'type' => 'email', 'required' => true ),
-			array( 'name' => 'message', 'label' => 'Сообщение', 'type' => 'textarea', 'required' => true ),
+			array( 'name' => 'message', 'label' => 'Message', 'type' => 'textarea', 'required' => true ),
 		),
 		'type'            => 'contact_astro',
 		'origins'         => array( 'https://example.com' ),
-		'success_message' => 'Спасибо!',
+		'success_message' => 'Thanks!',
 		'notifications'   => array( 'enabled' => true, 'to' => 'sales@example.com', 'subject' => '' ),
 		'autoreply'       => array( 'enabled' => false, 'email_field' => 'email', 'subject' => '', 'message' => '' ),
 	) );
 } );
 ```
 
-- Действие `fforms_register_forms` вызывается на `init`, приоритет 5 — до `rest_api_init`.
-- Обязательны `title` и непустой валидный `fields`; `fields` проходит через тот же `Schema::normalize()`, что и CPT-формы (лимиты: 50 полей, 100 опций, `max_length`). В отличие от CPT-редактора, пустая или полностью невалидная схема — `WP_Error`, а не подстановка `Schema::defaults()`.
-- Ключ: `sanitize_key`, паттерн `^[a-z0-9_]{1,32}$`. Повторная регистрация ключа — `WP_Error`; первая регистрация побеждает. Реестр (`FForms\Registry\Code_Forms`) живёт только в памяти запроса — источник правды остаётся код.
-- `fforms_add_api_route()` возвращает `true` либо `WP_Error`; ошибка регистрации не прерывает загрузку сайта.
-- Ключ `main` зарезервирован за встроенной главной формой — регистрация возвращает `WP_Error` `fforms_reserved_key`.
-- Необязательный `type` — slug типа формы (`^[a-z0-9_-]{1,32}$`), который получают заявки этой формы. Невалидное значение — `WP_Error` `fforms_invalid_form_type`. Без `type` заявки code-формы, отправленные через `/submit`, остаются без термина.
+- The `fforms_register_forms` action fires on `init` at priority 5 — before `rest_api_init`.
+- `title` and a non-empty valid `fields` are required; `fields` goes through the same `Schema::normalize()` as CPT forms (limits: 50 fields, 100 options, `max_length`). Unlike the CPT editor, an empty or entirely invalid schema is a `WP_Error` rather than a fallback to `Schema::defaults()`.
+- Key: `sanitize_key`, pattern `^[a-z0-9_]{1,32}$`. Registering a key twice is a `WP_Error`; the first registration wins. The registry (`FForms\Registry\Code_Forms`) lives only for the duration of the request — the code stays the source of truth.
+- `fforms_add_api_route()` returns `true` or a `WP_Error`; a failed registration does not interrupt site loading.
+- The `main` key is reserved for the built-in main form — registering it returns a `WP_Error` with code `fforms_reserved_key`.
+- The optional `type` is the form type slug (`^[a-z0-9_-]{1,32}$`) that entries of this form receive. An invalid value is a `WP_Error` with code `fforms_invalid_form_type`. Without `type`, entries of a code form submitted through `/submit` stay without a term.
 
-## 3. Единая адресация формы
+## 3. Unified form addressing
 
-`FForms\Form_Ref` — value object (`post_id`, `key`, `title`, `schema`, `success_message`, `origins`, `notifications`, `source` = `post`|`code`|`builtin`, `type`). `FForms\Form_Locator::resolve( int|string $ref ): Form_Ref|WP_Error` разбирает ссылку в фиксированном порядке:
+`FForms\Form_Ref` is a value object (`post_id`, `key`, `title`, `schema`, `success_message`, `origins`, `notifications`, `source` = `post`|`code`|`builtin`, `type`). `FForms\Form_Locator::resolve( int|string $ref ): Form_Ref|WP_Error` parses the reference in a fixed order:
 
-1. число — post ID опубликованной CPT-формы;
-2. ключ `main` — встроенная главная форма (`post_id = 0`, `source = builtin`);
-3. зарегистрированный ключ code-формы;
-4. slug термина `fform_type` с непустой метой `_fforms_form_id` — та самая CPT-форма;
-5. иначе — `WP_Error` `fforms_form_not_found`.
+1. a number — the post ID of a published CPT form;
+2. the `main` key — the built-in main form (`post_id = 0`, `source = builtin`);
+3. a registered code-form key;
+4. the slug of an `fform_type` term with a non-empty `_fforms_form_id` meta — that very CPT form;
+5. otherwise — a `WP_Error` with code `fforms_form_not_found`.
 
-Submit, read-маршруты, `Notifications` и админ-колонки работают только через `Form_Ref`. Падение на шаг 5 обрабатывают по-разному: `/submit` отвечает 404, `POST /main` трактует значение как тип формы и принимает её во встроенную главную форму.
+Submit, the read routes, `Notifications`, and the admin columns all work through `Form_Ref` only. Falling through to step 5 is handled differently per route: `/submit` answers 404, while `POST /main` treats the value as a form type and accepts the submission into the built-in main form.
 
-CPT-формы всегда резолвятся с `origins = []` — per-form CORS настраивается для code-форм и, отдельной настройкой, для маршрута `/main` (см. §6).
+CPT forms always resolve with `origins = []` — per-form CORS is configured for code forms and, through a separate setting, for the `/main` route (see §6).
 
-## 4. REST-контракт (обновлено)
+## 4. REST contract (updated)
 
-| Метод и маршрут | Доступ | Назначение |
+| Method and route | Access | Purpose |
 | --- | --- | --- |
-| `POST /submit` | публичный | `form_id` ИЛИ `form_key` — ровно один обязателен. |
-| `POST /main` | публичный | Лояльный плоский payload; см. `base.md` §5.2. |
-| `GET /forms` | публичный | Главная, CPT- и code-формы вместе; у каждой есть `key` (у CPT — `null`), `source` (`post`\|`code`\|`builtin`), `mode` и `form_type`. |
-| `GET /forms/{id}` | публичный | Как раньше, для CPT-формы. |
-| `GET /forms/{id}/schema` | публичный | Как раньше. |
-| `GET /forms/{key}` | публичный | Code-форма по ключу, `main` или slug термина CPT-формы; регистрируется после числового маршрута, паттерн `[a-z0-9_-]+`. |
-| `GET /forms/{key}/schema` | публичный | Схема формы по тому же ключу. |
-| `GET /entries` | `manage_options` | Фильтры `form_id`, `form_key`, `form_type` и `status` (комбинируются). |
-| `POST /entries/{id}/status` | `manage_options` | Без изменений. |
+| `POST /submit` | public | `form_id` OR `form_key` — exactly one is required. |
+| `POST /main` | public | Lenient flat payload; see `base.md` §5.2. |
+| `GET /forms` | public | The main form, CPT forms, and code forms together; each carries `key` (`null` for CPT forms), `source` (`post`\|`code`\|`builtin`), `mode`, and `form_type`. |
+| `GET /forms/{id}` | public | As before, for a CPT form. |
+| `GET /forms/{id}/schema` | public | As before. |
+| `GET /forms/{key}` | public | A code form by key, `main`, or the slug of a CPT form's term; registered after the numeric route, pattern `[a-z0-9_-]+`. |
+| `GET /forms/{key}/schema` | public | The schema of the form addressed by that same key. |
+| `GET /entries` | `manage_options` | `form_id`, `form_key`, `form_type`, and `status` filters (combinable). |
+| `POST /entries/{id}/status` | `manage_options` | Unchanged. |
 
-Отсутствие и `form_id`, и `form_key` в submit — 400 `fforms_form_ref_required`. Несуществующий `form_id`/`form_key` — 404 `fforms_form_not_found`. Дальше submit не меняется: honeypot, rate limit, валидация, entry, письма, `fforms_entry_created` — те же шаги, что в `base.md` §6, просто оперируют `Form_Ref` вместо голого `form_id`. Rate limit считается по паре «ссылка на форму (`post:{id}` либо `code:{key}`) + IP», так что код-форма с ключом-цифрой не делит транзиент с CPT-формой того же ID.
+A submit with neither `form_id` nor `form_key` returns 400 `fforms_form_ref_required`. A nonexistent `form_id`/`form_key` returns 404 `fforms_form_not_found`. Beyond that, submit is unchanged: honeypot, rate limit, validation, entry, emails, and `fforms_entry_created` are the same steps as in `base.md` §6 — they just operate on a `Form_Ref` instead of a bare `form_id`. The rate limit is counted per form reference (`post:{id}` or `code:{key}`) plus IP, so a code form whose key is a digit string does not share a transient with the CPT form of the same ID.
 
-`fforms_entry_created` теперь получает `Form_Ref` вторым аргументом вместо `int $form_id`.
+`fforms_entry_created` now receives a `Form_Ref` as its second argument instead of `int $form_id`.
 
-## 5. Entries, письма, админка
+## 5. Entries, emails, admin
 
-- Entry code-формы: `_fforms_form_id = 0`, `_fforms_form_key = <ключ>`. Entry главной формы: `_fforms_form_id = 0`, `_fforms_form_key = main`. Entry CPT-формы не меняется (`_fforms_form_key` пустая строка).
-- Классификация ответа хранится термином таксономии `fform_type` (`base.md` §3.1), отдельно от адресации: одна заявка может прийти в главную форму и при этом нести бизнес-тип «заявка на консультацию».
-- Список ответов, колонка «Форма», CSV-экспорт и селект экспорта резолвят название через `Form_Locator`, а не `get_the_title()`. Если ключ entry больше не зарегистрирован в коде, колонка/CSV показывают сам ключ — данные не теряются.
-- CSV получает колонки `form_key`, `form_type`, `ref`, `user_id`, `custom_fields` и `meta`; параметры экспорта — `form_ref` (`post:{id}` или `code:{key}`, старый `form_id` ещё принимается для обратной совместимости) и `form_type`.
-- `Notifications::send( Form_Ref $form, int $entry_id, array $data, array $extras = array() )` берёт настройки писем (`notifications`, `autoreply`) из `Form_Ref` вместо `get_post_meta()`. Глобальный тумблер `Settings::get()['notifications']` остаётся общим предохранителем для обоих источников форм.
+- Code-form entry: `_fforms_form_id = 0`, `_fforms_form_key = <key>`. Main-form entry: `_fforms_form_id = 0`, `_fforms_form_key = main`. A CPT-form entry is unchanged (`_fforms_form_key` is an empty string).
+- An entry's classification is stored as an `fform_type` term (`base.md` §3.1), separately from addressing: a submission can land in the main form and still carry the business type "consultation request".
+- The entry list, the "Form" column, the CSV export, and the export select all resolve the title through `Form_Locator` rather than `get_the_title()`. If an entry's key is no longer registered in code, the column and the CSV show the key itself — no data is lost.
+- The CSV gains the `form_key`, `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns; the export parameters are `form_ref` (`post:{id}` or `code:{key}`; the old `form_id` is still accepted for backward compatibility) and `form_type`.
+- `Notifications::send( Form_Ref $form, int $entry_id, array $data, array $extras = array() )` takes the mail settings (`notifications`, `autoreply`) from the `Form_Ref` instead of `get_post_meta()`. The global `Settings::get()['notifications']` toggle remains the shared safety switch for both form sources.
 
 ## 6. CORS
 
-CORS-заголовки плагин отдаёт только для namespace `fforms/v1`; остальные REST-маршруты сайта используют штатное поведение ядра WordPress без изменений.
+The plugin sends CORS headers only for the `fforms/v1` namespace; every other REST route on the site keeps WordPress core's default behavior unchanged.
 
-- `Access-Control-Allow-Origin` появляется только если заголовок `Origin` запроса точно совпадает (схема + хост + порт) с одним из `origins` формы. Совпадение проверяется у конкретной формы для реального запроса (submit по `form_id`/`form_key`, чтение по `{id}`/`{key}`); для preflight `OPTIONS` (у которого ещё нет тела с `form_id`/`form_key`) допускается origin, разрешённый *любой* зарегистрированной code-формой либо настройкой главной формы.
-- `Access-Control-Allow-Credentials` не отправляется никогда, wildcard-origin не поддерживается.
-- Preflight `OPTIONS` на `/submit` возвращает 204 с `Access-Control-Allow-Methods: GET, POST, OPTIONS`, `Access-Control-Allow-Headers: Content-Type`, `Access-Control-Max-Age: 600`.
-- Итоговый список origins расширяется фильтром `fforms_allowed_origins( array $origins, ?Form_Ref $form )`.
-- На маршруте `/main` дополнительно действует список «Разрешённые origins главной формы» из настроек плагина: он назван по маршруту, поэтому применяется независимо от того, какую форму адресовал payload. По умолчанию список пуст — zero-config относится к созданию формы, не к CORS.
-- Форма (CPT или code) без настроенных `origins` ведёт себя как раньше — заголовки не отправляются, CORS остаётся заботой сайта.
+- `Access-Control-Allow-Origin` appears only when the request's `Origin` header matches exactly (scheme + host + port) one of the form's `origins`. The match is checked against the specific form for a real request (submit by `form_id`/`form_key`, reads by `{id}`/`{key}`); for a preflight `OPTIONS` — which has no body carrying `form_id`/`form_key` yet — an origin allowed by *any* registered code form, or by the main form setting, is accepted.
+- `Access-Control-Allow-Credentials` is never sent, and a wildcard origin is not supported.
+- A preflight `OPTIONS` on `/submit` returns 204 with `Access-Control-Allow-Methods: GET, POST, OPTIONS`, `Access-Control-Allow-Headers: Content-Type`, and `Access-Control-Max-Age: 600`.
+- The resulting origin list is extended by the `fforms_allowed_origins( array $origins, ?Form_Ref $form )` filter.
+- On the `/main` route the "Allowed origins of the main form" list from the plugin settings applies as well. It is named after the route, so it applies regardless of which form the payload addressed. The list is empty by default — zero-config covers creating a form, not CORS.
+- A form (CPT or code) with no configured `origins` behaves as before: no headers are sent, and CORS stays the site's own concern.
 
-## 7. Расширяемость (дополнение к base.md §9)
+## 7. Extensibility (supplements base.md §9)
 
-- `fforms_add_api_route( string $key, array $args ): true|WP_Error` — публичная функция регистрации.
-- `fforms_register_forms` — action для регистрации code-форм, `init` @5.
-- `fforms_allowed_origins` — filter, расширяет allowlist origins для CORS.
-- `fforms_rate_limit` / `fforms_rate_window` — второй параметр теперь строковый rate-ref (`post:{id}`/`code:{key}`, у главной формы — `code:main`) вместо `int $form_id`.
-- `fforms_max_form_types` — filter, лимит автосоздания терминов `fform_type` (по умолчанию 50).
+- `fforms_add_api_route( string $key, array $args ): true|WP_Error` — the public registration function.
+- `fforms_register_forms` — the action for registering code forms, `init` @5.
+- `fforms_allowed_origins` — filter, extends the CORS origin allowlist.
+- `fforms_rate_limit` / `fforms_rate_window` — the second parameter is now a string rate reference (`post:{id}`/`code:{key}`, and `code:main` for the main form) instead of `int $form_id`.
+- `fforms_max_form_types` — filter, the autocreation limit for `fform_type` terms (50 by default).
 
-## 8. Вне объёма (без изменений от RFC)
+## 8. Out of scope (unchanged from the RFC)
 
-Редактирование code-форм и главной формы в админке, рендер code-формы блоком `fforms/form`, программное удаление зарегистрированных форм, per-form токены/подписи запросов, версия `v2` REST API, приём вложений (см. `docs/rfc/main-form-attachments.md`).
+Editing code forms and the main form in the admin, rendering a code form through the `fforms/form` block, unregistering forms programmatically, per-form tokens and request signatures, a `v2` REST API, and accepting attachments (see `docs/rfc/main-form-attachments.md`).
