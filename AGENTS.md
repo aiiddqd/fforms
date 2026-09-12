@@ -116,7 +116,7 @@ Russian is a translation, never a second source: it lives in
 
 ```text
 fforms.php                         bootstrap and constants
-includes/class-*.php               CPTs, REST, settings, mail, export
+includes/<Class_Name>.php          CPTs, REST, settings, mail, export
 includes/Schema/                   schema compiler and the single repository
 includes/Blocks/                   PHP rendering and block registration
 includes/Migration/                compatible legacy JSON migration
@@ -125,6 +125,11 @@ assets/                            legacy fallback/admin scripts
 build/                             generated wp-scripts output
 docs/                              specifications, RFCs, and roadmap
 ```
+
+One class per file, and the file name matches the class name exactly
+(`Notifications` -> `includes/Notifications.php`, `REST_Controller` ->
+`includes/REST_Controller.php`, `Schema_Compiler` ->
+`includes/Schema/Schema_Compiler.php`). The `class-*.php` prefix is not used.
 
 Keep the separation: PHP templates and renderers stay thin, domain logic lives in
 `includes/Schema` and the services, and React code never becomes the source of
