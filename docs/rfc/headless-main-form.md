@@ -126,7 +126,7 @@ Rate limit считается по паре «ссылка на форму + IP�
 
 ## Критерии приемки (checklist)
 
-- [x] `POST /fforms/v1/main` без `formType` и с одним `message` создаёт entry: 201, `entry_id`, `message`; в админке entry подписан «Главная форма (API)».
+- [x] `POST /fforms/v1/main` без `formType` и с одним `message` создаёт entry: 201, `entry_id`, `message`; в админке entry подписан «Главная форма (API) — {дата}» (с `formType` в заголовок вместо названия формы идёт имя термина).
 - [x] Запрос без `email`, `phone` и `message` возвращает 422 `fforms_empty_submission` и не создаёт entry.
 - [x] `formType: "consultation_request"`, которого ещё нет, создаёт термин `fform_type` и назначает его entry; вторая заявка с тем же значением переиспользует термин, а не создаёт дубль.
 - [x] Переименование термина в админке в «Заявка на консультацию» не ломает привязку последующих заявок — связь идёт по slug.

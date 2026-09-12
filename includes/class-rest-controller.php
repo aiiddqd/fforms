@@ -219,8 +219,16 @@ final class REST_Controller {
 			return $data;
 		}
 
+		// A form without its own type keeps today's behaviour: no term assigned.
+		// Resolved before the insert so the entry title can carry the type.
+		if ( '' === $type_slug && null === $term && null !== $form->type ) {
+			$type_slug = (string) $form->type;
+			$resolved  = Form_Types::upsert( $type_slug );
+			$term      = $resolved instanceof WP_Term ? $resolved : null;
+		}
+
 		$entry_id = wp_insert_post(
-			array( 'post_type' => Post_Types::ENTRY, 'post_status' => 'private', 'post_title' => sprintf( '%s — %s', $form->title, current_time( 'Y-m-d H:i:s' ) ) ),
+			array( 'post_type' => Post_Types::ENTRY, 'post_status' => 'private', 'post_title' => self::entry_title( $form, $type_slug, $term ) ),
 			true
 		);
 		if ( is_wp_error( $entry_id ) ) {
@@ -241,12 +249,6 @@ final class REST_Controller {
 		update_post_meta( $entry_id, '_fforms_user_agent', self::user_agent() );
 		self::store_extras( $entry_id, $extras );
 
-		// A form without its own type keeps today's behaviour: no term assigned.
-		if ( '' === $type_slug && null === $term && null !== $form->type ) {
-			$type_slug = (string) $form->type;
-			$resolved  = Form_Types::upsert( $type_slug );
-			$term      = $resolved instanceof WP_Term ? $resolved : null;
-		}
 		Form_Types::assign_to_entry( $entry_id, $type_slug, $term );
 
 		$notification_sent = Notifications::send( $form, $entry_id, $data, $extras );
@@ -257,6 +259,20 @@ final class REST_Controller {
 			$response['form_type'] = $type_slug;
 		}
 		return new WP_REST_Response( $response, 201 );
+	}
+
+	/**
+	 * The form type is what distinguishes entries that share one form — for the
+	 * built-in /main endpoint it is the only thing that does — so it leads the
+	 * title and stands in for the form name when present.
+	 */
+	private static function entry_title( Form_Ref $form, string $type_slug, ?WP_Term $term ): string {
+		$label = $term instanceof WP_Term ? $term->name : $type_slug;
+		if ( '' === $label ) {
+			$label = $form->title;
+		}
+
+		return sprintf( '%s — %s', $label, current_time( 'Y-m-d H:i:s' ) );
 	}
 
 	public static function forms(): WP_REST_Response {

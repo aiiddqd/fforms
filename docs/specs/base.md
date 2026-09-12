@@ -227,7 +227,7 @@ The admin implements:
 - a `Block editor` or `Headless API` mode in the sidebar. A new form starts as `Block editor`, and switching the mode converts the current fields between blocks and the JSON schema. In `Headless API` the container accepts FForms field blocks only, so the REST schema cannot drift from the editor content;
 - an overview page at `admin.php?page=fforms-dashboard` that opens with the first FAQ question, "How do I start accepting messages over the REST API?": the real `POST /fforms/v1/main` URL, the current settings state, the list of form types, and four ready-made request examples with a "Copy" button. The top-level menu slug stays `fforms` (both CPTs and the settings and export pages use it as their parent), and `admin.php?page=fforms` redirects to the new address;
 - a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View entries" action leading to the list filtered by its term;
-- the entry list with the form, form type, status, and a short preview; the form and type filters work together with the status filter;
+- the entry list with the form, form type, status, and a short preview; the single form-type dropdown is the only entry filter beside the status one, and an entry is titled `{form type} — {date}`, falling back to the form title when no type is assigned;
 - a view of the full entry data, source, IP, and User-Agent, plus an "Additional" block with the form type, `ref`, `user_id`, `customFields`, and `meta`;
 - manual status changes on an entry;
 - CSV export of all entries, of a selected form's entries, or of a selected form type's entries.

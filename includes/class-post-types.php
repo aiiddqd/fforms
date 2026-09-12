@@ -21,7 +21,6 @@ final class Post_Types {
 		add_filter( 'allowed_block_types_all', array( self::class, 'limit_internal_blocks_to_form_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
-		add_action( 'restrict_manage_posts', array( self::class, 'render_entries_form_filter' ) );
 		add_action( 'pre_get_posts', array( self::class, 'filter_entries_by_form' ) );
 		add_filter( 'post_row_actions', array( self::class, 'add_view_entries_row_action' ), 10, 2 );
 		add_filter( 'the_title', array( self::class, 'append_entry_id_to_title' ), 10, 2 );
@@ -377,27 +376,11 @@ final class Post_Types {
 		}
 	}
 
-	public static function render_entries_form_filter(): void {
-		global $typenow;
-		if ( self::ENTRY !== $typenow ) {
-			return;
-		}
-		$current = isset( $_GET['form_ref'] ) ? sanitize_text_field( wp_unslash( $_GET['form_ref'] ) ) : '';
-		$forms   = get_posts( array( 'post_type' => self::FORM, 'post_status' => array( 'publish', 'draft', 'private' ), 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC' ) );
-		?>
-		<label class="screen-reader-text" for="fforms-filter-form"><?php esc_html_e( 'Фильтр по форме', 'fforms' ); ?></label>
-		<select id="fforms-filter-form" name="form_ref">
-			<option value=""><?php esc_html_e( 'Все формы', 'fforms' ); ?></option>
-			<?php foreach ( $forms as $form ) : ?>
-				<option value="post:<?php echo esc_attr( $form->ID ); ?>" <?php selected( $current, 'post:' . $form->ID ); ?>><?php echo esc_html( get_the_title( $form ) ); ?></option>
-			<?php endforeach; ?>
-			<?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?>
-				<option value="code:<?php echo esc_attr( $key ); ?>" <?php selected( $current, 'code:' . $key ); ?>><?php echo esc_html( $code_form->title ); ?></option>
-			<?php endforeach; ?>
-		</select>
-		<?php
-	}
-
+	/**
+	 * The entries list filters by type term (the fform_type dropdown); `form_ref`
+	 * has no control of its own and only backs the "Смотреть заявки" row action
+	 * for forms that have no term yet.
+	 */
 	public static function filter_entries_by_form( \WP_Query $query ): void {
 		global $pagenow, $typenow;
 		if ( ! is_admin() || 'edit.php' !== $pagenow || self::ENTRY !== $typenow || ! $query->is_main_query() ) {
