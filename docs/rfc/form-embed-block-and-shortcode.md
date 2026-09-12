@@ -2,6 +2,7 @@
 title: "Вставка формы на страницу: блок Gutenberg и шорткод [fform id=123]"
 status: implementing
 created: 2026-09-12
+superseded_by: docs/rfc/two-modes-headless-and-builder.md
 ---
 
 # RFC: Вставка формы на страницу — блок `fforms/form` и шорткод `[fform id=123]`

@@ -12,6 +12,7 @@ Entry format:
 ```
 
 ## 2026-09-12
+- docs: RFC `two-modes-headless-and-builder` — the plugin collapses to two modes (schema-free headless route `/main`, builder form published via block, shortcode, iframe, js snippet and an optional token share link); marks the three mode/embed RFCs as superseded.
 
 - The overview page heading "FAQ" renamed to "Questions and answers" (Russian: «Вопросы и ответы»); the `fforms-faq` markup, anchors, and questions are unchanged.
 - Class files renamed to match their class names: `includes/class-notifications.php` -> `includes/Notifications.php`, `includes/class-rest-controller.php` -> `includes/REST_Controller.php`, `includes/Schema/class-schema-compiler.php` -> `includes/Schema/Schema_Compiler.php`, and so on for all 23 files under `includes/`. The `class-*.php` prefix is gone; the `require_once` list in `fforms.php` and the source references in `languages/` were updated, and the rule is recorded in `AGENTS.md`. No namespaces, class names, hooks, or data changed.

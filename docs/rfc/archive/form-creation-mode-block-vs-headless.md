@@ -2,6 +2,7 @@
 title: "Режим формы: Block editor vs Headless API"
 status: implementing
 created: 2026-08-30
+superseded_by: docs/rfc/two-modes-headless-and-builder.md
 ---
 
 # RFC: Режим формы — Block editor vs Headless API

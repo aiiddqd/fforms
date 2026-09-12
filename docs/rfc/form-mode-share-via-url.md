@@ -2,6 +2,7 @@
 title: "Режим формы: третий вариант «Share via URL» вместо отдельного тумблера «Публичная форма»"
 status: implementing
 created: 2026-08-30
+superseded_by: docs/rfc/two-modes-headless-and-builder.md
 ---
 
 # RFC: Режим формы — «Share via URL» как третье значение вместо отдельной группы «Публичная форма»
