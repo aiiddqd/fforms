@@ -4,3 +4,4 @@ test-results/
 .wp-env.override.json
 docs/rfc/jetpack
 .env
+.learnings/
