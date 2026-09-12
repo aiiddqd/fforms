@@ -139,6 +139,13 @@ final class Dashboard {
 			</div>
 
 			<div class="fforms-cards">
+				<?php if ( $can_view_entries ) : ?>
+				<div class="fforms-card">
+					<h2><?php esc_html_e( 'Submissions', 'fforms' ); ?></h2>
+					<p class="fforms-card-status <?php echo esc_attr( $entries_count > 0 ? 'is-on' : 'is-off' ); ?>"><?php echo esc_html( sprintf( _n( '%d submission', '%d submissions', $entries_count, 'fforms' ), $entries_count ) ); ?></p>
+					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>"><?php esc_html_e( 'All submissions →', 'fforms' ); ?></a></p>
+				</div>
+				<?php endif; ?>
 				<div class="fforms-card">
 					<h2><?php esc_html_e( 'Forms', 'fforms' ); ?></h2>
 					<p class="fforms-card-status"><?php echo esc_html( sprintf( _n( '%d form', '%d forms', $forms_count, 'fforms' ), $forms_count ) ); ?></p>
@@ -164,13 +171,6 @@ final class Dashboard {
 					<?php endif; ?>
 					<p><a href="#fforms-faq-headless"><?php esc_html_e( 'How to connect →', 'fforms' ); ?></a></p>
 				</div>
-				<?php if ( $can_view_entries ) : ?>
-				<div class="fforms-card">
-					<h2><?php esc_html_e( 'Submissions', 'fforms' ); ?></h2>
-					<p class="fforms-card-status <?php echo esc_attr( $entries_count > 0 ? 'is-on' : 'is-off' ); ?>"><?php echo esc_html( sprintf( _n( '%d submission', '%d submissions', $entries_count, 'fforms' ), $entries_count ) ); ?></p>
-					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>"><?php esc_html_e( 'All submissions →', 'fforms' ); ?></a></p>
-				</div>
-				<?php endif; ?>
 			</div>
 
 			<h2><?php esc_html_e( 'Questions and answers', 'fforms' ); ?></h2>
