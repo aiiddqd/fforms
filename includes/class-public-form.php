@@ -148,7 +148,14 @@ final class Public_Form {
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <?php wp_head(); ?>
-<style>html,body{margin:0;padding:0;background:transparent}body.fforms-embed{min-height:0}.fforms-embed__content{padding:0}</style>
+<style>
+/* Themes routinely give html/body a 100% height and their own overflow. Inside a
+   frame that makes the document report the frame's height instead of its own,
+   so the form can never be measured and ends up clipped. */
+html,body{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;margin:0;padding:0;background:transparent}
+body.fforms-embed{display:block!important}
+.fforms-embed__content{height:auto!important;min-height:0!important;overflow:visible!important;padding:0;margin:0}
+</style>
 </head>
 <body <?php body_class(); ?>>
 <main class="fforms-embed__content"><?php echo $form_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already-rendered block markup ?></main>

@@ -31,7 +31,16 @@
 			return Math.ceil( document.body.scrollHeight );
 		}
 		const top = document.documentElement.getBoundingClientRect().top;
-		return Math.ceil( content.getBoundingClientRect().bottom - top );
+		// scrollHeight also covers the case where a theme style still turns body
+		// into its own scroll container: the box then stops at the frame's
+		// height while the content inside it keeps going.
+		return Math.ceil(
+			Math.max(
+				content.getBoundingClientRect().bottom - top,
+				content.scrollHeight,
+				document.body.scrollHeight
+			)
+		);
 	}
 
 	function report() {
