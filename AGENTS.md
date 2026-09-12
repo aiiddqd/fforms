@@ -1,126 +1,128 @@
-# FForms — рабочий контекст
+# FForms — working context
 
-## Назначение
+## Purpose
 
-FForms — лёгкий WordPress-плагин для контактных и lead-форм, хранения заявок
-в WordPress и REST-first отправки. Плагин должен быть удобен как в обычном
-Gutenberg-сайте, так и в headless/Jamstack-интеграциях.
+FForms is a lightweight WordPress plugin for contact and lead forms, storing
+submissions in WordPress and sending them REST-first. The plugin has to feel
+right both on a regular Gutenberg site and in headless/Jamstack integrations.
 
-Базовая продуктовая позиция: бесплатное, самодостаточное и предсказуемое ядро;
-нативные Gutenberg-формы, которые наследуют `theme.json`/Global Styles; заявки
-сохраняются локально по умолчанию. Сложные интеграции и платные возможности —
-отдельные аддоны, а не разрастание ядра.
+The product position: a free, self-contained, predictable core; native Gutenberg
+forms that inherit `theme.json`/Global Styles; submissions stored locally by
+default. Complex integrations and paid capabilities are separate add-ons, not
+core bloat.
 
-## Источники истины
+## Sources of truth
 
-Читайте документы до изменения затронутой области и не смешивайте фактическое
-состояние с планом:
+Read the relevant document before changing the area it covers, and do not mix
+the current state up with the plan:
 
-1. `docs/specs/base.md` — текущая реализованная и поддерживаемая базовая
-   спецификация.
-2. `docs/rfc/gutenberg-form-builder.md` — активный целевой переход на
-   Gutenberg-конструктор; незакрытые критерии приёмки — работа в плане.
-3. `ROADMAP.md` — следующий продуктовый приоритет.
-4. `docs/rfc/mvp.md` — история и контракт MVP; его roadmap не переопределяет
-   базовую спецификацию.
-5. `docs/rfc/сf7.md` — продуктовые принципы, а не техническое ТЗ.
+1. `docs/specs/base.md` — the base specification as currently implemented and
+   supported.
+2. `docs/rfc/archive/gutenberg-form-builder.md` — the transition to the
+   Gutenberg builder; unchecked acceptance criteria are planned work.
+3. `ROADMAP.md` — the next product priority.
+4. `docs/rfc/archive/mvp/rfc.md` — the history and contract of the MVP; its
+   roadmap does not override the base specification.
+5. `docs/rfc/archive/mvp/сf7.md` — product principles, not a technical spec.
 
-При противоречии не меняйте обратную совместимость молча: уточните решение или
-обновите соответствующую спецификацию/RFC вместе с кодом.
+On a conflict, never change backward compatibility silently: clarify the
+decision, or update the corresponding specification/RFC together with the code.
 
-### Язык документации
+### Documentation language
 
-`docs/specs/*` пишутся **на английском** — это технический контракт плагина,
-который читают в том числе вне русскоязычной команды. Правило распространяется
-на весь файл: заголовки, прозаический текст, таблицы и подписи к примерам.
+`docs/specs/*` and this file are written **in English** — they are the technical
+contract of the plugin and its working context, read outside the
+Russian-speaking team as well. The rule covers the whole file: headings, prose,
+tables, and example captions.
 
-- Идентификаторы не переводятся и не склоняются: имена мет, хуков, фильтров,
-  slug'ов, кодов ошибок, маршрутов и классов остаются как в коде.
-- Названия элементов админки даются по-английски описательно («Form types»,
-  «View entries»); источник правды для точной строки интерфейса — код, а не
-  спецификация.
-- `docs/rfc/*`, `LOG.md`, `ROADMAP.md`, `README.md` и этот файл язык не меняют.
-- Правя код, который меняет поведение из `docs/specs/*`, обновляйте спецификацию
-  на английском в том же изменении.
+- Identifiers are never translated or inflected: meta keys, hooks, filters,
+  slugs, error codes, routes, and class names stay exactly as they are in code.
+- Admin UI elements are named descriptively in English ("Form types",
+  "View entries"); the source of truth for the exact interface string is the
+  code, not the specification.
+- `docs/rfc/*`, `LOG.md`, `ROADMAP.md`, and `README.md` keep their current
+  language.
+- When you change code that changes behavior documented in `docs/specs/*`,
+  update the specification in English as part of the same change.
 
-## Доменная модель и публичный контракт
+## Domain model and public contract
 
-- `fform` — непубличный CPT формы; `fform_entry` — приватный CPT отправки.
-- REST namespace: `fforms/v1`; text domain и PHP namespace: `fforms` и
-  `FForms\` соответственно.
-- Публичный submit: `POST /wp-json/fforms/v1/submit`, payload содержит
-  `form_id`, `fields`, honeypot `website` и `source`.
-- Публично доступны только опубликованные формы/схемы. Entries, экспорт и
-  управление статусом требуют `manage_options`.
-- Валидация всегда серверная: allowlist полей из схемы, нормализация,
-  обязательность и типы. Не доверяйте атрибутам и валидации из браузера.
-- Антиспам-контракт нельзя ослаблять: лимит по умолчанию 5 попыток / 60 секунд
-  для пары форма+IP; заполненный honeypot возвращает ложный успешный ответ и не
-  сохраняет entry/не отправляет письма.
-- По умолчанию сохраняются данные, IP, User-Agent и source. Любое изменение
-  хранения PII, retention или экспорта требует отдельного продуктового и
-  privacy-решения.
+- `fform` — the non-public form CPT; `fform_entry` — the private submission CPT.
+- REST namespace: `fforms/v1`; text domain and PHP namespace: `fforms` and
+  `FForms\` respectively.
+- Public submit: `POST /wp-json/fforms/v1/submit`, with a payload of `form_id`,
+  `fields`, the `website` honeypot, and `source`.
+- Only published forms and schemas are publicly available. Entries, export, and
+  status management require `manage_options`.
+- Validation is always server-side: an allowlist of schema fields,
+  normalization, required checks, and types. Never trust browser attributes or
+  browser-side validation.
+- The anti-spam contract must not be weakened: the default limit is 5 attempts
+  per 60 seconds for a form+IP pair; a filled honeypot returns a fake successful
+  response and neither stores an entry nor sends email.
+- Data, IP, User-Agent, and source are stored by default. Any change to PII
+  storage, retention, or export requires a separate product and privacy
+  decision.
 
-## Gutenberg-архитектура
+## Gutenberg architecture
 
-- Форма редактируется как один `fforms/form` с дочерними блоками полей и
-  `fforms/submit`. Поддерживаемые поля: text, textarea, email, tel, url,
-  number, select, radio, checkbox, hidden.
-- Для формы с блоками `post_content` — канонический источник. `_fforms_schema`
-  остаётся производным кэшем/legacy-данными; обращаться к схеме следует через
-  `FForms\Schema\Schema_Repository`, не читая meta напрямую.
-- Обычная страница хранит ссылку на опубликованную форму через `ref`; `formId`
-  остаётся legacy alias. Одна форма должна централизованно обновлять все
-  вставки.
-- Legacy-формы с пустым `post_content` и `_fforms_schema` должны продолжать
-  работать. Миграция JSON → blocks не удаляет исходные meta и не выполняется
-  массово при обновлении.
-- Блоки `apiVersion: 3`, работают в iframe-редакторе. Не обращаться к DOM
-  родительского окна. Описывайте block metadata, assets, атрибуты и supports в
-  `block.json`; не дублируйте вручную в PHP.
-- Рендер остаётся динамическим и семантичным: связанные label/control,
-  `fieldset`/`legend` где нужно, `aria-live`, уникальные DOM ID для двух
-  вставок одной формы. Frontend assets загружаются только при рендере формы.
-- Визуальная настройка использует Block Supports, `theme.json` и CSS variables;
-  не вводите отдельную дизайн-систему или жёсткие theme-specific стили.
-- Submit UI должен связывать server field errors с контролами и переводить
-  фокус на первую ошибку. Изменения формы требуют ручной проверки клавиатуры,
-  label association, error/loading/success states.
+- A form is edited as a single `fforms/form` with child field blocks and
+  `fforms/submit`. Supported fields: text, textarea, email, tel, url, number,
+  select, radio, checkbox, hidden.
+- For a block-based form, `post_content` is the canonical source. `_fforms_schema`
+  remains a derived cache / legacy data; reach the schema through
+  `FForms\Schema\Schema_Repository` rather than reading the meta directly.
+- A regular page holds a reference to a published form through `ref`; `formId`
+  remains a legacy alias. One form must update every insertion centrally.
+- Legacy forms with an empty `post_content` and a `_fforms_schema` must keep
+  working. The JSON → blocks migration does not delete the original meta and
+  does not run in bulk on update.
+- Blocks are `apiVersion: 3` and run in the iframed editor. Do not touch the
+  parent window's DOM. Describe block metadata, assets, attributes, and supports
+  in `block.json`; do not duplicate them by hand in PHP.
+- Rendering stays dynamic and semantic: associated label/control pairs,
+  `fieldset`/`legend` where appropriate, `aria-live`, and unique DOM IDs for two
+  insertions of the same form. Frontend assets load only when a form renders.
+- Visual configuration uses Block Supports, `theme.json`, and CSS variables; do
+  not introduce a separate design system or hard theme-specific styles.
+- The submit UI must tie server field errors to their controls and move focus to
+  the first error. Form changes require manual checks of keyboard navigation,
+  label association, and the error/loading/success states.
 
-## Структура кода
+## Code layout
 
 ```text
-fforms.php                         bootstrap и константы
-includes/class-*.php               CPT, REST, settings, mail, export
-includes/Schema/                   compiler и единый repository схемы
-includes/Blocks/                   PHP-рендер и регистрация блоков
-includes/Migration/                совместимая миграция legacy JSON
-src/blocks/<block>/                block.json, editor, render и styles
+fforms.php                         bootstrap and constants
+includes/class-*.php               CPTs, REST, settings, mail, export
+includes/Schema/                   schema compiler and the single repository
+includes/Blocks/                   PHP rendering and block registration
+includes/Migration/                compatible legacy JSON migration
+src/blocks/<block>/                block.json, editor, render, and styles
 assets/                            legacy fallback/admin scripts
-build/                             генерируемый результат wp-scripts
-docs/                              спецификации, RFC и roadmap
+build/                             generated wp-scripts output
+docs/                              specifications, RFCs, and roadmap
 ```
 
-Сохраняйте разделение: PHP-шаблоны/рендереры тонкие, предметная логика — в
-`includes/Schema` и сервисах, React-код не становится источником серверной
-валидации. Не редактируйте `build/` вручную: меняйте `src/`, затем собирайте.
+Keep the separation: PHP templates and renderers stay thin, domain logic lives in
+`includes/Schema` and the services, and React code never becomes the source of
+server-side validation. Do not edit `build/` by hand: change `src/`, then build.
 
-## Совместимость и безопасность
+## Compatibility and security
 
-- Поддерживаемый минимум: WordPress 6.5, PHP 8.0; также проверяем актуальный
-  WordPress 7.1. Node закреплён на 22 (`.node-version`).
-- На WP 6.8+ блоки регистрируются через metadata collection;
-  на 6.5–6.7 обязателен проверенный fallback. Не возвращайте ручные списки
-  блоков/asset handles как основной путь.
-- Админские сохранения, CSV и изменение entry должны иметь nonce и capability
-  checks. Публичный submit намеренно без nonce/auth.
-- Встроенный SMTP глобально меняет PHPMailer WordPress; не расширяйте его как
-  изолированный mailer FForms и предупреждайте о конфликте с SMTP-плагинами.
+- Supported minimum: WordPress 6.5, PHP 8.0; current WordPress 7.1 is checked as
+  well. Node is pinned to 22 (`.node-version`).
+- On WP 6.8+ blocks are registered through the metadata collection; on 6.5–6.7 a
+  verified fallback is mandatory. Do not make manual block/asset-handle lists the
+  primary path.
+- Admin saves, CSV, and entry changes must have nonce and capability checks. The
+  public submit deliberately has neither nonce nor auth.
+- The built-in SMTP changes WordPress's global PHPMailer; do not grow it into an
+  isolated FForms mailer, and warn about conflicts with SMTP plugins.
 
-## Разработка и проверка
+## Development and verification
 
-Используется npm с lockfile и `@wordpress/scripts`; для чистой установки —
-`npm ci`, а не смена package manager. Основные команды:
+The project uses npm with a lockfile and `@wordpress/scripts`; for a clean
+install run `npm ci` rather than switching package manager. Main commands:
 
 ```bash
 npm run build
@@ -133,33 +135,35 @@ make status
 make logs
 ```
 
-`wp-env` монтирует этот плагин, поэтому изменения PHP/JS видны сразу; для
-блоков после изменения `src/` нужна сборка. Перед завершением изменения
-минимально выполните релевантные lint/build проверки. Для серверного submit
-проверяйте как минимум 422 для неверных данных, 201 для корректных, honeypot,
-rate limit и запрет неавторизованного доступа к entries.
+`wp-env` mounts this plugin, so PHP/JS changes are visible immediately; blocks
+need a build after `src/` changes. Before finishing a change, run at least the
+relevant lint/build checks. For the server-side submit, verify at minimum 422 for
+invalid data, 201 for valid data, the honeypot, the rate limit, and that
+unauthorized access to entries is denied.
 
 ## LOG.md
-После каждого изменения в плагине добавляйте запись в `LOG.md` 
-- новая запись — сверху, формат
-- каждый день начинается с заголовока `## YYYY-MM-DD`
-- каждое изменение должно быть пунктом списка с кратким описанием.
-- это касается любых правок кода, документации, конфигурации сборки и т.д. — фиксируйте это как часть
-самого изменения, а не отдельным шагом после.
-- цель - получить лог изменений - с группировкой по дням
 
-## Ближайшие приоритеты
+Add an entry to `LOG.md` after every change to the plugin.
 
-- Public form URL/страница уже есть; далее — embed через iframe и удобная
-  навигация от формы к её entries.
-- Уведомления по почте должны стать выключенными по умолчанию с явным включением
-  и списком получателей.
-- Приватность: настройка отключения хранения, retention, минимизация IP/UA,
-  удаление данных формы и WordPress privacy tools.
-- Экосистема: сначала стабильные hooks/filters и документированный versioned
-  REST/schema contract, затем отдельный `fforms-addon` для CRM, webhooks,
-  антиспама и коммерческих функций.
+- New entries go on top.
+- Each day starts with a `## YYYY-MM-DD` heading.
+- Each change is a list item with a short description.
+- This covers any edit — code, documentation, build configuration, and so on.
+  Record it as part of the change itself, not as a separate step afterwards.
+- The goal is a change log grouped by day.
 
-Не добавляйте conditional logic, multi-step, uploads, content/survey mapping,
-аналитику или произвольный HTML без отдельного RFC после стабилизации
-конструктора.
+## Near-term priorities
+
+- The public form URL/page already exists; next come iframe embedding and
+  convenient navigation from a form to its entries.
+- Email notifications should become off by default, with explicit opt-in and a
+  recipient list.
+- Privacy: a setting to disable storage, retention, IP/UA minimization, deletion
+  of a form's data, and WordPress privacy tools.
+- Ecosystem: stable hooks/filters and a documented versioned REST/schema contract
+  first, then a separate `fforms-addon` for CRM, webhooks, anti-spam, and
+  commercial features.
+
+Do not add conditional logic, multi-step, uploads, content/survey mapping,
+analytics, or arbitrary HTML without a dedicated RFC once the builder has
+stabilized.

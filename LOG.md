@@ -13,6 +13,8 @@
 
 ## 2026-09-12
 
+- `AGENTS.md` переведён на английский; правило «Documentation language» расширено — `docs/specs/*` и сам `AGENTS.md` на английском, `docs/rfc/*`, `LOG.md`, `ROADMAP.md` и `README.md` язык не меняют.
+- В «Sources of truth» поправлены пути на переехавшие в архив документы: `docs/rfc/archive/gutenberg-form-builder.md`, `docs/rfc/archive/mvp/rfc.md`, `docs/rfc/archive/mvp/сf7.md` — раньше ссылки вели в `docs/rfc/` и не резолвились.
 - `docs/specs/base.md` и `docs/specs/api-route-headless-cms-mode.md` переведены на английский; идентификаторы (меты, хуки, фильтры, slug'и, коды ошибок, маршруты) оставлены как в коде, названия элементов админки даны описательно по-английски.
 - В `AGENTS.md` добавлено правило «Язык документации»: `docs/specs/*` пишутся на английском, остальная документация (`docs/rfc/*`, `LOG.md`, `ROADMAP.md`, `README.md`) язык не меняет.
 - Исправлено устаревшее утверждение в `base.md` §9: специальная CORS-политика в плагине есть (exact-match allowlist для `fforms/v1`), теперь секция ссылается на `api-route-headless-cms-mode.md` §6.
