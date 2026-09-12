@@ -285,6 +285,20 @@
 							)
 					  )
 					: null,
+				'headless' !== ( meta[ META.mode ] || 'block' ) &&
+					'publish' === editor.status &&
+					editor.id
+					? el( TextControl, {
+							label: __( 'Шорткод', 'fforms' ),
+							value: '[fform id=' + String( editor.id ) + ']',
+							readOnly: true,
+							onChange() {},
+							help: __(
+								'Вставьте на любую страницу или в виджет, чтобы показать эту форму.',
+								'fforms'
+							),
+					  } )
+					: null,
 				el( SelectControl, {
 					label: __( 'Тип формы', 'fforms' ),
 					value: meta[ META.type ] || 'contact',

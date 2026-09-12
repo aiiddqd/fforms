@@ -38,6 +38,7 @@ require_once FFORMS_DIR . 'includes/class-cors.php';
 require_once FFORMS_DIR . 'includes/class-public-form.php';
 require_once FFORMS_DIR . 'includes/Blocks/class-form-renderer.php';
 require_once FFORMS_DIR . 'includes/class-block.php';
+require_once FFORMS_DIR . 'includes/class-shortcode.php';
 require_once FFORMS_DIR . 'includes/class-export.php';
 require_once FFORMS_DIR . 'includes/class-dashboard.php';
 require_once FFORMS_DIR . 'includes/class-plugin.php';

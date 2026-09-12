@@ -22,6 +22,7 @@ final class Plugin {
 		CORS::boot();
 		Public_Form::boot();
 		Block::boot();
+		Shortcode::boot();
 		Export::boot();
 	}
 

@@ -19,8 +19,8 @@ final class Form_Renderer {
 		return self::render_shell( $form_id, $content, $attributes );
 	}
 
-	public static function render_form( int $form_id ): string {
-		return self::render_reference( $form_id );
+	public static function render_form( int $form_id, string $unavailable_notice = '' ): string {
+		return self::render_reference( $form_id, false, $unavailable_notice );
 	}
 
 	/** @param array<string,mixed> $attributes */
@@ -38,12 +38,13 @@ final class Form_Renderer {
 		return '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
 	}
 
-	private static function render_reference( int $form_id, bool $is_reference = false ): string {
+	private static function render_reference( int $form_id, bool $is_reference = false, string $unavailable_notice = '' ): string {
 		$wrapper = $is_reference ? self::reference_wrapper_attributes() : '';
+		$unavailable = $unavailable_notice ?: __( 'Выберите опубликованную форму в настройках блока.', 'fforms' );
 		$form = get_post( $form_id );
-		if ( ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Выберите опубликованную форму в настройках блока.', 'fforms' ) . '</p>' : '', $wrapper );
-		if ( 'headless' === Post_Types::form_mode( $form_id ) ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Выберите опубликованную форму в настройках блока.', 'fforms' ) . '</p>' : '', $wrapper );
-		if ( isset( self::$resolving[ $form_id ] ) ) return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Обнаружена циклическая ссылка формы.', 'fforms' ) . '</p>' : '', $wrapper );
+		if ( ! $form_id || ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status ) return self::editor_notice( $unavailable, $wrapper );
+		if ( 'headless' === Post_Types::form_mode( $form_id ) ) return self::editor_notice( $unavailable, $wrapper );
+		if ( isset( self::$resolving[ $form_id ] ) ) return self::editor_notice( __( 'Обнаружена циклическая ссылка формы.', 'fforms' ), $wrapper );
 		self::$resolving[ $form_id ] = true;
 		$previous = self::$source_form_id;
 		self::$source_form_id = $form_id;
@@ -52,7 +53,7 @@ final class Form_Renderer {
 				$schema = Schema_Repository::for_form( $form_id );
 				return self::reference_markup( is_wp_error( $schema ) ? '' : self::render_legacy( $form_id, $schema ), $wrapper );
 			}
-			return self::reference_markup( do_blocks( $form->post_content ), $wrapper );
+			return self::reference_markup( do_shortcode( do_blocks( $form->post_content ) ), $wrapper );
 		} finally {
 			self::$source_form_id = $previous;
 			unset( self::$resolving[ $form_id ] );
@@ -73,6 +74,11 @@ final class Form_Renderer {
 		$title = ! empty( $attributes['showTitle'] ) ? '<h2 class="fforms-title">' . esc_html( get_the_title( $form_id ) ) . '</h2>' : '';
 		$wrapper = get_block_wrapper_attributes( array( 'class' => 'fforms' ) );
 		return '<div ' . $wrapper . '>' . $title . '<form class="fforms-form" data-wp-interactive="fforms/form" data-wp-context="' . esc_attr( $context ) . '" data-wp-on--submit="actions.submit" data-wp-bind--aria-busy="context.isSubmitting"><div class="fforms-fields">' . $content . '</div><div class="fforms-hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><div class="fforms-response" role="status" aria-live="polite" data-wp-text="context.message" data-wp-class--is-error="context.isError"></div></form></div>';
+	}
+
+	/** Messages about a broken insertion are for editors only; guests see nothing. */
+	private static function editor_notice( string $text, string $wrapper ): string {
+		return self::reference_markup( current_user_can( 'edit_posts' ) ? '<p>' . esc_html( $text ) . '</p>' : '', $wrapper );
 	}
 
 	private static function reference_markup( string $content, string $wrapper ): string {
