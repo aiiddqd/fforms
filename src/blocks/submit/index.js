@@ -12,9 +12,9 @@ function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Кнопка отправки', 'fforms' ) }>
+				<PanelBody title={ __( 'Submit button', 'fforms' ) }>
 					<TextControl
-						label={ __( 'Текст кнопки', 'fforms' ) }
+						label={ __( 'Button text', 'fforms' ) }
 						onChange={ ( label ) => setAttributes( { label } ) }
 						value={ attributes.label }
 					/>
@@ -25,7 +25,7 @@ function Edit( { attributes, setAttributes } ) {
 				onClick={ ( event ) => event.preventDefault() }
 				type="button"
 			>
-				{ attributes.label || __( 'Отправить', 'fforms' ) }
+				{ attributes.label || __( 'Send', 'fforms' ) }
 			</button>
 		</>
 	);

@@ -13,26 +13,26 @@ final class Default_Forms {
 	public static function seed(): void {
 		self::maybe_create(
 			'contact',
-			__( 'Контактная форма', 'fforms' ),
+			__( 'Contact form', 'fforms' ),
 			'contact',
 			array(
-				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ),
+				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ),
 				array( 'block' => 'fforms/field-email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ),
-				array( 'block' => 'fforms/field-textarea', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ),
+				array( 'block' => 'fforms/field-textarea', 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'required' => true ),
 			),
-			__( 'Отправить', 'fforms' )
+			__( 'Send', 'fforms' )
 		);
 
 		self::maybe_create(
 			'lead',
-			__( 'Форма для лидов', 'fforms' ),
+			__( 'Lead form', 'fforms' ),
 			'lead',
 			array(
-				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ),
-				array( 'block' => 'fforms/field-tel', 'name' => 'phone', 'label' => __( 'Телефон', 'fforms' ), 'required' => true ),
+				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ),
+				array( 'block' => 'fforms/field-tel', 'name' => 'phone', 'label' => __( 'Phone', 'fforms' ), 'required' => true ),
 				array( 'block' => 'fforms/field-email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => false ),
 			),
-			__( 'Оставить заявку', 'fforms' )
+			__( 'Request a call', 'fforms' )
 		);
 	}
 

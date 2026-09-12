@@ -15,7 +15,7 @@ const preventPreviewInteraction = ( event ) => event.preventDefault();
 function FieldLabel( { attributes } ) {
 	return (
 		<span className="fforms-label">
-			{ attributes.label || attributes.name || __( 'Поле', 'fforms' ) }
+			{ attributes.label || attributes.name || __( 'Field', 'fforms' ) }
 			{ attributes.required && ' *' }
 		</span>
 	);
@@ -30,13 +30,13 @@ function ChoicePreview( { type, choices } ) {
 				onMouseDown={ preventPreviewInteraction }
 				tabIndex="-1"
 			>
-				<option value="">{ __( 'Выберите вариант', 'fforms' ) }</option>
+				<option value="">{ __( 'Select an option', 'fforms' ) }</option>
 				{ choices.map( ( option, index ) => (
 					<option
 						key={ option.value || index }
 						value={ option.value }
 					>
-						{ option.label || __( 'Вариант', 'fforms' ) }
+						{ option.label || __( 'Option', 'fforms' ) }
 					</option>
 				) ) }
 			</select>
@@ -60,7 +60,7 @@ function ChoicePreview( { type, choices } ) {
 						onClick={ preventPreviewInteraction }
 						type={ type }
 					/>
-					{ option.label || __( 'Вариант', 'fforms' ) }
+					{ option.label || __( 'Option', 'fforms' ) }
 				</label>
 			);
 		} );
@@ -76,7 +76,7 @@ function ChoicePreview( { type, choices } ) {
 				type="checkbox"
 			/>
 			<FieldLabel
-				attributes={ { label: __( 'Подтверждение', 'fforms' ) } }
+				attributes={ { label: __( 'Confirmation', 'fforms' ) } }
 			/>
 		</label>
 	);
@@ -86,8 +86,8 @@ function FieldPreview( { attributes, type } ) {
 	if ( 'hidden' === type ) {
 		return (
 			<div className="fforms-hidden-field-placeholder">
-				{ __( 'Скрытое поле', 'fforms' ) }:{ ' ' }
-				{ attributes.name || __( 'без имени', 'fforms' ) }
+				{ __( 'Hidden field', 'fforms' ) }:{ ' ' }
+				{ attributes.name || __( 'unnamed', 'fforms' ) }
 			</div>
 		);
 	}
@@ -159,13 +159,13 @@ function FieldControls( { attributes, setAttributes, type } ) {
 
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'Настройки поля', 'fforms' ) }>
+			<PanelBody title={ __( 'Field settings', 'fforms' ) }>
 				<TextControl
 					help={ __(
-						'Латиница, цифры, дефисы и подчёркивания.',
+						'Latin letters, digits, hyphens and underscores.',
 						'fforms'
 					) }
-					label={ __( 'Имя', 'fforms' ) }
+					label={ __( 'Name', 'fforms' ) }
 					onChange={ ( name ) =>
 						setAttributes( {
 							name,
@@ -177,7 +177,7 @@ function FieldControls( { attributes, setAttributes, type } ) {
 				{ 'hidden' !== type && (
 					<>
 						<TextControl
-							label={ __( 'Подпись', 'fforms' ) }
+							label={ __( 'Label', 'fforms' ) }
 							onChange={ ( label ) => setAttributes( { label } ) }
 							value={ attributes.label }
 						/>
@@ -194,7 +194,7 @@ function FieldControls( { attributes, setAttributes, type } ) {
 							'textarea' !== type && (
 								<TextControl
 									label={ __(
-										'Максимальная длина',
+										'Maximum length',
 										'fforms'
 									) }
 									onChange={ ( maxLength ) =>
@@ -208,7 +208,7 @@ function FieldControls( { attributes, setAttributes, type } ) {
 							) }
 						<ToggleControl
 							checked={ attributes.required }
-							label={ __( 'Обязательное поле', 'fforms' ) }
+							label={ __( 'Required field', 'fforms' ) }
 							onChange={ ( required ) =>
 								setAttributes( { required } )
 							}
@@ -217,18 +217,18 @@ function FieldControls( { attributes, setAttributes, type } ) {
 				) }
 				{ choiceTypes.includes( type ) && (
 					<>
-						<h3>{ __( 'Варианты', 'fforms' ) }</h3>
+						<h3>{ __( 'Options', 'fforms' ) }</h3>
 						{ choices.map( ( option, index ) => (
 							<div className="fforms-editor-option" key={ index }>
 								<TextControl
-									label={ __( 'Значение', 'fforms' ) }
+									label={ __( 'Value', 'fforms' ) }
 									onChange={ ( value ) =>
 										updateOption( index, 'value', value )
 									}
 									value={ option.value }
 								/>
 								<TextControl
-									label={ __( 'Подпись', 'fforms' ) }
+									label={ __( 'Label', 'fforms' ) }
 									onChange={ ( label ) =>
 										updateOption( index, 'label', label )
 									}
@@ -246,7 +246,7 @@ function FieldControls( { attributes, setAttributes, type } ) {
 									}
 									variant="tertiary"
 								>
-									{ __( 'Удалить', 'fforms' ) }
+									{ __( 'Remove', 'fforms' ) }
 								</Button>
 							</div>
 						) ) }
@@ -259,14 +259,14 @@ function FieldControls( { attributes, setAttributes, type } ) {
 											value: `option-${
 												choices.length + 1
 											}`,
-											label: __( 'Вариант', 'fforms' ),
+											label: __( 'Option', 'fforms' ),
 										},
 									],
 								} )
 							}
 							variant="secondary"
 						>
-							{ __( 'Добавить вариант', 'fforms' ) }
+							{ __( 'Add option', 'fforms' ) }
 						</Button>
 					</>
 				) }

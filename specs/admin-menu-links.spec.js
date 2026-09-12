@@ -14,8 +14,8 @@ test.describe( 'FForms admin menu links', () => {
 	} );
 
 	for ( const [ label, expectedQuery ] of [
-		[ 'Настройки', 'page=fforms-settings' ],
-		[ 'Экспорт CSV', 'page=fforms-export' ],
+		[ 'Settings', 'page=fforms-settings' ],
+		[ 'CSV export', 'page=fforms-export' ],
 	] ) {
 		test( `"${ label }" submenu link resolves without a 404`, async ( { page } ) => {
 			await page.goto( '/wp-admin/edit.php?post_type=fform_entry' );

@@ -35,12 +35,12 @@ final class Post_Types {
 			self::FORM,
 			array(
 				'labels' => array(
-					'name'          => __( 'Формы', 'fforms' ),
-					'singular_name' => __( 'Форма', 'fforms' ),
-					'add_new_item'  => __( 'Добавить форму', 'fforms' ),
-					'edit_item'     => __( 'Редактировать форму', 'fforms' ),
+					'name'          => __( 'Forms', 'fforms' ),
+					'singular_name' => __( 'Form', 'fforms' ),
+					'add_new_item'  => __( 'Add form', 'fforms' ),
+					'edit_item'     => __( 'Edit form', 'fforms' ),
 					'menu_name'     => __( 'FForms', 'fforms' ),
-					'all_items'     => __( 'Формы', 'fforms' ),
+					'all_items'     => __( 'Forms', 'fforms' ),
 				),
 				'public'              => false,
 				'show_ui'             => true,
@@ -51,10 +51,10 @@ final class Post_Types {
 				'supports'            => array( 'title', 'editor', 'revisions', 'custom-fields' ),
 				'template'            => array(
 					array( 'fforms/form', array(), array(
-						array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
+						array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ) ),
 						array( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
-						array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
-						array( 'fforms/submit', array( 'label' => __( 'Отправить', 'fforms' ) ) ),
+						array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'required' => true ) ),
+						array( 'fforms/submit', array( 'label' => __( 'Send', 'fforms' ) ) ),
 					) ),
 				),
 				'exclude_from_search' => true,
@@ -65,10 +65,15 @@ final class Post_Types {
 			self::ENTRY,
 			array(
 				'labels' => array(
-					'name'          => __( 'Ответы', 'fforms' ),
-					'singular_name' => __( 'Ответ', 'fforms' ),
-					'edit_item'     => __( 'Просмотреть ответ', 'fforms' ),
-					'menu_name'     => __( 'Ответы', 'fforms' ),
+					'name'               => __( 'Submissions', 'fforms' ),
+					'singular_name'      => __( 'Submission', 'fforms' ),
+					'menu_name'          => __( 'Submissions', 'fforms' ),
+					'all_items'          => __( 'Submissions', 'fforms' ),
+					'edit_item'          => __( 'View submission', 'fforms' ),
+					'view_item'          => __( 'View submission', 'fforms' ),
+					'search_items'       => __( 'Search submissions', 'fforms' ),
+					'not_found'          => __( 'No submissions found.', 'fforms' ),
+					'not_found_in_trash' => __( 'No submissions found in Trash.', 'fforms' ),
 				),
 				'public'              => false,
 				'show_ui'             => true,
@@ -169,16 +174,16 @@ final class Post_Types {
 	private static function headless_schema_template(): array {
 		return array(
 			array( 'fforms/headless-schema', array( 'lock' => array( 'move' => true, 'remove' => true ) ), array(
-				array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'required' => true ) ),
+				array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ) ),
 				array( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
-				array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'required' => true ) ),
+				array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'required' => true ) ),
 			) ),
 		);
 	}
 
 	public static function add_meta_boxes(): void {
-		add_meta_box( 'fforms_entry_data', __( 'Данные ответа', 'fforms' ), array( self::class, 'render_entry_meta_box' ), self::ENTRY, 'normal', 'high' );
-		add_meta_box( 'fforms_entry_extras', __( 'Дополнительно', 'fforms' ), array( self::class, 'render_entry_extras_meta_box' ), self::ENTRY, 'normal', 'default' );
+		add_meta_box( 'fforms_entry_data', __( 'Submission data', 'fforms' ), array( self::class, 'render_entry_meta_box' ), self::ENTRY, 'normal', 'high' );
+		add_meta_box( 'fforms_entry_extras', __( 'Additional data', 'fforms' ), array( self::class, 'render_entry_extras_meta_box' ), self::ENTRY, 'normal', 'default' );
 	}
 
 	public static function enqueue_form_settings_sidebar(): void {
@@ -197,6 +202,7 @@ final class Post_Types {
 			$version,
 			true
 		);
+		wp_set_script_translations( $handle, 'fforms', FFORMS_DIR . 'languages' );
 		wp_add_inline_script(
 			$handle,
 			'window.fformsFormSettings = ' . wp_json_encode(
@@ -258,7 +264,7 @@ final class Post_Types {
 		$data   = json_decode( (string) get_post_meta( $post->ID, '_fforms_data', true ), true );
 		$status = (string) get_post_meta( $post->ID, '_fforms_status', true );
 		?>
-		<p><label for="fforms_entry_status"><strong><?php esc_html_e( 'Статус', 'fforms' ); ?></strong></label><br><select id="fforms_entry_status" name="fforms_entry_status"><?php foreach ( array( 'new' => __( 'Новый', 'fforms' ), 'read' => __( 'Прочитан', 'fforms' ), 'replied' => __( 'Отвечен', 'fforms' ), 'spam' => __( 'Спам', 'fforms' ) ) as $value => $label ) : ?><option value="<?php echo esc_attr( $value ); ?>" <?php selected( $status ?: 'new', $value ); ?>><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select></p>
+		<p><label for="fforms_entry_status"><strong><?php esc_html_e( 'Status', 'fforms' ); ?></strong></label><br><select id="fforms_entry_status" name="fforms_entry_status"><?php foreach ( array( 'new' => __( 'New', 'fforms' ), 'read' => __( 'Read', 'fforms' ), 'replied' => __( 'Replied', 'fforms' ), 'spam' => __( 'Spam', 'fforms' ) ) as $value => $label ) : ?><option value="<?php echo esc_attr( $value ); ?>" <?php selected( $status ?: 'new', $value ); ?>><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select></p>
 		<table class="widefat striped"><tbody><?php foreach ( is_array( $data ) ? $data : array() as $key => $value ) : ?><tr><th style="width:25%"><?php echo esc_html( (string) $key ); ?></th><td><?php echo nl2br( esc_html( self::stringify( $value ) ) ); ?></td></tr><?php endforeach; ?></tbody></table>
 		<p><small><?php echo esc_html( sprintf( 'IP: %s · User-Agent: %s · Source: %s', get_post_meta( $post->ID, '_fforms_ip', true ), get_post_meta( $post->ID, '_fforms_user_agent', true ), get_post_meta( $post->ID, '_fforms_source', true ) ) ); ?></small></p>
 		<?php
@@ -273,19 +279,19 @@ final class Post_Types {
 		$meta    = json_decode( (string) get_post_meta( $post->ID, '_fforms_meta', true ), true );
 
 		if ( '' === $type && '' === $ref && ! $user_id && ! is_array( $custom ) && ! is_array( $meta ) ) {
-			echo '<p>' . esc_html__( 'Дополнительных данных нет.', 'fforms' ) . '</p>';
+			echo '<p>' . esc_html__( 'No additional data.', 'fforms' ) . '</p>';
 			return;
 		}
 		?>
 		<table class="widefat striped"><tbody>
 			<?php if ( '' !== $type ) : ?>
-				<tr><th style="width:25%"><?php esc_html_e( 'Тип формы', 'fforms' ); ?></th><td>
+				<tr><th style="width:25%"><?php esc_html_e( 'Form type', 'fforms' ); ?></th><td>
 					<?php if ( $term ) : ?>
 						<a href="<?php echo esc_url( (string) get_edit_term_link( $term->term_id, Form_Types::TAXONOMY ) ); ?>"><?php echo esc_html( $term->name ); ?></a>
 						<code><?php echo esc_html( $term->slug ); ?></code>
 					<?php else : ?>
 						<code><?php echo esc_html( $type ); ?></code>
-						<span class="description"><?php esc_html_e( '— термин не создан (достигнут лимит типов)', 'fforms' ); ?></span>
+						<span class="description"><?php esc_html_e( '— the term was not created (form type limit reached)', 'fforms' ); ?></span>
 					<?php endif; ?>
 				</td></tr>
 			<?php endif; ?>
@@ -327,16 +333,16 @@ final class Post_Types {
 		$type_column = 'taxonomy-' . Form_Types::TAXONOMY;
 		$rebuilt     = array(
 			'cb'             => $columns['cb'] ?? '<input type="checkbox" />',
-			'title'          => __( 'Ответ', 'fforms' ),
-			'fforms_form'    => __( 'Форма', 'fforms' ),
+			'title'          => __( 'Submission', 'fforms' ),
+			'fforms_form'    => __( 'Form', 'fforms' ),
 		);
 		// Core renders taxonomy-* columns itself; keep the key it generated.
 		if ( isset( $columns[ $type_column ] ) ) {
-			$rebuilt[ $type_column ] = __( 'Тип формы', 'fforms' );
+			$rebuilt[ $type_column ] = __( 'Form type', 'fforms' );
 		}
-		$rebuilt['fforms_status']  = __( 'Статус', 'fforms' );
-		$rebuilt['fforms_preview'] = __( 'Данные', 'fforms' );
-		$rebuilt['date']           = $columns['date'] ?? __( 'Дата', 'fforms' );
+		$rebuilt['fforms_status']  = __( 'Status', 'fforms' );
+		$rebuilt['fforms_preview'] = __( 'Data', 'fforms' );
+		$rebuilt['date']           = $columns['date'] ?? __( 'Date', 'fforms' );
 
 		return $rebuilt;
 	}
@@ -378,7 +384,7 @@ final class Post_Types {
 
 	/**
 	 * The entries list filters by type term (the fform_type dropdown); `form_ref`
-	 * has no control of its own and only backs the "Смотреть заявки" row action
+	 * has no control of its own and only backs the "View submissions" row action
 	 * for forms that have no term yet.
 	 */
 	public static function filter_entries_by_form( \WP_Query $query ): void {
@@ -405,14 +411,14 @@ final class Post_Types {
 			$url  = '' !== $slug
 				? Form_Types::entries_url( $slug )
 				: add_query_arg( array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post->ID ), admin_url( 'edit.php' ) );
-			$actions['fforms_view_entries'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Смотреть заявки', 'fforms' ) . '</a>';
+			$actions['fforms_view_entries'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'View submissions', 'fforms' ) . '</a>';
 		}
 		return $actions;
 	}
 
 	public static function stringify( mixed $value ): string {
 		if ( is_bool( $value ) ) {
-			return $value ? __( 'Да', 'fforms' ) : __( 'Нет', 'fforms' );
+			return $value ? __( 'Yes', 'fforms' ) : __( 'No', 'fforms' );
 		}
 		return is_array( $value ) ? implode( ', ', array_map( array( self::class, 'stringify' ), $value ) ) : (string) $value;
 	}

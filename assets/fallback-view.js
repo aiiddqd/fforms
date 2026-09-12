@@ -43,11 +43,11 @@
 			.then( function ( body ) {
 				form.reset();
 				form.querySelector( '.fforms-response' ).textContent =
-					body.message || 'Спасибо! Форма отправлена.';
+					body.message || 'Thank you! The form has been sent.';
 			} )
 			.catch( function ( error ) {
 				form.querySelector( '.fforms-response' ).textContent =
-					error.message || 'Не удалось отправить форму.';
+					error.message || 'Could not submit the form.';
 			} );
 	} );
 } )();

@@ -26,7 +26,7 @@ function Edit() {
 		<div { ...blockProps }>
 			<p className="fforms-headless-schema__description">
 				{ __(
-					'Поля ниже определяют схему формы для REST API. Этот блок не выводится на сайте.',
+					'The fields below define the form schema for the REST API. This block is not rendered on the site.',
 					'fforms'
 				) }
 			</p>

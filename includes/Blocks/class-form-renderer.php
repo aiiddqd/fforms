@@ -33,18 +33,18 @@ final class Form_Renderer {
 
 	/** @param array<string,mixed> $attributes */
 	public static function render_submit( array $attributes, bool $is_block = false ): string {
-		$label = sanitize_text_field( (string) ( $attributes['label'] ?? '' ) ) ?: __( 'Отправить', 'fforms' );
+		$label = sanitize_text_field( (string) ( $attributes['label'] ?? '' ) ) ?: __( 'Send', 'fforms' );
 		$wrapper = $is_block ? get_block_wrapper_attributes( array( 'class' => 'fforms-submit wp-element-button' ) ) : 'class="fforms-submit wp-element-button"';
 		return '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
 	}
 
 	private static function render_reference( int $form_id, bool $is_reference = false, string $unavailable_notice = '' ): string {
 		$wrapper = $is_reference ? self::reference_wrapper_attributes() : '';
-		$unavailable = $unavailable_notice ?: __( 'Выберите опубликованную форму в настройках блока.', 'fforms' );
+		$unavailable = $unavailable_notice ?: __( 'Select a published form in the block settings.', 'fforms' );
 		$form = get_post( $form_id );
 		if ( ! $form_id || ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status ) return self::editor_notice( $unavailable, $wrapper );
 		if ( 'headless' === Post_Types::form_mode( $form_id ) ) return self::editor_notice( $unavailable, $wrapper );
-		if ( isset( self::$resolving[ $form_id ] ) ) return self::editor_notice( __( 'Обнаружена циклическая ссылка формы.', 'fforms' ), $wrapper );
+		if ( isset( self::$resolving[ $form_id ] ) ) return self::editor_notice( __( 'Circular form reference detected.', 'fforms' ), $wrapper );
 		self::$resolving[ $form_id ] = true;
 		$previous = self::$source_form_id;
 		self::$source_form_id = $form_id;
@@ -69,7 +69,7 @@ final class Form_Renderer {
 
 	/** @param array<string,mixed> $attributes */
 	private static function render_shell( int $form_id, string $content, array $attributes ): string {
-		if ( ! $form_id || Post_Types::FORM !== get_post_type( $form_id ) ) return current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Сохраните форму и вставьте её ссылку на страницу.', 'fforms' ) . '</p>' : '';
+		if ( ! $form_id || Post_Types::FORM !== get_post_type( $form_id ) ) return current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Save the form and insert a reference to it into a page.', 'fforms' ) . '</p>' : '';
 		$context = (string) wp_json_encode( array( 'formId' => $form_id, 'endpoint' => rest_url( 'fforms/v1/submit' ), 'isSubmitting' => false, 'isError' => false, 'message' => '' ) );
 		$title = ! empty( $attributes['showTitle'] ) ? '<h2 class="fforms-title">' . esc_html( get_the_title( $form_id ) ) . '</h2>' : '';
 		$wrapper = get_block_wrapper_attributes( array( 'class' => 'fforms' ) );
@@ -106,7 +106,7 @@ final class Form_Renderer {
 		$wrapper = $wrapper ?: 'class="fforms-field fforms-field--' . esc_attr( $type ) . '"';
 		if ( 'textarea' === $type ) return '<div ' . $wrapper . '><label class="fforms-label" for="' . esc_attr( $id ) . '">' . $label . '</label><textarea class="fforms-control" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name_attr ) . '"' . $placeholder . $maxlength . $required_a . $described . '></textarea>' . $error . '</div>';
 		if ( 'select' === $type ) {
-			$options = '<option value="">' . esc_html__( 'Выберите вариант', 'fforms' ) . '</option>';
+			$options = '<option value="">' . esc_html__( 'Select an option', 'fforms' ) . '</option>';
 			foreach ( $field['options'] ?? array() as $option ) $options .= '<option value="' . esc_attr( $option['value'] ) . '">' . esc_html( $option['label'] ) . '</option>';
 			return '<div ' . $wrapper . '><label class="fforms-label" for="' . esc_attr( $id ) . '">' . $label . '</label><select class="fforms-control" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name_attr ) . '"' . $required_a . $described . '>' . $options . '</select>' . $error . '</div>';
 		}

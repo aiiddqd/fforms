@@ -20,7 +20,7 @@ const TEMPLATE = [
 		{
 			fieldId: 'name',
 			name: 'name',
-			label: __( 'Имя', 'fforms' ),
+			label: __( 'Name', 'fforms' ),
 			required: true,
 		},
 	],
@@ -38,11 +38,11 @@ const TEMPLATE = [
 		{
 			fieldId: 'message',
 			name: 'message',
-			label: __( 'Сообщение', 'fforms' ),
+			label: __( 'Message', 'fforms' ),
 			required: true,
 		},
 	],
-	[ 'fforms/submit', { label: __( 'Отправить', 'fforms' ) } ],
+	[ 'fforms/submit', { label: __( 'Send', 'fforms' ) } ],
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
@@ -72,7 +72,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const ref = attributes.ref || attributes.formId || 0;
 	const options = [
-		{ label: __( 'Выберите опубликованную форму', 'fforms' ), value: 0 },
+		{ label: __( 'Select a published form', 'fforms' ), value: 0 },
 	].concat(
 		( forms || [] )
 			.filter(
@@ -86,7 +86,7 @@ export default function Edit( { attributes, setAttributes } ) {
 	);
 	const control = (
 		<SelectControl
-			label={ __( 'Форма', 'fforms' ) }
+			label={ __( 'Form', 'fforms' ) }
 			value={ ref }
 			options={ options }
 			onChange={ ( value ) =>
@@ -100,17 +100,17 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Настройки формы', 'fforms' ) }>
+				<PanelBody title={ __( 'Form settings', 'fforms' ) }>
 					{ control }
 					<ToggleControl
-						label={ __( 'Показывать заголовок', 'fforms' ) }
+						label={ __( 'Show the title', 'fforms' ) }
 						checked={ attributes.showTitle }
 						onChange={ ( showTitle ) =>
 							setAttributes( { showTitle } )
 						}
 					/>
 					<TextControl
-						label={ __( 'Текст кнопки (legacy)', 'fforms' ) }
+						label={ __( 'Button text (legacy)', 'fforms' ) }
 						value={ attributes.submitLabel }
 						onChange={ ( submitLabel ) =>
 							setAttributes( { submitLabel } )

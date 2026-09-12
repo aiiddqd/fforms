@@ -19,7 +19,7 @@ final class Settings {
 	}
 
 	public static function admin_menu(): void {
-		add_submenu_page( 'fforms', __( 'Настройки FForms', 'fforms' ), __( 'Настройки', 'fforms' ), 'manage_options', 'fforms-settings', array( self::class, 'render_page' ) );
+		add_submenu_page( 'fforms', __( 'FForms settings', 'fforms' ), __( 'Settings', 'fforms' ), 'manage_options', 'fforms-settings', array( self::class, 'render_page' ) );
 	}
 
 	public static function register_settings(): void {
@@ -108,24 +108,24 @@ final class Settings {
 		}
 		$s = self::get();
 		?>
-		<div class="wrap"><h1><?php esc_html_e( 'Настройки FForms', 'fforms' ); ?></h1>
-		<p><?php esc_html_e( 'Встроенный SMTP включайте только в том случае, если отправкой почты не управляет другой SMTP-плагин.', 'fforms' ); ?></p>
+		<div class="wrap"><h1><?php esc_html_e( 'FForms settings', 'fforms' ); ?></h1>
+		<p><?php esc_html_e( 'Enable the built-in SMTP only when no other SMTP plugin handles email delivery.', 'fforms' ); ?></p>
 		<form action="options.php" method="post"><?php settings_fields( 'fforms_settings' ); ?>
 		<table class="form-table" role="presentation">
-		<tr><th><?php esc_html_e( 'Уведомления', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Включить настройки уведомлений и автоответов для форм', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'После включения настройте отправку уведомлений и автоответы отдельно для каждой формы.', 'fforms' ); ?></p></td></tr>
-		<tr><th scope="row"><?php esc_html_e( 'Разрешённые origins главной формы', 'fforms' ); ?></th><td><textarea class="large-text code" rows="3" id="fforms-main-form-origins" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_origins]" placeholder="https://example.com, https://app.example.com"><?php echo esc_textarea( implode( ", ", (array) $s['main_form_origins'] ) ); ?></textarea><p class="description"><?php esc_html_e( 'Домены через запятую, которым разрешён кросс-доменный запрос к POST /fforms/v1/main. Пусто — CORS-заголовки не отправляются.', 'fforms' ); ?></p></td></tr>
-		<tr><th scope="row"><?php esc_html_e( 'Уведомления главной формы', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Отправлять письмо о новой заявке главной формы', 'fforms' ); ?></label><p><input class="regular-text" type="text" id="fforms-main-form-notification-to" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notification_to]" value="<?php echo esc_attr( (string) $s['main_form_notification_to'] ); ?>" placeholder="<?php echo esc_attr( (string) get_option( "admin_email" ) ); ?>"></p><p class="description"><?php esc_html_e( 'Получатели через запятую. Пусто — письмо уходит на адрес администратора.', 'fforms' ); ?></p></td></tr>
-		<tr><th scope="row"><?php esc_html_e( 'Типы форм', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[form_types_strict]" value="1" <?php checked( $s['form_types_strict'] ); ?>> <?php esc_html_e( 'Принимать только существующие типы', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'При включении неизвестный formType возвращает 422 и заявка не сохраняется. По умолчанию новый тип создаётся автоматически.', 'fforms' ); ?></p></td></tr>
-		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Использовать SMTP FForms', 'fforms' ); ?></label></td></tr>
+		<tr><th><?php esc_html_e( 'Notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Enable notification and auto-reply settings for forms', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Once enabled, configure notifications and auto-replies separately for each form.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Allowed origins of the main form', 'fforms' ); ?></th><td><textarea class="large-text code" rows="3" id="fforms-main-form-origins" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_origins]" placeholder="https://example.com, https://app.example.com"><?php echo esc_textarea( implode( ", ", (array) $s['main_form_origins'] ) ); ?></textarea><p class="description"><?php esc_html_e( 'Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Main form notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Send an email about a new main form submission', 'fforms' ); ?></label><p><input class="regular-text" type="text" id="fforms-main-form-notification-to" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notification_to]" value="<?php echo esc_attr( (string) $s['main_form_notification_to'] ); ?>" placeholder="<?php echo esc_attr( (string) get_option( "admin_email" ) ); ?>"></p><p class="description"><?php esc_html_e( 'Comma-separated recipients. Empty — the email goes to the administrator address.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Form types', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[form_types_strict]" value="1" <?php checked( $s['form_types_strict'] ); ?>> <?php esc_html_e( 'Accept only existing types', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically.', 'fforms' ); ?></p></td></tr>
+		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Use the FForms SMTP', 'fforms' ); ?></label></td></tr>
 		<?php self::input_row( 'host', __( 'SMTP host', 'fforms' ), $s['host'] ); ?>
-		<?php self::input_row( 'port', __( 'Порт', 'fforms' ), (string) $s['port'], 'number' ); ?>
-		<tr><th><label for="fforms-encryption"><?php esc_html_e( 'Шифрование', 'fforms' ); ?></label></th><td><select id="fforms-encryption" name="<?php echo esc_attr( self::OPTION ); ?>[encryption]"><option value="" <?php selected( $s['encryption'], '' ); ?>><?php esc_html_e( 'Нет', 'fforms' ); ?></option><option value="tls" <?php selected( $s['encryption'], 'tls' ); ?>>TLS</option><option value="ssl" <?php selected( $s['encryption'], 'ssl' ); ?>>SSL</option></select></td></tr>
-		<tr><th><?php esc_html_e( 'Авторизация', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[auth]" value="1" <?php checked( $s['auth'] ); ?>> <?php esc_html_e( 'SMTP требует логин и пароль', 'fforms' ); ?></label></td></tr>
-		<?php self::input_row( 'username', __( 'Логин', 'fforms' ), $s['username'] ); ?>
-		<?php self::input_row( 'password', __( 'Пароль', 'fforms' ), '', 'password' ); ?>
-		<tr><th></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[clear_password]" value="1"> <?php esc_html_e( 'Удалить сохранённый пароль', 'fforms' ); ?></label></td></tr>
-		<?php self::input_row( 'from_email', __( 'Email отправителя', 'fforms' ), $s['from_email'], 'email' ); ?>
-		<?php self::input_row( 'from_name', __( 'Имя отправителя', 'fforms' ), $s['from_name'] ); ?>
+		<?php self::input_row( 'port', __( 'Port', 'fforms' ), (string) $s['port'], 'number' ); ?>
+		<tr><th><label for="fforms-encryption"><?php esc_html_e( 'Encryption', 'fforms' ); ?></label></th><td><select id="fforms-encryption" name="<?php echo esc_attr( self::OPTION ); ?>[encryption]"><option value="" <?php selected( $s['encryption'], '' ); ?>><?php esc_html_e( 'None', 'fforms' ); ?></option><option value="tls" <?php selected( $s['encryption'], 'tls' ); ?>>TLS</option><option value="ssl" <?php selected( $s['encryption'], 'ssl' ); ?>>SSL</option></select></td></tr>
+		<tr><th><?php esc_html_e( 'Authentication', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[auth]" value="1" <?php checked( $s['auth'] ); ?>> <?php esc_html_e( 'SMTP requires a username and password', 'fforms' ); ?></label></td></tr>
+		<?php self::input_row( 'username', __( 'Username', 'fforms' ), $s['username'] ); ?>
+		<?php self::input_row( 'password', __( 'Password', 'fforms' ), '', 'password' ); ?>
+		<tr><th></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[clear_password]" value="1"> <?php esc_html_e( 'Delete the saved password', 'fforms' ); ?></label></td></tr>
+		<?php self::input_row( 'from_email', __( 'From email', 'fforms' ), $s['from_email'], 'email' ); ?>
+		<?php self::input_row( 'from_name', __( 'From name', 'fforms' ), $s['from_name'] ); ?>
 		</table><?php submit_button(); ?></form></div>
 		<?php
 	}

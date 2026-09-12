@@ -14,7 +14,7 @@ final class Export {
 	}
 
 	public static function admin_menu(): void {
-		add_submenu_page( 'fforms', __( 'Экспорт ответов', 'fforms' ), __( 'Экспорт CSV', 'fforms' ), 'manage_options', 'fforms-export', array( self::class, 'render_page' ) );
+		add_submenu_page( 'fforms', __( 'Export submissions', 'fforms' ), __( 'CSV export', 'fforms' ), 'manage_options', 'fforms-export', array( self::class, 'render_page' ) );
 	}
 
 	public static function render_page(): void {
@@ -23,13 +23,13 @@ final class Export {
 		}
 		$forms = get_posts( array( 'post_type' => Post_Types::FORM, 'post_status' => array( 'publish', 'draft', 'private' ), 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC' ) );
 		?>
-		<div class="wrap"><h1><?php esc_html_e( 'Экспорт ответов', 'fforms' ); ?></h1>
+		<div class="wrap"><h1><?php esc_html_e( 'Export submissions', 'fforms' ); ?></h1>
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="fforms_export_csv"><?php wp_nonce_field( 'fforms_export_csv' ); ?>
-		<label for="fforms-export-form"><strong><?php esc_html_e( 'Форма', 'fforms' ); ?></strong></label>
-		<select id="fforms-export-form" name="form_ref"><option value=""><?php esc_html_e( 'Все формы', 'fforms' ); ?></option><?php foreach ( $forms as $form ) : ?><option value="post:<?php echo esc_attr( $form->ID ); ?>"><?php echo esc_html( get_the_title( $form ) ); ?></option><?php endforeach; ?><?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?><option value="code:<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $code_form->title ); ?></option><?php endforeach; ?></select>
-		<label for="fforms-export-type"><strong><?php esc_html_e( 'Тип формы', 'fforms' ); ?></strong></label>
-		<select id="fforms-export-type" name="form_type"><option value=""><?php esc_html_e( 'Все типы', 'fforms' ); ?></option><?php foreach ( self::types() as $term ) : ?><option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option><?php endforeach; ?></select>
-		<?php submit_button( __( 'Скачать CSV', 'fforms' ), 'primary', 'submit', false ); ?></form></div>
+		<label for="fforms-export-form"><strong><?php esc_html_e( 'Form', 'fforms' ); ?></strong></label>
+		<select id="fforms-export-form" name="form_ref"><option value=""><?php esc_html_e( 'All forms', 'fforms' ); ?></option><?php foreach ( $forms as $form ) : ?><option value="post:<?php echo esc_attr( $form->ID ); ?>"><?php echo esc_html( get_the_title( $form ) ); ?></option><?php endforeach; ?><?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?><option value="code:<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $code_form->title ); ?></option><?php endforeach; ?></select>
+		<label for="fforms-export-type"><strong><?php esc_html_e( 'Form type', 'fforms' ); ?></strong></label>
+		<select id="fforms-export-type" name="form_type"><option value=""><?php esc_html_e( 'All types', 'fforms' ); ?></option><?php foreach ( self::types() as $term ) : ?><option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option><?php endforeach; ?></select>
+		<?php submit_button( __( 'Download CSV', 'fforms' ), 'primary', 'submit', false ); ?></form></div>
 		<?php
 	}
 
@@ -41,7 +41,7 @@ final class Export {
 
 	public static function download(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Недостаточно прав.', 'fforms' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'fforms' ), '', array( 'response' => 403 ) );
 		}
 		check_admin_referer( 'fforms_export_csv' );
 
@@ -75,7 +75,7 @@ final class Export {
 		header( 'Content-Disposition: attachment; filename="fforms-' . gmdate( 'Y-m-d-His' ) . '.csv"' );
 		$output = fopen( 'php://output', 'wb' );
 		if ( false === $output ) {
-			wp_die( esc_html__( 'Не удалось сформировать CSV.', 'fforms' ) );
+			wp_die( esc_html__( 'Could not build the CSV file.', 'fforms' ) );
 		}
 		fwrite( $output, "\xEF\xBB\xBF" );
 		fputcsv( $output, array_merge( array( 'entry_id', 'form_id', 'form_key', 'form', 'form_type', 'status', 'submitted_at', 'source', 'ip', 'user_agent', 'ref', 'user_id', 'custom_fields', 'meta' ), $field_keys ), ',', '"', '' );

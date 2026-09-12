@@ -16,7 +16,7 @@ test.describe( 'form creation mode', () => {
 			editor.canvas.locator( '.wp-block-fforms-form' )
 		).toBeVisible();
 
-		await page.getByLabel( 'Режим формы' ).selectOption( 'headless' );
+		await page.getByLabel( 'Form mode' ).selectOption( 'headless' );
 		await expect(
 			editor.canvas.locator( '.wp-block-fforms-form' )
 		).toHaveCount( 0 );
@@ -27,7 +27,7 @@ test.describe( 'form creation mode', () => {
 			editor.canvas.locator( '.wp-block-fforms-submit' )
 		).toHaveCount( 0 );
 
-		await page.getByLabel( 'Режим формы' ).selectOption( 'block' );
+		await page.getByLabel( 'Form mode' ).selectOption( 'block' );
 		await expect(
 			editor.canvas.locator( '.wp-block-fforms-form' )
 		).toBeVisible();

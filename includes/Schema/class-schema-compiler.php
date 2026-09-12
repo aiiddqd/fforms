@@ -24,7 +24,7 @@ final class Schema_Compiler {
 		$blocks  = parse_blocks( $content );
 		$root    = self::find_root( $blocks );
 		if ( ! $root ) {
-			return new WP_Error( 'fforms_no_form_block', __( 'Форма должна содержать корневой блок FForms.', 'fforms' ) );
+			return new WP_Error( 'fforms_no_form_block', __( 'The form must contain a root FForms block.', 'fforms' ) );
 		}
 
 		$fields = array();
@@ -37,13 +37,13 @@ final class Schema_Compiler {
 		}
 
 		if ( self::FORM_BLOCK === $root['blockName'] && 1 !== $submit ) {
-			$errors[] = __( 'В форме должна быть ровно одна кнопка отправки.', 'fforms' );
+			$errors[] = __( 'The form must contain exactly one submit button.', 'fforms' );
 		}
 		if ( array() === $fields ) {
-			$errors[] = __( 'Добавьте хотя бы одно поле формы.', 'fforms' );
+			$errors[] = __( 'Add at least one form field.', 'fforms' );
 		}
 		if ( array() !== $errors ) {
-			return new WP_Error( 'fforms_invalid_block_schema', __( 'Структура формы содержит ошибки.', 'fforms' ), array( 'status' => 422, 'errors' => $errors ) );
+			return new WP_Error( 'fforms_invalid_block_schema', __( 'The form structure contains errors.', 'fforms' ), array( 'status' => 422, 'errors' => $errors ) );
 		}
 
 		return array( 'fields' => $fields );
@@ -117,7 +117,7 @@ final class Schema_Compiler {
 				$field = self::field_from_block( $name, $block['attrs'] ?? array(), $errors );
 				if ( $field ) {
 					if ( isset( $names[ $field['name'] ] ) ) {
-						$errors[] = sprintf( __( 'Имя поля «%s» повторяется.', 'fforms' ), $field['name'] );
+						$errors[] = sprintf( __( 'The field name “%s” is duplicated.', 'fforms' ), $field['name'] );
 					} else {
 						$names[ $field['name'] ] = true;
 						$fields[]                = $field;
@@ -138,7 +138,7 @@ final class Schema_Compiler {
 		$raw_name = (string) ( $attributes['name'] ?? '' );
 		$name     = sanitize_key( $raw_name );
 		if ( ! Schema::is_supported_type( $type ) || '' === $name || $name !== $raw_name ) {
-			$errors[] = __( 'У каждого поля должно быть корректное уникальное имя.', 'fforms' );
+			$errors[] = __( 'Every field must have a valid, unique name.', 'fforms' );
 			return false;
 		}
 
@@ -159,7 +159,7 @@ final class Schema_Compiler {
 		if ( in_array( $type, array( 'select', 'radio', 'checkbox' ), true ) ) {
 			$options = Schema::normalize_options( $attributes['options'] ?? array() );
 			if ( array() === $options || count( $options ) !== count( (array) ( $attributes['options'] ?? array() ) ) ) {
-				$errors[] = sprintf( __( 'Поле «%s» должно иметь корректные варианты.', 'fforms' ), $field['label'] );
+				$errors[] = sprintf( __( 'The “%s” field must have valid options.', 'fforms' ), $field['label'] );
 				return false;
 			}
 			$field['options'] = $options;

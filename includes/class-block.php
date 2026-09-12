@@ -10,6 +10,7 @@ namespace FForms;
 final class Block {
 	public static function boot(): void {
 		add_action( 'init', array( self::class, 'register' ), 20 );
+		add_action( 'init', array( self::class, 'set_script_translations' ), 21 );
 		add_filter( 'block_categories_all', array( self::class, 'register_category' ) );
 	}
 
@@ -55,6 +56,22 @@ final class Block {
 		}
 		foreach ( array_keys( $metadata ) as $path ) {
 			register_block_type( $build . '/' . $path );
+		}
+	}
+
+	/**
+	 * register_block_type() sets script translations without a path, which makes
+	 * WordPress look only in wp-content/languages/plugins. Point every editor
+	 * script at the catalogs shipped with the plugin instead.
+	 */
+	public static function set_script_translations(): void {
+		foreach ( \WP_Block_Type_Registry::get_instance()->get_all_registered() as $block ) {
+			if ( ! str_starts_with( $block->name, 'fforms/' ) ) {
+				continue;
+			}
+			foreach ( $block->editor_script_handles ?? array() as $handle ) {
+				wp_set_script_translations( $handle, 'fforms', FFORMS_DIR . 'languages' );
+			}
 		}
 	}
 

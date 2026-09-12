@@ -38,11 +38,35 @@ headings, prose, tables, and example captions.
 - Identifiers are never translated or inflected: meta keys, hooks, filters,
   slugs, error codes, routes, and class names stay exactly as they are in code.
 - Admin UI elements are named descriptively in English ("Form types",
-  "View entries"); the source of truth for the exact interface string is the
+  "View submissions"); the source of truth for the exact interface string is the
   code, not the specification.
 - `docs/rfc/*`, `ROADMAP.md`, and `README.md` keep their current language.
 - When you change code that changes behavior documented in `docs/specs/*`,
   update the specification in English as part of the same change.
+
+### Interface language and translations
+
+Every user-facing string in PHP and JS is written **in English** inside
+`__()`/`_e()`/`_n()` and their escaping variants, with the `fforms` text domain.
+Russian is a translation, never a second source: it lives in
+`languages/fforms-ru_RU.po`.
+
+- After adding, changing, or removing an interface string run `make i18n`
+  (`tools/i18n.py`). It rewrites `languages/fforms.pot`, merges new msgids into
+  `fforms-ru_RU.po` keeping existing translations, compiles `fforms-ru_RU.mo`,
+  and regenerates the per-script `fforms-ru_RU-<md5>.json` catalogs that
+  `wp.i18n` reads in the block editor.
+- The JSON catalogs are keyed by the md5 of the script path, so editing a
+  string in `src/` means running `npm run build` **before** `make i18n` — the
+  catalogs are built from the enqueued files in `build/` and `assets/`.
+- `make i18n` prints the untranslated msgids; the only ones that may stay empty
+  are product and protocol terms identical in both languages (FForms, Email,
+  SMTP, Endpoint, Meta, Ref, User ID, Headless API, Iframe, Js-script).
+- Entity naming: the `fform_entry` CPT is "Submissions"/"Submission" in English
+  and «Записи»/«Запись» in Russian. Keep both terminologies consistent across
+  labels, notifications, and the export page.
+- e2e specs in `specs/` run against an English site: match interface strings
+  in English there.
 
 ## Domain model and public contract
 

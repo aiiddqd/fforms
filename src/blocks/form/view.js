@@ -75,12 +75,12 @@ store( 'fforms/form', {
 					throw body;
 				}
 				form.reset();
-				context.message = body.message || 'Спасибо! Форма отправлена.';
+				context.message = body.message || 'Thank you! The form has been sent.';
 			} catch ( error ) {
 				context.isError = true;
 				context.message =
 					error?.message ||
-					'Не удалось отправить форму. Попробуйте ещё раз.';
+					'Could not submit the form. Please try again.';
 				showFieldErrors( form, error?.data?.fields );
 			} finally {
 				context.isSubmitting = false;

@@ -64,7 +64,7 @@ Entry meta:
 
 ### 3.1. The `fform_type` taxonomy
 
-`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Entries". The existing `_fforms_type` form meta (`contact`/`lead`) is unrelated to this taxonomy.
+`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Submissions". The existing `_fforms_type` form meta (`contact`/`lead`) is unrelated to this taxonomy.
 
 - Value normalization: `sanitize_key`, pattern `^[a-z0-9_-]{1,32}$`; anything else returns HTTP 422 `fforms_invalid_form_type`.
 - Upsert by slug: an unknown slug creates a term with `name = slug` and the `_fforms_autocreated` meta. Renaming the term in the admin does not affect matching — the link is by slug.
@@ -226,11 +226,13 @@ The admin implements:
 - creating and editing forms through the standard CPT interface;
 - a `Block editor` or `Headless API` mode in the sidebar. A new form starts as `Block editor`, and switching the mode converts the current fields between blocks and the JSON schema. In `Headless API` the container accepts FForms field blocks only, so the REST schema cannot drift from the editor content;
 - an overview page at `admin.php?page=fforms-dashboard` that opens with the first FAQ question, "How do I start accepting messages over the REST API?": the real `POST /fforms/v1/main` URL, the current settings state, the list of form types, and four ready-made request examples with a "Copy" button. The top-level menu slug stays `fforms` (both CPTs and the settings and export pages use it as their parent), and `admin.php?page=fforms` redirects to the new address;
-- a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View entries" action leading to the list filtered by its term;
+- a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View submissions" action leading to the list filtered by its term;
 - the entry list with the form, form type, status, and a short preview; the single form-type dropdown is the only entry filter beside the status one, and an entry is titled `{form type} — {date}`, falling back to the form title when no type is assigned;
-- a view of the full entry data, source, IP, and User-Agent, plus an "Additional" block with the form type, `ref`, `user_id`, `customFields`, and `meta`;
+- a view of the full entry data, source, IP, and User-Agent, plus an "Additional data" block with the form type, `ref`, `user_id`, `customFields`, and `meta`;
 - manual status changes on an entry;
 - CSV export of all entries, of a selected form's entries, or of a selected form type's entries.
+
+The interface is written in English and translated through the `fforms` text domain. The plugin ships its own catalogs in `languages/`: `fforms-ru_RU.po`/`.mo` for PHP and per-script `fforms-ru_RU-<md5>.json` files for the block editor, loaded with `load_plugin_textdomain()` and `wp_set_script_translations()` against the plugin directory. The `fform_entry` CPT is "Submissions" in English and «Записи» in Russian.
 
 The CSV carries a UTF-8 BOM, merges the fields of every selected record into a shared column set, and guards values against spreadsheet formula injection. Besides the schema fields it contains the `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns.
 

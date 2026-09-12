@@ -16,7 +16,7 @@ final class Schema_Repository {
 	public static function for_form( int $form_id ): array|WP_Error {
 		$form = get_post( $form_id );
 		if ( ! $form || Post_Types::FORM !== $form->post_type ) {
-			return new WP_Error( 'fforms_form_not_found', __( 'Форма не найдена.', 'fforms' ) );
+			return new WP_Error( 'fforms_form_not_found', __( 'Form not found.', 'fforms' ) );
 		}
 
 		if ( Schema_Compiler::has_schema_block( $form->post_content ) ) {

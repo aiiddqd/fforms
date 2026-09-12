@@ -26,12 +26,12 @@ final class Dashboard {
 			'dashicons-feedback'
 		);
 
-		// Position 0 keeps "Обзор" first, ahead of the CPT-generated "Формы"/"Добавить форму" items
+		// Position 0 keeps "Overview" first, ahead of the CPT-generated "Forms"/"Add form" items
 		// which WordPress appends to $submenu['fforms'] before the admin_menu hook runs.
 		add_submenu_page(
 			'fforms',
-			__( 'Обзор', 'fforms' ),
-			__( 'Обзор', 'fforms' ),
+			__( 'Overview', 'fforms' ),
+			__( 'Overview', 'fforms' ),
 			'edit_posts',
 			self::PAGE,
 			array( self::class, 'render_page' ),
@@ -67,24 +67,24 @@ final class Dashboard {
 
 		return array(
 			array(
-				'title'       => __( 'Контактная форма', 'fforms' ),
-				'description' => __( 'Без formType — заявка попадает в главную форму.', 'fforms' ),
-				'code'        => $curl( "{\n    \"name\": \"Иван\",\n    \"email\": \"ivan@example.com\",\n    \"message\": \"Здравствуйте!\"\n  }" ),
+				'title'       => __( 'Contact form', 'fforms' ),
+				'description' => __( 'Without formType the submission goes to the main form.', 'fforms' ),
+				'code'        => $curl( "{\n    \"name\": \"John\",\n    \"email\": \"john@example.com\",\n    \"message\": \"Hello!\"\n  }" ),
 			),
 			array(
-				'title'       => __( 'Заявка на консультацию', 'fforms' ),
-				'description' => __( 'formType заводит тип формы: переименуйте термин в админке, slug останется прежним.', 'fforms' ),
-				'code'        => $curl( "{\n    \"formType\": \"consultation_request\",\n    \"name\": \"Иван\",\n    \"phone\": \"+7 900 000-00-00\",\n    \"email\": \"ivan@example.com\"\n  }" ),
+				'title'       => __( 'Consultation request', 'fforms' ),
+				'description' => __( 'formType creates a form type: rename the term in the admin, the slug stays the same.', 'fforms' ),
+				'code'        => $curl( "{\n    \"formType\": \"consultation_request\",\n    \"name\": \"John\",\n    \"phone\": \"+1 555 010 0000\",\n    \"email\": \"john@example.com\"\n  }" ),
 			),
 			array(
-				'title'       => __( 'Email и сайт компании', 'fforms' ),
-				'description' => __( 'Поле website не входит в схему и сохраняется в customFields — настраивать ничего не нужно.', 'fforms' ),
+				'title'       => __( 'Email and company website', 'fforms' ),
+				'description' => __( 'The website field is not part of the schema and is stored in customFields — nothing to configure.', 'fforms' ),
 				'code'        => $curl( "{\n    \"email\": \"sales@acme.dev\",\n    \"website\": \"https://acme.dev\"\n  }" ),
 			),
 			array(
-				'title'       => __( 'Заявка с UTM-меткой', 'fforms' ),
-				'description' => __( 'ref и meta сохраняют контекст запроса отдельно от проверенных полей схемы.', 'fforms' ),
-				'code'        => $curl( "{\n    \"message\": \"Перезвоните\",\n    \"phone\": \"+7 900 000-00-00\",\n    \"ref\": \"yandex-direct\",\n    \"meta\": { \"page\": \"/pricing\", \"locale\": \"ru\" }\n  }" ),
+				'title'       => __( 'Submission with a UTM tag', 'fforms' ),
+				'description' => __( 'ref and meta keep the request context separate from the validated schema fields.', 'fforms' ),
+				'code'        => $curl( "{\n    \"message\": \"Please call me back\",\n    \"phone\": \"+1 555 010 0000\",\n    \"ref\": \"yandex-direct\",\n    \"meta\": { \"page\": \"/pricing\", \"locale\": \"en\" }\n  }" ),
 			),
 		);
 	}
@@ -131,66 +131,66 @@ final class Dashboard {
 
 			<div class="fforms-hero">
 				<h1><?php esc_html_e( 'FForms', 'fforms' ); ?></h1>
-				<p><?php esc_html_e( 'Лёгкий, headless-friendly приём форм: собирайте данные из блоков Gutenberg или из внешних сайтов через REST API.', 'fforms' ); ?></p>
+				<p><?php esc_html_e( 'Lightweight, headless-friendly form handling: collect data from Gutenberg blocks or from external sites through the REST API.', 'fforms' ); ?></p>
 				<p>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Добавить форму', 'fforms' ); ?></a>
-					<a href="<?php echo esc_url( self::REPO_URL ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Читать документацию', 'fforms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>" class="button button-primary"><?php esc_html_e( 'Add form', 'fforms' ); ?></a>
+					<a href="<?php echo esc_url( self::REPO_URL ); ?>" class="button" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Read the documentation', 'fforms' ); ?></a>
 				</p>
 			</div>
 
 			<div class="fforms-cards">
 				<div class="fforms-card">
-					<h2><?php esc_html_e( 'Формы', 'fforms' ); ?></h2>
-					<p class="fforms-card-status"><?php echo esc_html( sprintf( _n( '%d форма', '%d форм', $forms_count, 'fforms' ), $forms_count ) ); ?></p>
-					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>"><?php esc_html_e( 'Все формы →', 'fforms' ); ?></a></p>
+					<h2><?php esc_html_e( 'Forms', 'fforms' ); ?></h2>
+					<p class="fforms-card-status"><?php echo esc_html( sprintf( _n( '%d form', '%d forms', $forms_count, 'fforms' ), $forms_count ) ); ?></p>
+					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::FORM ) ); ?>"><?php esc_html_e( 'All forms →', 'fforms' ); ?></a></p>
 				</div>
 				<div class="fforms-card">
 					<h2><?php esc_html_e( 'SMTP', 'fforms' ); ?></h2>
 					<?php if ( $smtp['enabled'] ) : ?>
-						<p class="fforms-card-status is-on"><?php esc_html_e( 'Включён', 'fforms' ); ?></p>
-						<p><?php echo esc_html( $smtp['host'] ?: __( 'Хост не указан', 'fforms' ) ); ?></p>
+						<p class="fforms-card-status is-on"><?php esc_html_e( 'Enabled', 'fforms' ); ?></p>
+						<p><?php echo esc_html( $smtp['host'] ?: __( 'Host is not set', 'fforms' ) ); ?></p>
 					<?php else : ?>
-						<p class="fforms-card-status is-off"><?php esc_html_e( 'Выключен', 'fforms' ); ?></p>
-						<p><?php esc_html_e( 'Письма уходят через стандартный wp_mail()', 'fforms' ); ?></p>
+						<p class="fforms-card-status is-off"><?php esc_html_e( 'Disabled', 'fforms' ); ?></p>
+						<p><?php esc_html_e( 'Email is sent through the default wp_mail()', 'fforms' ); ?></p>
 					<?php endif; ?>
-					<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'Настройки →', 'fforms' ); ?></a></p>
+					<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'Settings →', 'fforms' ); ?></a></p>
 				</div>
 				<div class="fforms-card">
-					<h2><?php esc_html_e( 'Headless-режим', 'fforms' ); ?></h2>
+					<h2><?php esc_html_e( 'Headless mode', 'fforms' ); ?></h2>
 					<?php if ( array() === $code_forms ) : ?>
-						<p class="fforms-card-status is-off"><?php esc_html_e( 'Не используется', 'fforms' ); ?></p>
+						<p class="fforms-card-status is-off"><?php esc_html_e( 'Not in use', 'fforms' ); ?></p>
 					<?php else : ?>
-						<p class="fforms-card-status is-on"><?php echo esc_html( sprintf( _n( '%d форма из кода', '%d форм из кода', count( $code_forms ), 'fforms' ), count( $code_forms ) ) ); ?></p>
+						<p class="fforms-card-status is-on"><?php echo esc_html( sprintf( _n( '%d form in code', '%d forms in code', count( $code_forms ), 'fforms' ), count( $code_forms ) ) ); ?></p>
 					<?php endif; ?>
-					<p><a href="#fforms-faq-headless"><?php esc_html_e( 'Как подключить →', 'fforms' ); ?></a></p>
+					<p><a href="#fforms-faq-headless"><?php esc_html_e( 'How to connect →', 'fforms' ); ?></a></p>
 				</div>
 				<?php if ( $can_view_entries ) : ?>
 				<div class="fforms-card">
-					<h2><?php esc_html_e( 'Заявки', 'fforms' ); ?></h2>
-					<p class="fforms-card-status <?php echo esc_attr( $entries_count > 0 ? 'is-on' : 'is-off' ); ?>"><?php echo esc_html( sprintf( _n( '%d заявка', '%d заявок', $entries_count, 'fforms' ), $entries_count ) ); ?></p>
-					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>"><?php esc_html_e( 'Все заявки →', 'fforms' ); ?></a></p>
+					<h2><?php esc_html_e( 'Submissions', 'fforms' ); ?></h2>
+					<p class="fforms-card-status <?php echo esc_attr( $entries_count > 0 ? 'is-on' : 'is-off' ); ?>"><?php echo esc_html( sprintf( _n( '%d submission', '%d submissions', $entries_count, 'fforms' ), $entries_count ) ); ?></p>
+					<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . Post_Types::ENTRY ) ); ?>"><?php esc_html_e( 'All submissions →', 'fforms' ); ?></a></p>
 				</div>
 				<?php endif; ?>
 			</div>
 
-			<h2><?php esc_html_e( 'Частые вопросы', 'fforms' ); ?></h2>
+			<h2><?php esc_html_e( 'FAQ', 'fforms' ); ?></h2>
 			<div class="fforms-faq">
 				<details id="fforms-faq-api" open>
-					<summary><?php esc_html_e( 'Как быстро добавить приём сообщений через REST API?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'Главная форма работает сразу после активации плагина: создавать форму заранее не нужно.', 'fforms' ); ?></p>
+					<summary><?php esc_html_e( 'How do I start receiving messages through the REST API?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'The main form works right after the plugin is activated: there is no need to create a form first.', 'fforms' ); ?></p>
 					<dl>
 						<dt><?php esc_html_e( 'Endpoint', 'fforms' ); ?></dt>
 						<dd><code><?php echo esc_html( $main_url ); ?></code></dd>
-						<dt><?php esc_html_e( 'Разрешённые origins', 'fforms' ); ?></dt>
-						<dd><?php echo array() === $origins ? esc_html__( 'не заданы — кросс-доменные запросы заблокированы', 'fforms' ) : esc_html( implode( ', ', $origins ) ); ?> — <a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'изменить', 'fforms' ); ?></a></dd>
-						<dt><?php esc_html_e( 'Строгий режим типов', 'fforms' ); ?></dt>
-						<dd><?php echo $strict_types ? esc_html__( 'включён — принимаются только существующие типы', 'fforms' ) : esc_html__( 'выключен — новый тип создаётся автоматически', 'fforms' ); ?></dd>
-						<dt><?php esc_html_e( 'Вложения', 'fforms' ); ?></dt>
-						<dd><?php esc_html_e( 'не принимаются — файлы возвращают 400', 'fforms' ); ?></dd>
-						<dt><?php esc_html_e( 'Типы форм', 'fforms' ); ?></dt>
+						<dt><?php esc_html_e( 'Allowed origins', 'fforms' ); ?></dt>
+						<dd><?php echo array() === $origins ? esc_html__( 'not set — cross-origin requests are blocked', 'fforms' ) : esc_html( implode( ', ', $origins ) ); ?> — <a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'change', 'fforms' ); ?></a></dd>
+						<dt><?php esc_html_e( 'Strict form types', 'fforms' ); ?></dt>
+						<dd><?php echo $strict_types ? esc_html__( 'on — only existing types are accepted', 'fforms' ) : esc_html__( 'off — a new type is created automatically', 'fforms' ); ?></dd>
+						<dt><?php esc_html_e( 'Attachments', 'fforms' ); ?></dt>
+						<dd><?php esc_html_e( 'not accepted — files return 400', 'fforms' ); ?></dd>
+						<dt><?php esc_html_e( 'Form types', 'fforms' ); ?></dt>
 						<dd>
 							<?php if ( array() === $types ) : ?>
-								<?php esc_html_e( 'пока нет — первый появится после первой заявки с formType', 'fforms' ); ?>
+								<?php esc_html_e( 'none yet — the first one appears after the first submission with formType', 'fforms' ); ?>
 							<?php else : ?>
 								<?php foreach ( $types as $term ) : ?>
 									<code><?php echo esc_html( $term->slug ); ?></code> — <?php echo esc_html( $term->name ); ?><br>
@@ -203,7 +203,7 @@ final class Dashboard {
 					<div class="fforms-example">
 						<div class="fforms-example-head">
 							<h3><?php echo esc_html( $example['title'] ); ?></h3>
-							<button type="button" class="button button-small fforms-copy" data-target="fforms-example-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Скопировать', 'fforms' ); ?></button>
+							<button type="button" class="button button-small fforms-copy" data-target="fforms-example-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Copy', 'fforms' ); ?></button>
 						</div>
 						<p class="description"><?php echo esc_html( $example['description'] ); ?></p>
 						<pre id="fforms-example-<?php echo esc_attr( (string) $index ); ?>"><code><?php echo esc_html( $example['code'] ); ?></code></pre>
@@ -211,31 +211,31 @@ final class Dashboard {
 					<?php endforeach; ?>
 				</details>
 				<details>
-					<summary><?php esc_html_e( 'Как быстро создать форму?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'Нажмите «Добавить форму», соберите поля блоками FForms прямо в редакторе Gutenberg и опубликуйте запись — форма сразу становится доступна на сайте и через REST API.', 'fforms' ); ?></p>
+					<summary><?php esc_html_e( 'How do I create a form?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post — the form becomes available on the site and through the REST API right away.', 'fforms' ); ?></p>
 				</details>
 				<details>
-					<summary><?php esc_html_e( 'Как настроить отправку писем?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'В разделе «Настройки» включите встроенный SMTP и укажите хост, порт и логин — либо оставьте выключенным, если почтой уже управляет другой SMTP-плагин. Уведомления и автоответы для конкретной формы настраиваются в самой форме.', 'fforms' ); ?></p>
+					<summary><?php esc_html_e( 'How do I set up email sending?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'In “Settings”, enable the built-in SMTP and fill in the host, port and username — or leave it off when another SMTP plugin already handles email. Notifications and auto-replies for a particular form are configured in the form itself.', 'fforms' ); ?></p>
 				</details>
 				<details>
-					<summary><?php esc_html_e( 'Как выгрузить заявки?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'В разделе «Экспорт CSV» выберите форму (или все сразу) и нажмите «Скачать CSV».', 'fforms' ); ?></p>
+					<summary><?php esc_html_e( 'How do I export submissions?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'In “CSV export”, pick a form (or all of them) and click “Download CSV”.', 'fforms' ); ?></p>
 				</details>
 				<details id="fforms-faq-headless">
-					<summary><?php esc_html_e( 'Как добавить headless-форму (форму из кода)?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'Зарегистрируйте форму на хуке fforms_register_forms — она станет доступна через REST API по своему ключу, без создания записи в Gutenberg.', 'fforms' ); ?></p>
+					<summary><?php esc_html_e( 'How do I add a headless form (a form defined in code)?', 'fforms' ); ?></summary>
+					<p><?php esc_html_e( 'Register the form on the fforms_register_forms hook — it becomes available through the REST API under its key, with no post created in Gutenberg.', 'fforms' ); ?></p>
 					<pre><code>add_action( 'fforms_register_forms', function () {
 	fforms_add_api_route( 'contact_astro', array(
-		'title'   =&gt; 'Контакт (Astro)',
+		'title'   =&gt; 'Contact (Astro)',
 		'fields'  =&gt; array(
 			array( 'name' =&gt; 'email', 'label' =&gt; 'Email', 'type' =&gt; 'email', 'required' =&gt; true ),
-			array( 'name' =&gt; 'message', 'label' =&gt; 'Сообщение', 'type' =&gt; 'textarea', 'required' =&gt; true ),
+			array( 'name' =&gt; 'message', 'label' =&gt; 'Message', 'type' =&gt; 'textarea', 'required' =&gt; true ),
 		),
 		'origins' =&gt; array( 'https://example.com' ),
 	) );
 } );</code></pre>
-					<p><?php esc_html_e( 'Отправка данных формы с внешнего сайта:', 'fforms' ); ?></p>
+					<p><?php esc_html_e( 'Submitting form data from an external site:', 'fforms' ); ?></p>
 					<pre><code>curl -X POST <?php echo esc_html( rest_url( 'fforms/v1/submit' ) ); ?> \
 	-H "Content-Type: application/json" \
 	-d '{
@@ -254,7 +254,7 @@ final class Dashboard {
 						}
 						navigator.clipboard.writeText( source.innerText ).then( function () {
 							var label = button.textContent;
-							button.textContent = <?php echo wp_json_encode( __( 'Скопировано', 'fforms' ) ); ?>;
+							button.textContent = <?php echo wp_json_encode( __( 'Copied', 'fforms' ) ); ?>;
 							window.setTimeout( function () { button.textContent = label; }, 1500 );
 						} );
 					} );

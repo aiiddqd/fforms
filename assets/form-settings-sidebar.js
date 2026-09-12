@@ -27,7 +27,7 @@
 		fields: [
 			{
 				name: 'name',
-				label: __( 'Имя', 'fforms' ),
+				label: __( 'Name', 'fforms' ),
 				type: 'text',
 				required: true,
 			},
@@ -39,7 +39,7 @@
 			},
 			{
 				name: 'message',
-				label: __( 'Сообщение', 'fforms' ),
+				label: __( 'Message', 'fforms' ),
 				type: 'textarea',
 				required: true,
 			},
@@ -135,7 +135,7 @@
 		const innerBlocks = fieldBlocksFromSchema( schema );
 		innerBlocks.push(
 			blocks.createBlock( 'fforms/submit', {
-				label: __( 'Отправить', 'fforms' ),
+				label: __( 'Send', 'fforms' ),
 			} )
 		);
 		return [ blocks.createBlock( 'fforms/form', {}, innerBlocks ) ];
@@ -260,11 +260,11 @@
 				PluginDocumentSettingPanel,
 				{
 					name: 'form-settings',
-					title: __( 'Настройки формы', 'fforms' ),
+					title: __( 'Form settings', 'fforms' ),
 					className: 'fforms-form-settings',
 				},
 				el( SelectControl, {
-					label: __( 'Режим формы', 'fforms' ),
+					label: __( 'Form mode', 'fforms' ),
 					value: meta[ META.mode ] || 'block',
 					options: [
 						{
@@ -281,7 +281,7 @@
 						},
 					],
 					help: __(
-						'При смене режима поля формы сохраняются и преобразуются в нужный формат.',
+						'Switching the mode keeps the form fields and converts them to the required format.',
 						'fforms'
 					),
 					onChange: updateMode,
@@ -299,7 +299,7 @@
 									target: '_blank',
 									rel: 'noopener noreferrer',
 								},
-								__( 'Открыть публичную форму', 'fforms' )
+								__( 'Open the public form', 'fforms' )
 							)
 					  )
 					: null,
@@ -309,17 +309,17 @@
 							'p',
 							{ className: 'components-base-control__help' },
 							__(
-								'Ссылка станет доступна после публикации формы.',
+								'The link becomes available once the form is published.',
 								'fforms'
 							)
 					  )
 					: null,
 				'headless' !== mode && isPublished && editor.id
 					? snippetField(
-							__( 'Шорткод', 'fforms' ),
+							__( 'Shortcode', 'fforms' ),
 							'[fform id=' + String( editor.id ) + ']',
 							__(
-								'Вставьте на любую страницу или в виджет этого сайта.',
+								'Insert it into any page or widget of this site.',
 								'fforms'
 							)
 					  )
@@ -329,7 +329,7 @@
 							__( 'Iframe', 'fforms' ),
 							iframeSnippet,
 							__(
-								'Вставка на сторонний сайт с фиксированной высотой.',
+								'Embed on an external site with a fixed height.',
 								'fforms'
 							)
 					  )
@@ -339,7 +339,7 @@
 							__( 'Js-script', 'fforms' ),
 							scriptSnippet,
 							__(
-								'Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту.',
+								'Embed on an external site: the script inserts the iframe and adjusts its height.',
 								'fforms'
 							)
 					  )
@@ -349,20 +349,20 @@
 							'p',
 							{ className: 'components-base-control__help' },
 							__(
-								'Вставка через iframe и js-script доступна в режиме «Share via URL».',
+								'iframe and js-script embedding is available in “Share via URL” mode.',
 								'fforms'
 							)
 					  )
 					: null,
 				el( SelectControl, {
-					label: __( 'Тип формы', 'fforms' ),
+					label: __( 'Form type', 'fforms' ),
 					value: meta[ META.type ] || 'contact',
 					options: [
 						{
-							label: __( 'Контактная', 'fforms' ),
+							label: __( 'Contact', 'fforms' ),
 							value: 'contact',
 						},
-						{ label: __( 'Лид', 'fforms' ), value: 'lead' },
+						{ label: __( 'Lead', 'fforms' ), value: 'lead' },
 					],
 					onChange( value ) {
 						updateMeta( META.type, value );
@@ -374,7 +374,7 @@
 							null,
 							el( ToggleControl, {
 								label: __(
-									'Отправлять уведомления о заявках',
+									'Send notifications about submissions',
 									'fforms'
 								),
 								checked: Boolean(
@@ -392,12 +392,12 @@
 										element.Fragment,
 										null,
 										el( TextControl, {
-											label: __( 'Получатели', 'fforms' ),
+											label: __( 'Recipients', 'fforms' ),
 											value:
 												meta[ META.notificationTo ] ||
 												'',
 											help: __(
-												'Email через запятую; если пусто — email администратора.',
+												'Comma-separated emails; the administrator email when empty.',
 												'fforms'
 											),
 											onChange( value ) {
@@ -409,7 +409,7 @@
 										} ),
 										el( TextControl, {
 											label: __(
-												'Тема уведомления',
+												'Notification subject',
 												'fforms'
 											),
 											value:
@@ -428,9 +428,9 @@
 					  )
 					: null,
 				el( TextControl, {
-					label: __( 'Сообщение об успехе', 'fforms' ),
+					label: __( 'Success message', 'fforms' ),
 					value: meta[ META.successMessage ] || '',
-					placeholder: __( 'Спасибо! Форма отправлена.', 'fforms' ),
+					placeholder: __( 'Thank you! The form has been sent.', 'fforms' ),
 					onChange( value ) {
 						updateMeta( META.successMessage, value );
 					},
@@ -441,11 +441,11 @@
 						PluginDocumentSettingPanel,
 						{
 							name: 'autoreply',
-							title: __( 'Автоответ', 'fforms' ),
+							title: __( 'Auto-reply', 'fforms' ),
 						},
 						el( ToggleControl, {
 							label: __(
-								'Отправлять автоответ пользователю',
+								'Send an auto-reply to the user',
 								'fforms'
 							),
 							checked: Boolean( meta[ META.autoreplyEnabled ] ),
@@ -458,7 +458,7 @@
 									element.Fragment,
 									null,
 									el( TextControl, {
-										label: __( 'Имя email-поля', 'fforms' ),
+										label: __( 'Email field name', 'fforms' ),
 										value:
 											meta[ META.autoreplyEmailField ] ||
 											'email',
@@ -471,7 +471,7 @@
 									} ),
 									el( TextControl, {
 										label: __(
-											'Тема автоответа',
+											'Auto-reply subject',
 											'fforms'
 										),
 										value:
@@ -485,7 +485,7 @@
 									} ),
 									el( TextareaControl, {
 										label: __(
-											'Текст автоответа',
+											'Auto-reply body',
 											'fforms'
 										),
 										value:

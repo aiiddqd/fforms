@@ -31,23 +31,23 @@ final class Code_Forms {
 	public static function register( string $key, array $args ): true|WP_Error {
 		$key = sanitize_key( $key );
 		if ( '' === $key || ! preg_match( self::KEY_PATTERN, $key ) ) {
-			return new WP_Error( 'fforms_invalid_key', __( 'Некорректный ключ формы.', 'fforms' ) );
+			return new WP_Error( 'fforms_invalid_key', __( 'Invalid form key.', 'fforms' ) );
 		}
 		if ( Main_Form::KEY === $key ) {
-			return new WP_Error( 'fforms_reserved_key', __( 'Ключ «main» зарезервирован за встроенной главной формой.', 'fforms' ) );
+			return new WP_Error( 'fforms_reserved_key', __( 'The “main” key is reserved for the built-in main form.', 'fforms' ) );
 		}
 		if ( isset( self::$forms[ $key ] ) ) {
-			return new WP_Error( 'fforms_key_exists', __( 'Форма с таким ключом уже зарегистрирована.', 'fforms' ) );
+			return new WP_Error( 'fforms_key_exists', __( 'A form with this key is already registered.', 'fforms' ) );
 		}
 
 		$title = sanitize_text_field( (string) ( $args['title'] ?? '' ) );
 		if ( '' === $title ) {
-			return new WP_Error( 'fforms_title_required', __( 'Укажите название формы.', 'fforms' ) );
+			return new WP_Error( 'fforms_title_required', __( 'Provide a form title.', 'fforms' ) );
 		}
 
 		$raw_fields = $args['fields'] ?? array();
 		if ( ! is_array( $raw_fields ) || array() === $raw_fields || ! self::has_valid_field( $raw_fields ) ) {
-			return new WP_Error( 'fforms_invalid_schema', __( 'Укажите хотя бы одно валидное поле формы.', 'fforms' ) );
+			return new WP_Error( 'fforms_invalid_schema', __( 'Provide at least one valid form field.', 'fforms' ) );
 		}
 
 		$notifications = is_array( $args['notifications'] ?? null ) ? $args['notifications'] : array();
@@ -55,7 +55,7 @@ final class Code_Forms {
 
 		$type = \FForms\Form_Types::normalize( $args['type'] ?? '' );
 		if ( is_wp_error( $type ) ) {
-			return new WP_Error( 'fforms_invalid_form_type', __( 'Некорректный тип формы.', 'fforms' ) );
+			return new WP_Error( 'fforms_invalid_form_type', __( 'Invalid form type.', 'fforms' ) );
 		}
 
 		self::$forms[ $key ] = new Form_Ref(
@@ -63,7 +63,7 @@ final class Code_Forms {
 			key: $key,
 			title: $title,
 			schema: Schema::normalize( array( 'fields' => $raw_fields ) ),
-			success_message: sanitize_text_field( (string) ( $args['success_message'] ?? '' ) ) ?: __( 'Спасибо! Форма отправлена.', 'fforms' ),
+			success_message: sanitize_text_field( (string) ( $args['success_message'] ?? '' ) ) ?: __( 'Thank you! The form has been sent.', 'fforms' ),
 			origins: self::sanitize_origins( $args['origins'] ?? array() ),
 			notifications: array(
 				'enabled'               => ! empty( $notifications['enabled'] ),

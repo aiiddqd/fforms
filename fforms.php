@@ -1,11 +1,12 @@
 <?php
 /**
  * Plugin Name: FForms
- * Description: Лёгкий, headless-friendly плагин для приёма, хранения и обработки данных из форм в WordPress.
+ * Description: Lightweight, headless-friendly plugin that receives, stores and processes form data in WordPress.
  * Requires at least: 6.5
  * Requires PHP: 8.0
  * Author: Delta Development
  * Text Domain: fforms
+ * Domain Path: /languages
  * Version: 0.1.260826
  */
 

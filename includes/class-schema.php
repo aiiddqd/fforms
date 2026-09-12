@@ -24,9 +24,9 @@ final class Schema {
 	public static function defaults(): array {
 		return array(
 			'fields' => array(
-				array( 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'type' => 'text', 'required' => true ),
+				array( 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'type' => 'text', 'required' => true ),
 				array( 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'type' => 'email', 'required' => true ),
-				array( 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'type' => 'textarea', 'required' => true ),
+				array( 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'type' => 'textarea', 'required' => true ),
 			),
 		);
 	}
@@ -124,7 +124,7 @@ final class Schema {
 			$value = $input[ $name ] ?? null;
 			if ( self::is_empty( $value ) ) {
 				if ( $field['required'] ) {
-					$errors[ $name ] = sprintf( __( 'Поле «%s» обязательно.', 'fforms' ), $field['label'] );
+					$errors[ $name ] = sprintf( __( 'The “%s” field is required.', 'fforms' ), $field['label'] );
 				}
 				$data[ $name ] = 'checkbox' === $field['type'] && ! empty( $field['options'] ) ? array() : '';
 				continue;
@@ -139,7 +139,7 @@ final class Schema {
 		}
 
 		if ( array() !== $errors ) {
-			return new WP_Error( 'fforms_validation_failed', __( 'Проверьте заполненные поля.', 'fforms' ), array( 'status' => 422, 'fields' => $errors ) );
+			return new WP_Error( 'fforms_validation_failed', __( 'Check the submitted fields.', 'fforms' ), array( 'status' => 422, 'fields' => $errors ) );
 		}
 		return $data;
 	}
@@ -154,24 +154,24 @@ final class Schema {
 			return array_values( array_intersect( array_map( 'sanitize_text_field', $values ), $allowed ) );
 		}
 		if ( is_array( $value ) || is_object( $value ) ) {
-			return new WP_Error( 'fforms_invalid_value', __( 'Некорректное значение поля.', 'fforms' ) );
+			return new WP_Error( 'fforms_invalid_value', __( 'Invalid field value.', 'fforms' ) );
 		}
 
 		$value = self::truncate( (string) $value, $max_length );
 		switch ( $type ) {
 			case 'email':
 				$value = sanitize_email( $value );
-				return is_email( $value ) ? $value : new WP_Error( 'fforms_invalid_email', __( 'Укажите корректный email.', 'fforms' ) );
+				return is_email( $value ) ? $value : new WP_Error( 'fforms_invalid_email', __( 'Enter a valid email address.', 'fforms' ) );
 			case 'url':
 				$value = esc_url_raw( $value, array( 'http', 'https' ) );
-				return '' !== $value ? $value : new WP_Error( 'fforms_invalid_url', __( 'Укажите корректный URL.', 'fforms' ) );
+				return '' !== $value ? $value : new WP_Error( 'fforms_invalid_url', __( 'Enter a valid URL.', 'fforms' ) );
 			case 'number':
-				return is_numeric( $value ) ? $value : new WP_Error( 'fforms_invalid_number', __( 'Укажите число.', 'fforms' ) );
+				return is_numeric( $value ) ? $value : new WP_Error( 'fforms_invalid_number', __( 'Enter a number.', 'fforms' ) );
 			case 'select':
 			case 'radio':
 				$allowed = wp_list_pluck( $field['options'] ?? array(), 'value' );
 				$value   = sanitize_text_field( $value );
-				return in_array( $value, $allowed, true ) ? $value : new WP_Error( 'fforms_invalid_option', __( 'Выберите допустимый вариант.', 'fforms' ) );
+				return in_array( $value, $allowed, true ) ? $value : new WP_Error( 'fforms_invalid_option', __( 'Choose one of the allowed options.', 'fforms' ) );
 			case 'checkbox':
 				return in_array( strtolower( $value ), array( '1', 'true', 'yes', 'on' ), true );
 			case 'textarea':

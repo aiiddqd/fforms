@@ -24,9 +24,9 @@ final class Main_Form {
 			self::$ref = new Form_Ref(
 				post_id: 0,
 				key: self::KEY,
-				title: __( 'Главная форма (API)', 'fforms' ),
+				title: __( 'Main form (API)', 'fforms' ),
 				schema: Schema::normalize( array( 'fields' => self::fields() ) ),
-				success_message: __( 'Спасибо! Заявка отправлена.', 'fforms' ),
+				success_message: __( 'Thank you! Your submission has been sent.', 'fforms' ),
 				origins: self::origins(),
 				notifications: self::notifications(),
 				source: 'builtin',
@@ -45,10 +45,10 @@ final class Main_Form {
 	 */
 	private static function fields(): array {
 		return array(
-			array( 'name' => 'name', 'label' => __( 'Имя', 'fforms' ), 'type' => 'text', 'required' => false ),
+			array( 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'type' => 'text', 'required' => false ),
 			array( 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'type' => 'email', 'required' => false ),
-			array( 'name' => 'phone', 'label' => __( 'Телефон', 'fforms' ), 'type' => 'tel', 'required' => false ),
-			array( 'name' => 'message', 'label' => __( 'Сообщение', 'fforms' ), 'type' => 'textarea', 'required' => false ),
+			array( 'name' => 'phone', 'label' => __( 'Phone', 'fforms' ), 'type' => 'tel', 'required' => false ),
+			array( 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'type' => 'textarea', 'required' => false ),
 		);
 	}
 

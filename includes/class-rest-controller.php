@@ -113,7 +113,7 @@ final class REST_Controller {
 
 		$fields = $request['fields'];
 		if ( ! is_array( $fields ) ) {
-			return new WP_Error( 'fforms_invalid_fields', __( 'Поле fields должно быть объектом.', 'fforms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'fforms_invalid_fields', __( 'The fields parameter must be an object.', 'fforms' ), array( 'status' => 400 ) );
 		}
 
 		return self::process( $form, $fields, $request );
@@ -187,7 +187,7 @@ final class REST_Controller {
 			if ( array() === $filled ) {
 				return new WP_Error(
 					'fforms_empty_submission',
-					__( 'Заполните хотя бы одно из полей: email, телефон или сообщение.', 'fforms' ),
+					__( 'Fill in at least one of these fields: email, phone or message.', 'fforms' ),
 					array( 'status' => 422 )
 				);
 			}
@@ -232,7 +232,7 @@ final class REST_Controller {
 			true
 		);
 		if ( is_wp_error( $entry_id ) ) {
-			return new WP_Error( 'fforms_entry_failed', __( 'Не удалось сохранить ответ.', 'fforms' ), array( 'status' => 500 ) );
+			return new WP_Error( 'fforms_entry_failed', __( 'Could not save the submission.', 'fforms' ), array( 'status' => 500 ) );
 		}
 		$entry_id = (int) $entry_id;
 
@@ -335,7 +335,7 @@ final class REST_Controller {
 	public static function update_status( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$entry = get_post( absint( $request['id'] ) );
 		if ( ! $entry || Post_Types::ENTRY !== $entry->post_type ) {
-			return new WP_Error( 'fforms_entry_not_found', __( 'Ответ не найден.', 'fforms' ), array( 'status' => 404 ) );
+			return new WP_Error( 'fforms_entry_not_found', __( 'Submission not found.', 'fforms' ), array( 'status' => 404 ) );
 		}
 		$status = sanitize_key( (string) $request['status'] );
 		update_post_meta( $entry->ID, '_fforms_status', $status );
@@ -348,7 +348,7 @@ final class REST_Controller {
 
 	private static function reject_oversized_body( WP_REST_Request $request ): true|WP_Error {
 		if ( strlen( $request->get_body() ) > (int) apply_filters( 'fforms_max_request_bytes', 262144 ) ) {
-			return new WP_Error( 'fforms_payload_too_large', __( 'Запрос слишком большой.', 'fforms' ), array( 'status' => 413 ) );
+			return new WP_Error( 'fforms_payload_too_large', __( 'The request is too large.', 'fforms' ), array( 'status' => 413 ) );
 		}
 		return true;
 	}
@@ -361,10 +361,10 @@ final class REST_Controller {
 	 */
 	private static function reject_attachments( WP_REST_Request $request, array $params ): true|WP_Error {
 		if ( array() !== $request->get_file_params() ) {
-			return new WP_Error( 'fforms_attachments_disabled', __( 'Приём вложений отключён.', 'fforms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'fforms_attachments_disabled', __( 'Attachments are disabled.', 'fforms' ), array( 'status' => 400 ) );
 		}
 		if ( array_key_exists( 'attachments', $params ) && array() !== (array) $params['attachments'] ) {
-			return new WP_Error( 'fforms_attachments_require_multipart', __( 'Вложения передаются только через multipart/form-data.', 'fforms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'fforms_attachments_require_multipart', __( 'Attachments are only accepted as multipart/form-data.', 'fforms' ), array( 'status' => 400 ) );
 		}
 		return true;
 	}
@@ -388,7 +388,7 @@ final class REST_Controller {
 		}
 		$values = array_values( array_unique( $values ) );
 		if ( count( $values ) > 1 ) {
-			return new WP_Error( 'fforms_form_ref_conflict', __( 'Передано несколько разных значений formType/formId.', 'fforms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'fforms_form_ref_conflict', __( 'Several different formType/formId values were provided.', 'fforms' ), array( 'status' => 400 ) );
 		}
 		return $values[0] ?? '';
 	}
@@ -495,7 +495,7 @@ final class REST_Controller {
 		if ( ! is_string( $encoded ) || strlen( $encoded ) > self::MAX_META_BYTES || self::array_depth( $meta ) > self::MAX_META_DEPTH ) {
 			return new WP_Error(
 				'fforms_meta_too_large',
-				__( 'Поле meta слишком большое или слишком глубоко вложено.', 'fforms' ),
+				__( 'The meta field is too large or nested too deeply.', 'fforms' ),
 				array( 'status' => 422 )
 			);
 		}
@@ -521,7 +521,7 @@ final class REST_Controller {
 		$form_id  = absint( $request['form_id'] ?? 0 );
 		$form_key = sanitize_key( (string) ( $request['form_key'] ?? '' ) );
 		if ( ! $form_id && '' === $form_key ) {
-			return new WP_Error( 'fforms_form_ref_required', __( 'Укажите form_id или form_key.', 'fforms' ), array( 'status' => 400 ) );
+			return new WP_Error( 'fforms_form_ref_required', __( 'Provide form_id or form_key.', 'fforms' ), array( 'status' => 400 ) );
 		}
 		return Form_Locator::resolve( $form_id ?: $form_key );
 	}
@@ -567,7 +567,7 @@ final class REST_Controller {
 		$key      = 'fforms_rate_' . md5( $rate_ref . '|' . $ip . '|' . wp_salt( 'nonce' ) );
 		$count    = (int) get_transient( $key );
 		if ( $count >= $limit ) {
-			return new WP_Error( 'fforms_rate_limited', __( 'Слишком много отправок. Попробуйте позже.', 'fforms' ), array( 'status' => 429 ) );
+			return new WP_Error( 'fforms_rate_limited', __( 'Too many submissions. Try again later.', 'fforms' ), array( 'status' => 429 ) );
 		}
 		set_transient( $key, $count + 1, $window );
 		return true;

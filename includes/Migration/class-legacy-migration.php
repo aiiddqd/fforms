@@ -23,7 +23,7 @@ final class Legacy_Migration {
 	public static function migrate(): void {
 		$form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
 		if ( ! $form_id || ! current_user_can( 'edit_post', $form_id ) ) {
-			wp_die( esc_html__( 'Недостаточно прав.', 'fforms' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Insufficient permissions.', 'fforms' ), '', array( 'response' => 403 ) );
 		}
 		check_admin_referer( 'fforms_migrate_form_' . $form_id );
 		if ( ! self::can_migrate( $form_id ) ) {
@@ -41,7 +41,7 @@ final class Legacy_Migration {
 			);
 			$blocks[] = array( 'blockName' => 'fforms/field-' . $field['type'], 'attrs' => $attributes, 'innerBlocks' => array(), 'innerHTML' => '', 'innerContent' => array() );
 		}
-		$blocks[] = array( 'blockName' => 'fforms/submit', 'attrs' => array( 'label' => __( 'Отправить', 'fforms' ) ), 'innerBlocks' => array(), 'innerHTML' => '', 'innerContent' => array() );
+		$blocks[] = array( 'blockName' => 'fforms/submit', 'attrs' => array( 'label' => __( 'Send', 'fforms' ) ), 'innerBlocks' => array(), 'innerHTML' => '', 'innerContent' => array() );
 		$content  = serialize_blocks( array( array( 'blockName' => 'fforms/form', 'attrs' => array(), 'innerBlocks' => $blocks, 'innerHTML' => '', 'innerContent' => array_fill( 0, count( $blocks ), null ) ) ) );
 		wp_update_post( array( 'ID' => $form_id, 'post_content' => $content ) );
 		Schema_Repository::invalidate( $form_id );

@@ -17,7 +17,7 @@
 			{
 				fieldId: 'name',
 				name: 'name',
-				label: __( 'Имя', 'fforms' ),
+				label: __( 'Name', 'fforms' ),
 				required: true,
 			},
 		],
@@ -35,11 +35,11 @@
 			{
 				fieldId: 'message',
 				name: 'message',
-				label: __( 'Сообщение', 'fforms' ),
+				label: __( 'Message', 'fforms' ),
 				required: true,
 			},
 		],
-		[ 'fforms/submit', { label: __( 'Отправить', 'fforms' ) } ],
+		[ 'fforms/submit', { label: __( 'Send', 'fforms' ) } ],
 	];
 	const FIELDS = [
 		'text',
@@ -99,7 +99,7 @@
 			}, [] );
 			const options = [
 				{
-					label: __( 'Выберите опубликованную форму', 'fforms' ),
+					label: __( 'Select a published form', 'fforms' ),
 					value: 0,
 				},
 			].concat(
@@ -117,7 +117,7 @@
 					Placeholder,
 					{ icon: 'feedback', label: __( 'FForms Form', 'fforms' ) },
 					el( SelectControl, {
-						label: __( 'Форма', 'fforms' ),
+						label: __( 'Form', 'fforms' ),
 						value: props.attributes.ref || props.attributes.formId,
 						options,
 						onChange( value ) {
@@ -147,7 +147,7 @@
 					'p',
 					null,
 					__(
-						'Поля ниже определяют схему формы для REST API. Этот блок не выводится на сайте.',
+						'The fields below define the form schema for the REST API. This block is not rendered on the site.',
 						'fforms'
 					)
 				),
@@ -184,9 +184,9 @@
 					null,
 					el(
 						PanelBody,
-						{ title: __( 'Настройки поля', 'fforms' ) },
+						{ title: __( 'Field settings', 'fforms' ) },
 						el( TextControl, {
-							label: __( 'Имя', 'fforms' ),
+							label: __( 'Name', 'fforms' ),
 							value: a.name,
 							onChange( name ) {
 								props.setAttributes( {
@@ -196,7 +196,7 @@
 							},
 						} ),
 						el( TextControl, {
-							label: __( 'Подпись', 'fforms' ),
+							label: __( 'Label', 'fforms' ),
 							value: a.label,
 							onChange( label ) {
 								props.setAttributes( { label } );
@@ -212,7 +212,7 @@
 							},
 						} ),
 						el( ToggleControl, {
-							label: __( 'Обязательное поле', 'fforms' ),
+							label: __( 'Required field', 'fforms' ),
 							checked: a.required,
 							onChange( required ) {
 								props.setAttributes( { required } );
@@ -244,7 +244,7 @@
 									null,
 									a.label ||
 										a.name ||
-										__( 'Новое поле', 'fforms' )
+										__( 'New field', 'fforms' )
 							  )
 							: null,
 						input
@@ -270,9 +270,9 @@
 					null,
 					el(
 						PanelBody,
-						{ title: __( 'Кнопка отправки', 'fforms' ) },
+						{ title: __( 'Submit button', 'fforms' ) },
 						el( TextControl, {
-							label: __( 'Текст', 'fforms' ),
+							label: __( 'Text', 'fforms' ),
 							value: props.attributes.label,
 							onChange( label ) {
 								props.setAttributes( { label } );
@@ -286,7 +286,7 @@
 					el(
 						'button',
 						{ type: 'button', disabled: true },
-						props.attributes.label || __( 'Отправить', 'fforms' )
+						props.attributes.label || __( 'Send', 'fforms' )
 					)
 				)
 			);

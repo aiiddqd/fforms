@@ -49,7 +49,7 @@ final class Shortcode {
 
 		return Form_Renderer::render_form(
 			$form_id,
-			__( 'Форма не найдена: проверьте id в шорткоде [fform].', 'fforms' )
+			__( 'Form not found: check the id in the [fform] shortcode.', 'fforms' )
 		);
 	}
 }

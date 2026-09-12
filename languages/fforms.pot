@@ -1,0 +1,1156 @@
+# Copyright (C) FForms
+# This file is distributed under the same license as the FForms plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: FForms\n"
+"Report-Msgid-Bugs-To: https://github.com/aiiddqd/fforms\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: tools/i18n.py\n"
+"X-Domain: fforms\n"
+
+#: includes/class-dashboard.php:144
+msgid "%d form"
+msgid_plural "%d forms"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: includes/class-dashboard.php:163
+msgid "%d form in code"
+msgid_plural "%d forms in code"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: includes/class-dashboard.php:170
+msgid "%d submission"
+msgid_plural "%d submissions"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: includes/Registry/class-code-forms.php:40
+msgid "A form with this key is already registered."
+msgstr ""
+
+#: includes/class-settings.php:118
+msgid "Accept only existing types"
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:43
+msgid "Add at least one form field."
+msgstr ""
+
+#: includes/class-dashboard.php:136 includes/class-post-types.php:40
+msgid "Add form"
+msgstr ""
+
+#: includes/class-form-types.php:48
+msgid "Add form type"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:269
+msgid "Add option"
+msgstr ""
+
+#: build/blocks/submit/block.json:1 src/blocks/submit/block.json:1
+msgid "Add the button that submits this FForms form."
+msgstr ""
+
+#: includes/class-post-types.php:186
+msgid "Additional data"
+msgstr ""
+
+#: includes/class-form-types.php:50 includes/class-form-types.php:278
+msgid "All form types"
+msgstr ""
+
+#: includes/class-export.php:29
+msgid "All forms"
+msgstr ""
+
+#: includes/class-dashboard.php:145
+msgid "All forms →"
+msgstr ""
+
+#: includes/class-dashboard.php:171
+msgid "All submissions →"
+msgstr ""
+
+#: includes/class-export.php:31
+msgid "All types"
+msgstr ""
+
+#: includes/class-dashboard.php:184
+msgid "Allowed origins"
+msgstr ""
+
+#: includes/class-settings.php:116
+msgid "Allowed origins of the main form"
+msgstr ""
+
+#: includes/class-dashboard.php:188
+msgid "Attachments"
+msgstr ""
+
+#: includes/class-rest-controller.php:364
+msgid "Attachments are disabled."
+msgstr ""
+
+#: includes/class-rest-controller.php:367
+msgid "Attachments are only accepted as multipart/form-data."
+msgstr ""
+
+#: includes/class-settings.php:123
+msgid "Authentication"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:444
+msgid "Auto-reply"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:487
+msgid "Auto-reply body"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:473
+msgid "Auto-reply subject"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:271
+msgid "Block editor"
+msgstr ""
+
+#: build/blocks/form/block.json:1 src/blocks/form/block.json:1
+msgid "Build a reusable FForms form or insert a published form."
+msgstr ""
+
+#: build/blocks/submit/index.js:1 src/blocks/submit/index.js:17
+msgid "Button text"
+msgstr ""
+
+#: build/blocks/form/index.js:1 src/blocks/form/edit.js:113
+msgid "Button text (legacy)"
+msgstr ""
+
+#: includes/class-export.php:17
+msgid "CSV export"
+msgstr ""
+
+#: includes/class-schema.php:142
+msgid "Check the submitted fields."
+msgstr ""
+
+#: build/blocks/field-checkbox/block.json:1 src/blocks/field-checkbox/block.json:1
+msgid "Checkbox field"
+msgstr ""
+
+#: includes/class-schema.php:174
+msgid "Choose one of the allowed options."
+msgstr ""
+
+#: includes/Blocks/class-form-renderer.php:47
+msgid "Circular form reference detected."
+msgstr ""
+
+#: includes/class-dashboard.php:215
+msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post — the form becomes available on the site and through the REST API right away."
+msgstr ""
+
+#: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
+msgid "Collect a longer multi-line response."
+msgstr ""
+
+#: build/blocks/field-number/block.json:1 src/blocks/field-number/block.json:1
+msgid "Collect a numeric value."
+msgstr ""
+
+#: build/blocks/field-text/block.json:1 src/blocks/field-text/block.json:1
+msgid "Collect a short line of text."
+msgstr ""
+
+#: build/blocks/field-tel/block.json:1 src/blocks/field-tel/block.json:1
+msgid "Collect a telephone number."
+msgstr ""
+
+#: build/blocks/field-url/block.json:1 src/blocks/field-url/block.json:1
+msgid "Collect and validate a web address."
+msgstr ""
+
+#: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
+msgid "Collect and validate an email address."
+msgstr ""
+
+#: build/blocks/field-checkbox/block.json:1 src/blocks/field-checkbox/block.json:1
+msgid "Collect one or more confirmed options."
+msgstr ""
+
+#: includes/class-settings.php:116
+msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:399
+msgid "Comma-separated emails; the administrator email when empty."
+msgstr ""
+
+#: includes/class-settings.php:117
+msgid "Comma-separated recipients. Empty — the email goes to the administrator address."
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:79
+msgid "Confirmation"
+msgstr ""
+
+#: includes/class-dashboard.php:75
+msgid "Consultation request"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:362
+msgid "Contact"
+msgstr ""
+
+#: includes/class-dashboard.php:70 includes/class-default-forms.php:16
+msgid "Contact form"
+msgstr ""
+
+#: includes/class-dashboard.php:257
+msgid "Copied"
+msgstr ""
+
+#: includes/class-dashboard.php:206
+msgid "Copy"
+msgstr ""
+
+#: includes/class-export.php:78
+msgid "Could not build the CSV file."
+msgstr ""
+
+#: includes/class-rest-controller.php:235
+msgid "Could not save the submission."
+msgstr ""
+
+#: includes/class-post-types.php:344
+msgid "Data"
+msgstr ""
+
+#: includes/class-post-types.php:345
+msgid "Date"
+msgstr ""
+
+#: build/blocks/headless-schema/block.json:1 src/blocks/headless-schema/block.json:1
+msgid "Define the fields exposed by an FForms Headless API form."
+msgstr ""
+
+#: includes/class-settings.php:126
+msgid "Delete the saved password"
+msgstr ""
+
+#: includes/class-dashboard.php:153
+msgid "Disabled"
+msgstr ""
+
+#: includes/class-export.php:32
+msgid "Download CSV"
+msgstr ""
+
+#: includes/class-post-types.php:41
+msgid "Edit form"
+msgstr ""
+
+#: includes/class-form-types.php:47
+msgid "Edit form type"
+msgstr ""
+
+#: assets/fallback-editor.js:29 assets/form-settings-sidebar.js:36 build/blocks/form/index.js:1 includes/Registry/class-main-form.php:49 includes/class-default-forms.php:20 includes/class-default-forms.php:33 includes/class-post-types.php:55 includes/class-post-types.php:178 includes/class-schema.php:28 src/blocks/form/edit.js:32
+msgid "Email"
+msgstr ""
+
+#: includes/class-dashboard.php:80
+msgid "Email and company website"
+msgstr ""
+
+#: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
+msgid "Email field"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:461
+msgid "Email field name"
+msgstr ""
+
+#: includes/class-dashboard.php:154
+msgid "Email is sent through the default wp_mail()"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:331
+msgid "Embed on an external site with a fixed height."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:341
+msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
+msgstr ""
+
+#: includes/class-settings.php:115
+msgid "Enable notification and auto-reply settings for forms"
+msgstr ""
+
+#: includes/class-settings.php:112
+msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
+msgstr ""
+
+#: includes/class-dashboard.php:150
+msgid "Enabled"
+msgstr ""
+
+#: includes/class-settings.php:122
+msgid "Encryption"
+msgstr ""
+
+#: includes/class-dashboard.php:182
+msgid "Endpoint"
+msgstr ""
+
+#: includes/class-schema.php:169
+msgid "Enter a number."
+msgstr ""
+
+#: includes/class-schema.php:167
+msgid "Enter a valid URL."
+msgstr ""
+
+#: includes/class-schema.php:164
+msgid "Enter a valid email address."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:141
+msgid "Every field must have a valid, unique name."
+msgstr ""
+
+#: includes/class-export.php:17 includes/class-export.php:26
+msgid "Export submissions"
+msgstr ""
+
+#: includes/class-dashboard.php:176
+msgid "FAQ"
+msgstr ""
+
+#: build/blocks/form/index.js:1 includes/class-block.php:34 includes/class-dashboard.php:21 includes/class-dashboard.php:22 includes/class-dashboard.php:133 includes/class-post-types.php:42 src/blocks/form/edit.js:122
+msgid "FForms"
+msgstr ""
+
+#: assets/fallback-editor.js:58 assets/fallback-editor.js:118 build/blocks/form/block.json:1 src/blocks/form/block.json:1
+msgid "FForms Form"
+msgstr ""
+
+#: includes/class-settings.php:22 includes/class-settings.php:111
+msgid "FForms settings"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:18
+msgid "Field"
+msgstr ""
+
+#: assets/fallback-editor.js:187 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:162
+msgid "Field settings"
+msgstr ""
+
+#: includes/class-rest-controller.php:190
+msgid "Fill in at least one of these fields: email, phone or message."
+msgstr ""
+
+#: includes/class-form-types.php:276
+msgid "Filter by form type"
+msgstr ""
+
+#: assets/fallback-editor.js:120 build/blocks/form/index.js:1 includes/class-export.php:28 includes/class-form-types.php:249 includes/class-post-types.php:39 includes/class-post-types.php:337 src/blocks/form/edit.js:89
+msgid "Form"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:267
+msgid "Form mode"
+msgstr ""
+
+#: includes/Schema/class-schema-repository.php:19 includes/class-form-locator.php:34 includes/class-form-locator.php:40
+msgid "Form not found."
+msgstr ""
+
+#: includes/class-shortcode.php:52
+msgid "Form not found: check the id in the [fform] shortcode."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:263 build/blocks/form/index.js:1 src/blocks/form/edit.js:103
+msgid "Form settings"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:358 includes/class-export.php:30 includes/class-form-types.php:45 includes/class-post-types.php:288 includes/class-post-types.php:341
+msgid "Form type"
+msgstr ""
+
+#: includes/class-notifications.php:59
+msgid "Form type: %s"
+msgstr ""
+
+#: includes/class-dashboard.php:190 includes/class-form-types.php:44 includes/class-form-types.php:46 includes/class-form-types.php:81 includes/class-form-types.php:82 includes/class-settings.php:118
+msgid "Form types"
+msgstr ""
+
+#: includes/class-notifications.php:33
+msgid "Form: %s"
+msgstr ""
+
+#: includes/class-dashboard.php:143 includes/class-post-types.php:38 includes/class-post-types.php:43
+msgid "Forms"
+msgstr ""
+
+#: includes/class-settings.php:127
+msgid "From email"
+msgstr ""
+
+#: includes/class-settings.php:128
+msgid "From name"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:279
+msgid "Headless API"
+msgstr ""
+
+#: assets/fallback-editor.js:139 build/blocks/headless-schema/block.json:1 src/blocks/headless-schema/block.json:1
+msgid "Headless API fields"
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:64
+msgid "Headless API form may contain only FForms field blocks."
+msgstr ""
+
+#: includes/class-dashboard.php:159
+msgid "Headless mode"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/block.json:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field-hidden/block.json:1 src/blocks/field.js:89
+msgid "Hidden field"
+msgstr ""
+
+#: includes/class-dashboard.php:151
+msgid "Host is not set"
+msgstr ""
+
+#: includes/class-dashboard.php:226
+msgid "How do I add a headless form (a form defined in code)?"
+msgstr ""
+
+#: includes/class-dashboard.php:214
+msgid "How do I create a form?"
+msgstr ""
+
+#: includes/class-dashboard.php:222
+msgid "How do I export submissions?"
+msgstr ""
+
+#: includes/class-dashboard.php:218
+msgid "How do I set up email sending?"
+msgstr ""
+
+#: includes/class-dashboard.php:179
+msgid "How do I start receiving messages through the REST API?"
+msgstr ""
+
+#: includes/class-dashboard.php:165
+msgid "How to connect →"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:329
+msgid "Iframe"
+msgstr ""
+
+#: includes/class-dashboard.php:223
+msgid "In “CSV export”, pick a form (or all of them) and click “Download CSV”."
+msgstr ""
+
+#: includes/class-dashboard.php:219
+msgid "In “Settings”, enable the built-in SMTP and fill in the host, port and username — or leave it off when another SMTP plugin already handles email. Notifications and auto-replies for a particular form are configured in the form itself."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:321
+msgid "Insert it into any page or widget of this site."
+msgstr ""
+
+#: includes/Migration/class-legacy-migration.php:26 includes/class-export.php:44
+msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/class-schema.php:157
+msgid "Invalid field value."
+msgstr ""
+
+#: includes/Registry/class-code-forms.php:34
+msgid "Invalid form key."
+msgstr ""
+
+#: includes/Registry/class-code-forms.php:58
+msgid "Invalid form type."
+msgstr ""
+
+#: includes/class-form-types.php:105
+msgid "Invalid form type: Latin letters, digits, hyphen and underscore only, up to 32 characters."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:339
+msgid "Js-script"
+msgstr ""
+
+#: assets/fallback-editor.js:199 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:180 src/blocks/field.js:231
+msgid "Label"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:164
+msgid "Latin letters, digits, hyphens and underscores."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:365
+msgid "Lead"
+msgstr ""
+
+#: includes/class-default-forms.php:28
+msgid "Lead form"
+msgstr ""
+
+#: build/blocks/field-select/block.json:1 src/blocks/field-select/block.json:1
+msgid "Let visitors choose one option from a menu."
+msgstr ""
+
+#: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1
+msgid "Let visitors choose one visible option."
+msgstr ""
+
+#: includes/class-dashboard.php:134
+msgid "Lightweight, headless-friendly form handling: collect data from Gutenberg blocks or from external sites through the REST API."
+msgstr ""
+
+#: includes/Registry/class-main-form.php:27
+msgid "Main form (API)"
+msgstr ""
+
+#: includes/class-settings.php:117
+msgid "Main form notifications"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:196
+msgid "Maximum length"
+msgstr ""
+
+#: assets/fallback-editor.js:38 assets/form-settings-sidebar.js:42 build/blocks/form/index.js:1 includes/Registry/class-main-form.php:51 includes/class-default-forms.php:21 includes/class-post-types.php:56 includes/class-post-types.php:179 includes/class-schema.php:29 src/blocks/form/edit.js:41
+msgid "Message"
+msgstr ""
+
+#: includes/class-post-types.php:318
+msgid "Meta"
+msgstr ""
+
+#: includes/class-notifications.php:71
+msgid "Meta: %s"
+msgstr ""
+
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:189 assets/form-settings-sidebar.js:30 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Registry/class-main-form.php:48 includes/class-default-forms.php:19 includes/class-default-forms.php:31 includes/class-post-types.php:54 includes/class-post-types.php:177 includes/class-schema.php:27 src/blocks/field.js:168 src/blocks/form/edit.js:23
+msgid "Name"
+msgstr ""
+
+#: includes/class-post-types.php:267
+msgid "New"
+msgstr ""
+
+#: assets/fallback-editor.js:247
+msgid "New field"
+msgstr ""
+
+#: includes/class-notifications.php:30
+msgid "New submission: %s"
+msgstr ""
+
+#: includes/class-post-types.php:421
+msgid "No"
+msgstr ""
+
+#: includes/class-post-types.php:282
+msgid "No additional data."
+msgstr ""
+
+#: includes/class-post-types.php:76
+msgid "No submissions found in Trash."
+msgstr ""
+
+#: includes/class-post-types.php:75
+msgid "No submissions found."
+msgstr ""
+
+#: includes/class-settings.php:122
+msgid "None"
+msgstr ""
+
+#: includes/class-dashboard.php:161
+msgid "Not in use"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:411
+msgid "Notification subject"
+msgstr ""
+
+#: includes/class-settings.php:115
+msgid "Notifications"
+msgstr ""
+
+#: build/blocks/field-number/block.json:1 src/blocks/field-number/block.json:1
+msgid "Number field"
+msgstr ""
+
+#: includes/class-settings.php:115
+msgid "Once enabled, configure notifications and auto-replies separately for each form."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:302
+msgid "Open the public form"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:39 src/blocks/field.js:63 src/blocks/field.js:262
+msgid "Option"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:220
+msgid "Options"
+msgstr ""
+
+#: includes/class-dashboard.php:33 includes/class-dashboard.php:34
+msgid "Overview"
+msgstr ""
+
+#: includes/class-settings.php:125
+msgid "Password"
+msgstr ""
+
+#: includes/Registry/class-main-form.php:50 includes/class-default-forms.php:32
+msgid "Phone"
+msgstr ""
+
+#: build/blocks/field-tel/block.json:1 src/blocks/field-tel/block.json:1
+msgid "Phone field"
+msgstr ""
+
+#: assets/fallback-editor.js:206 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:186
+msgid "Placeholder"
+msgstr ""
+
+#: includes/class-settings.php:121
+msgid "Port"
+msgstr ""
+
+#: includes/Registry/class-code-forms.php:45
+msgid "Provide a form title."
+msgstr ""
+
+#: includes/Registry/class-code-forms.php:50
+msgid "Provide at least one valid form field."
+msgstr ""
+
+#: includes/class-rest-controller.php:524
+msgid "Provide form_id or form_key."
+msgstr ""
+
+#: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1
+msgid "Radio field"
+msgstr ""
+
+#: includes/class-post-types.php:267
+msgid "Read"
+msgstr ""
+
+#: includes/class-dashboard.php:137
+msgid "Read the documentation"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:395
+msgid "Recipients"
+msgstr ""
+
+#: includes/class-post-types.php:299
+msgid "Ref"
+msgstr ""
+
+#: includes/class-notifications.php:62
+msgid "Ref: %s"
+msgstr ""
+
+#: includes/class-dashboard.php:227
+msgid "Register the form on the fforms_register_forms hook — it becomes available through the REST API under its key, with no post created in Gutenberg."
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:249
+msgid "Remove"
+msgstr ""
+
+#: includes/class-post-types.php:267
+msgid "Replied"
+msgstr ""
+
+#: includes/class-default-forms.php:35
+msgid "Request a call"
+msgstr ""
+
+#: assets/fallback-editor.js:215 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:211
+msgid "Required field"
+msgstr ""
+
+#: includes/class-dashboard.php:148 includes/class-settings.php:119
+msgid "SMTP"
+msgstr ""
+
+#: includes/class-settings.php:120
+msgid "SMTP host"
+msgstr ""
+
+#: includes/class-settings.php:123
+msgid "SMTP requires a username and password"
+msgstr ""
+
+#: includes/Blocks/class-form-renderer.php:72
+msgid "Save the form and insert a reference to it into a page."
+msgstr ""
+
+#: includes/class-form-types.php:49
+msgid "Search form types"
+msgstr ""
+
+#: includes/class-post-types.php:74
+msgid "Search submissions"
+msgstr ""
+
+#: assets/fallback-editor.js:102 build/blocks/form/index.js:1 src/blocks/form/edit.js:75
+msgid "Select a published form"
+msgstr ""
+
+#: includes/Blocks/class-form-renderer.php:43
+msgid "Select a published form in the block settings."
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 includes/Blocks/class-form-renderer.php:109 src/blocks/field.js:33
+msgid "Select an option"
+msgstr ""
+
+#: build/blocks/field-select/block.json:1 src/blocks/field-select/block.json:1
+msgid "Select field"
+msgstr ""
+
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:289 assets/form-settings-sidebar.js:138 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/class-form-renderer.php:36 includes/Migration/class-legacy-migration.php:44 includes/class-default-forms.php:23 includes/class-post-types.php:57 src/blocks/form/edit.js:45 src/blocks/submit/index.js:28
+msgid "Send"
+msgstr ""
+
+#: build/blocks/field-hidden/block.json:1 src/blocks/field-hidden/block.json:1
+msgid "Send a value without showing a control to visitors."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:447
+msgid "Send an auto-reply to the user"
+msgstr ""
+
+#: includes/class-settings.php:117
+msgid "Send an email about a new main form submission"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:376
+msgid "Send notifications about submissions"
+msgstr ""
+
+#: includes/class-settings.php:22
+msgid "Settings"
+msgstr ""
+
+#: includes/class-dashboard.php:156
+msgid "Settings →"
+msgstr ""
+
+#: includes/class-rest-controller.php:391
+msgid "Several different formType/formId values were provided."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:275
+msgid "Share via URL"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:319
+msgid "Shortcode"
+msgstr ""
+
+#: build/blocks/form/index.js:1 src/blocks/form/edit.js:106
+msgid "Show the title"
+msgstr ""
+
+#: includes/class-post-types.php:267
+msgid "Spam"
+msgstr ""
+
+#: includes/class-post-types.php:267 includes/class-post-types.php:343
+msgid "Status"
+msgstr ""
+
+#: includes/class-dashboard.php:186
+msgid "Strict form types"
+msgstr ""
+
+#: includes/class-post-types.php:69 includes/class-post-types.php:336
+msgid "Submission"
+msgstr ""
+
+#: includes/class-notifications.php:33
+msgid "Submission #%d"
+msgstr ""
+
+#: includes/class-post-types.php:185
+msgid "Submission data"
+msgstr ""
+
+#: includes/class-rest-controller.php:338
+msgid "Submission not found."
+msgstr ""
+
+#: includes/class-dashboard.php:85
+msgid "Submission with a UTM tag"
+msgstr ""
+
+#: includes/class-dashboard.php:169 includes/class-post-types.php:68 includes/class-post-types.php:70 includes/class-post-types.php:71
+msgid "Submissions"
+msgstr ""
+
+#: assets/fallback-editor.js:260 assets/fallback-editor.js:273 build/blocks/submit/block.json:1 build/blocks/submit/index.js:1 src/blocks/submit/block.json:1 src/blocks/submit/index.js:15
+msgid "Submit button"
+msgstr ""
+
+#: includes/class-dashboard.php:238
+msgid "Submitting form data from an external site:"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:431
+msgid "Success message"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:283
+msgid "Switching the mode keeps the form fields and converts them to the required format."
+msgstr ""
+
+#: assets/fallback-editor.js:275
+msgid "Text"
+msgstr ""
+
+#: build/blocks/field-text/block.json:1 src/blocks/field-text/block.json:1
+msgid "Text field"
+msgstr ""
+
+#: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
+msgid "Textarea field"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:433 includes/Registry/class-code-forms.php:66 includes/class-form-locator.php:53
+msgid "Thank you! The form has been sent."
+msgstr ""
+
+#: includes/class-notifications.php:88
+msgid "Thank you! We have received your message and will reply soon."
+msgstr ""
+
+#: includes/Registry/class-main-form.php:29
+msgid "Thank you! Your submission has been sent."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:120
+msgid "The field name “%s” is duplicated."
+msgstr ""
+
+#: assets/fallback-editor.js:149 build/blocks/headless-schema/index.js:1 src/blocks/headless-schema/index.js:28
+msgid "The fields below define the form schema for the REST API. This block is not rendered on the site."
+msgstr ""
+
+#: includes/class-rest-controller.php:116
+msgid "The fields parameter must be an object."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:27
+msgid "The form must contain a root FForms block."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:40
+msgid "The form must contain exactly one submit button."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:46
+msgid "The form structure contains errors."
+msgstr ""
+
+#: includes/class-form-types.php:254
+msgid "The form with this type no longer exists — its submissions keep the classification."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:311
+msgid "The link becomes available once the form is published."
+msgstr ""
+
+#: includes/class-dashboard.php:180
+msgid "The main form works right after the plugin is activated: there is no need to create a form first."
+msgstr ""
+
+#: includes/class-rest-controller.php:498
+msgid "The meta field is too large or nested too deeply."
+msgstr ""
+
+#: includes/class-rest-controller.php:351
+msgid "The request is too large."
+msgstr ""
+
+#: includes/class-dashboard.php:81
+msgid "The website field is not part of the schema and is stored in customFields — nothing to configure."
+msgstr ""
+
+#: includes/class-schema.php:127
+msgid "The “%s” field is required."
+msgstr ""
+
+#: includes/Schema/class-schema-compiler.php:162
+msgid "The “%s” field must have valid options."
+msgstr ""
+
+#: includes/Registry/class-code-forms.php:37
+msgid "The “main” key is reserved for the built-in main form."
+msgstr ""
+
+#: includes/class-rest-controller.php:570
+msgid "Too many submissions. Try again later."
+msgstr ""
+
+#: build/blocks/field-url/block.json:1 src/blocks/field-url/block.json:1
+msgid "URL field"
+msgstr ""
+
+#: includes/class-form-types.php:133
+msgid "Unknown form type."
+msgstr ""
+
+#: includes/class-settings.php:119
+msgid "Use the FForms SMTP"
+msgstr ""
+
+#: includes/class-post-types.php:302
+msgid "User ID"
+msgstr ""
+
+#: includes/class-notifications.php:65
+msgid "User ID: %d"
+msgstr ""
+
+#: includes/class-settings.php:124
+msgid "Username"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:224
+msgid "Value"
+msgstr ""
+
+#: includes/class-post-types.php:72 includes/class-post-types.php:73
+msgid "View submission"
+msgstr ""
+
+#: includes/class-post-types.php:414
+msgid "View submissions"
+msgstr ""
+
+#: includes/class-form-types.php:257
+msgid "View submissions of this type"
+msgstr ""
+
+#: includes/class-notifications.php:88
+msgid "We have received your message — %s"
+msgstr ""
+
+#: includes/class-settings.php:118
+msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
+msgstr ""
+
+#: includes/class-dashboard.php:71
+msgid "Without formType the submission goes to the main form."
+msgstr ""
+
+#: includes/class-post-types.php:421
+msgid "Yes"
+msgstr ""
+
+#: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
+msgid "address"
+msgstr ""
+
+#: build/blocks/submit/block.json:1 src/blocks/submit/block.json:1
+msgid "button"
+msgstr ""
+
+#: includes/class-dashboard.php:185
+msgid "change"
+msgstr ""
+
+#: build/blocks/field-checkbox/block.json:1 src/blocks/field-checkbox/block.json:1
+msgid "checkbox"
+msgstr ""
+
+#: build/blocks/field-checkbox/block.json:1 build/blocks/field-radio/block.json:1 build/blocks/field-select/block.json:1 src/blocks/field-checkbox/block.json:1 src/blocks/field-radio/block.json:1 src/blocks/field-select/block.json:1
+msgid "choice"
+msgstr ""
+
+#: build/blocks/field-checkbox/block.json:1 src/blocks/field-checkbox/block.json:1
+msgid "consent"
+msgstr ""
+
+#: build/blocks/form/block.json:1 src/blocks/form/block.json:1
+msgid "contact"
+msgstr ""
+
+#: build/blocks/field-select/block.json:1 src/blocks/field-select/block.json:1
+msgid "dropdown"
+msgstr ""
+
+#: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
+msgid "email"
+msgstr ""
+
+#: build/blocks/form/block.json:1 src/blocks/form/block.json:1
+msgid "form"
+msgstr ""
+
+#: includes/class-dashboard.php:76
+msgid "formType creates a form type: rename the term in the admin, the slug stays the same."
+msgstr ""
+
+#: build/blocks/field-hidden/block.json:1 src/blocks/field-hidden/block.json:1
+msgid "hidden"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:351
+msgid "iframe and js-script embedding is available in “Share via URL” mode."
+msgstr ""
+
+#: build/blocks/field-text/block.json:1 src/blocks/field-text/block.json:1
+msgid "input"
+msgstr ""
+
+#: build/blocks/form/block.json:1 src/blocks/form/block.json:1
+msgid "lead"
+msgstr ""
+
+#: build/blocks/field-url/block.json:1 src/blocks/field-url/block.json:1
+msgid "link"
+msgstr ""
+
+#: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
+msgid "mail"
+msgstr ""
+
+#: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
+msgid "message"
+msgstr ""
+
+#: build/blocks/field-hidden/block.json:1 src/blocks/field-hidden/block.json:1
+msgid "metadata"
+msgstr ""
+
+#: build/blocks/field-text/block.json:1 src/blocks/field-text/block.json:1
+msgid "name"
+msgstr ""
+
+#: includes/class-dashboard.php:193
+msgid "none yet — the first one appears after the first submission with formType"
+msgstr ""
+
+#: includes/class-dashboard.php:189
+msgid "not accepted — files return 400"
+msgstr ""
+
+#: includes/class-dashboard.php:185
+msgid "not set — cross-origin requests are blocked"
+msgstr ""
+
+#: build/blocks/field-number/block.json:1 src/blocks/field-number/block.json:1
+msgid "number"
+msgstr ""
+
+#: build/blocks/field-number/block.json:1 src/blocks/field-number/block.json:1
+msgid "numeric"
+msgstr ""
+
+#: includes/class-dashboard.php:187
+msgid "off — a new type is created automatically"
+msgstr ""
+
+#: includes/class-dashboard.php:187
+msgid "on — only existing types are accepted"
+msgstr ""
+
+#: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1
+msgid "option"
+msgstr ""
+
+#: build/blocks/field-tel/block.json:1 src/blocks/field-tel/block.json:1
+msgid "phone"
+msgstr ""
+
+#: build/blocks/field-number/block.json:1 src/blocks/field-number/block.json:1
+msgid "quantity"
+msgstr ""
+
+#: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1
+msgid "radio"
+msgstr ""
+
+#: includes/class-dashboard.php:86
+msgid "ref and meta keep the request context separate from the validated schema fields."
+msgstr ""
+
+#: build/blocks/field-select/block.json:1 src/blocks/field-select/block.json:1
+msgid "select"
+msgstr ""
+
+#: build/blocks/submit/block.json:1 src/blocks/submit/block.json:1
+msgid "send"
+msgstr ""
+
+#: build/blocks/submit/block.json:1 src/blocks/submit/block.json:1
+msgid "submit"
+msgstr ""
+
+#: build/blocks/field-tel/block.json:1 src/blocks/field-tel/block.json:1
+msgid "tel"
+msgstr ""
+
+#: build/blocks/field-tel/block.json:1 src/blocks/field-tel/block.json:1
+msgid "telephone"
+msgstr ""
+
+#: build/blocks/field-text/block.json:1 build/blocks/field-textarea/block.json:1 src/blocks/field-text/block.json:1 src/blocks/field-textarea/block.json:1
+msgid "text"
+msgstr ""
+
+#: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
+msgid "textarea"
+msgstr ""
+
+#: build/blocks/field-hidden/block.json:1 src/blocks/field-hidden/block.json:1
+msgid "tracking"
+msgstr ""
+
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:90
+msgid "unnamed"
+msgstr ""
+
+#: build/blocks/field-url/block.json:1 src/blocks/field-url/block.json:1
+msgid "url"
+msgstr ""
+
+#: build/blocks/field-url/block.json:1 src/blocks/field-url/block.json:1
+msgid "website"
+msgstr ""
+
+#: includes/class-post-types.php:294
+msgid "— the term was not created (form type limit reached)"
+msgstr ""

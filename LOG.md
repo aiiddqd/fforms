@@ -13,6 +13,10 @@ Entry format:
 
 ## 2026-09-12
 
+- The interface switched to English as its source language: every `__()`/`_e()`/`_n()` string in PHP and JS is written in English, and Russian became a translation shipped in `languages/` — `fforms-ru_RU.po`/`.mo` for PHP plus per-script `fforms-ru_RU-<md5>.json` catalogs for the block editor. Added `Domain Path: /languages` and `wp_set_script_translations()` for the block editor scripts and the form sidebar, which `register_block_type()` otherwise points at `wp-content/languages/plugins` only.
+- `fform_entry` renamed in the interface: the mixed "Ответы"/"Заявки" became "Submissions"/"Submission" in English and «Записи»/«Запись» in Russian, consistently across the CPT labels, the entry list columns, the "View submissions" row action, notification emails, CSV export, and the overview cards. Slugs, meta keys, routes, and data are untouched.
+- Added `tools/i18n.py` and the `make i18n` target: it rebuilds `languages/fforms.pot`, merges new msgids into `fforms-ru_RU.po` keeping existing translations, compiles the `.mo`, and regenerates the script JSON catalogs (wp-cli's `i18n` commands are unavailable in this environment). Interface language rules recorded in `AGENTS.md`.
+- The e2e specs in `specs/` now match English interface strings ("Settings", "CSV export", "Form mode").
 - `LOG.md` translated to English; the "Documentation language" rule in `AGENTS.md` now covers `docs/specs/*`, `AGENTS.md`, and `LOG.md`, while `docs/rfc/*`, `ROADMAP.md`, and `README.md` keep their current language.
 - `AGENTS.md` translated to English; the "Documentation language" rule extended — `docs/specs/*` and `AGENTS.md` itself in English, `docs/rfc/*`, `LOG.md`, `ROADMAP.md`, and `README.md` keep their language.
 - Fixed the paths in "Sources of truth" that pointed at documents moved to the archive: `docs/rfc/archive/gutenberg-form-builder.md`, `docs/rfc/archive/mvp/rfc.md`, `docs/rfc/archive/mvp/сf7.md` — the links previously pointed into `docs/rfc/` and did not resolve.

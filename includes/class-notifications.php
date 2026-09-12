@@ -27,10 +27,10 @@ final class Notifications {
 
 			$subject = (string) $form->notifications['subject'];
 			if ( '' === $subject ) {
-				$subject = sprintf( __( 'Новый ответ: %s', 'fforms' ), $form->title );
+				$subject = sprintf( __( 'New submission: %s', 'fforms' ), $form->title );
 			}
 
-			$lines  = array( sprintf( __( 'Форма: %s', 'fforms' ), $form->title ), sprintf( __( 'Ответ #%d', 'fforms' ), $entry_id ), '' );
+			$lines  = array( sprintf( __( 'Form: %s', 'fforms' ), $form->title ), sprintf( __( 'Submission #%d', 'fforms' ), $entry_id ), '' );
 			$labels = wp_list_pluck( $form->schema['fields'], 'label', 'name' );
 			foreach ( $data as $key => $value ) {
 				$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
@@ -56,7 +56,7 @@ final class Notifications {
 
 		if ( '' !== $type ) {
 			$term    = Form_Types::get_term( $type );
-			$lines[] = sprintf( __( 'Тип формы: %s', 'fforms' ), $term ? $term->name : $type );
+			$lines[] = sprintf( __( 'Form type: %s', 'fforms' ), $term ? $term->name : $type );
 		}
 		if ( '' !== (string) ( $extras['ref'] ?? '' ) ) {
 			$lines[] = sprintf( __( 'Ref: %s', 'fforms' ), (string) $extras['ref'] );
@@ -85,6 +85,6 @@ final class Notifications {
 		}
 		$subject = (string) $form->notifications['autoreply_subject'];
 		$message = (string) $form->notifications['autoreply_message'];
-		wp_mail( $address, $subject ?: sprintf( __( 'Мы получили ваше сообщение — %s', 'fforms' ), get_bloginfo( 'name' ) ), $message ?: __( 'Спасибо! Мы получили ваше сообщение и скоро ответим.', 'fforms' ) );
+		wp_mail( $address, $subject ?: sprintf( __( 'We have received your message — %s', 'fforms' ), get_bloginfo( 'name' ) ), $message ?: __( 'Thank you! We have received your message and will reply soon.', 'fforms' ) );
 	}
 }
