@@ -52,7 +52,12 @@
 	script.setAttribute( 'data-fforms-done', '1' );
 
 	const iframe = document.createElement( 'iframe' );
-	iframe.src = origin + '/forms/' + formId + '/';
+	// The snippet carries the exact embed URL; the fallback only matters for a
+	// hand-written tag. fforms_embed=1 asks for the bare form document, without
+	// the site's header and footer.
+	iframe.src =
+		script.getAttribute( 'data-fforms-src' ) ||
+		origin + '/forms/' + formId + '?fforms_embed=1';
 	iframe.title = script.getAttribute( 'data-fforms-title' ) || 'Form';
 	iframe.loading = 'lazy';
 	iframe.style.width = '100%';
