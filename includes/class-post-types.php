@@ -202,6 +202,8 @@ final class Post_Types {
 			'window.fformsFormSettings = ' . wp_json_encode(
 				array(
 					'publicFormUrl'          => Public_Form::url( 0 ),
+					'embedScriptUrl'         => Public_Form::embed_script_url(),
+					'homeUrl'                => home_url(),
 					'notificationSettingsEnabled' => ! empty( Settings::get()['notifications'] ),
 				)
 			) . ';',

@@ -151,11 +151,22 @@
 		];
 	}
 
+	function snippetField( label, value, help ) {
+		return el( TextControl, {
+			label,
+			value,
+			readOnly: true,
+			onChange() {},
+			help,
+		} );
+	}
+
 	function FormSettings() {
 		const editor = data.useSelect( function ( select ) {
 			const store = select( 'core/editor' );
 			return {
 				id: store.getCurrentPostId(),
+				title: store.getEditedPostAttribute( 'title' ) || '',
 				meta: store.getEditedPostAttribute( 'meta' ) || {},
 				status: store.getEditedPostAttribute( 'status' ),
 				isPanelOpened: store.isEditorPanelOpened(
@@ -217,13 +228,31 @@
 				meta: nextMeta,
 			} );
 		};
-		const publicUrl =
-			window.fformsFormSettings && window.fformsFormSettings.publicFormUrl
-				? window.fformsFormSettings.publicFormUrl.replace(
-						/0\/?$/,
-						String( editor.id ) + '/'
-				  )
-				: '';
+		const settings = window.fformsFormSettings || {};
+		const publicUrl = settings.publicFormUrl
+			? settings.publicFormUrl.replace(
+					/0\/?$/,
+					String( editor.id ) + '/'
+			  )
+			: '';
+		const mode = meta[ META.mode ] || 'block';
+		const isPublished = 'publish' === editor.status;
+		const iframeSnippet = publicUrl
+			? '<iframe src="' +
+			  publicUrl +
+			  '" title="' +
+			  ( editor.title || 'Form' ) +
+			  '" style="width:100%;border:0" height="600" loading="lazy"></iframe>'
+			: '';
+		const scriptSnippet = settings.embedScriptUrl
+			? '<script src="' +
+			  settings.embedScriptUrl +
+			  '" data-fforms-form="' +
+			  String( editor.id ) +
+			  '" data-fforms-origin="' +
+			  ( settings.homeUrl || '' ) +
+			  '"></script>'
+			: '';
 		return el(
 			element.Fragment,
 			null,
@@ -285,19 +314,45 @@
 							)
 					  )
 					: null,
-				'headless' !== ( meta[ META.mode ] || 'block' ) &&
-					'publish' === editor.status &&
-					editor.id
-					? el( TextControl, {
-							label: __( 'Шорткод', 'fforms' ),
-							value: '[fform id=' + String( editor.id ) + ']',
-							readOnly: true,
-							onChange() {},
-							help: __(
-								'Вставьте на любую страницу или в виджет, чтобы показать эту форму.',
+				'headless' !== mode && isPublished && editor.id
+					? snippetField(
+							__( 'Шорткод', 'fforms' ),
+							'[fform id=' + String( editor.id ) + ']',
+							__(
+								'Вставьте на любую страницу или в виджет этого сайта.',
 								'fforms'
-							),
-					  } )
+							)
+					  )
+					: null,
+				'public' === mode && isPublished && iframeSnippet
+					? snippetField(
+							__( 'Iframe', 'fforms' ),
+							iframeSnippet,
+							__(
+								'Вставка на сторонний сайт с фиксированной высотой.',
+								'fforms'
+							)
+					  )
+					: null,
+				'public' === mode && isPublished && scriptSnippet
+					? snippetField(
+							__( 'Js-script', 'fforms' ),
+							scriptSnippet,
+							__(
+								'Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту.',
+								'fforms'
+							)
+					  )
+					: null,
+				'block' === mode && isPublished
+					? el(
+							'p',
+							{ className: 'components-base-control__help' },
+							__(
+								'Вставка через iframe и js-script доступна в режиме «Share via URL».',
+								'fforms'
+							)
+					  )
 					: null,
 				el( SelectControl, {
 					label: __( 'Тип формы', 'fforms' ),
