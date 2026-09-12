@@ -30,18 +30,17 @@ decision, or update the corresponding specification/RFC together with the code.
 
 ### Documentation language
 
-`docs/specs/*` and this file are written **in English** — they are the technical
-contract of the plugin and its working context, read outside the
-Russian-speaking team as well. The rule covers the whole file: headings, prose,
-tables, and example captions.
+`docs/specs/*`, this file, and `LOG.md` are written **in English** — they are the
+technical contract of the plugin, its working context, and its change log, read
+outside the Russian-speaking team as well. The rule covers the whole file:
+headings, prose, tables, and example captions.
 
 - Identifiers are never translated or inflected: meta keys, hooks, filters,
   slugs, error codes, routes, and class names stay exactly as they are in code.
 - Admin UI elements are named descriptively in English ("Form types",
   "View entries"); the source of truth for the exact interface string is the
   code, not the specification.
-- `docs/rfc/*`, `LOG.md`, `ROADMAP.md`, and `README.md` keep their current
-  language.
+- `docs/rfc/*`, `ROADMAP.md`, and `README.md` keep their current language.
 - When you change code that changes behavior documented in `docs/specs/*`,
   update the specification in English as part of the same change.
 
