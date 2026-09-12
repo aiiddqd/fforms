@@ -2,6 +2,7 @@
 
 ## Next
 
+- [ ] pr https://github.com/aiiddqd/fforms/pull/6/
 - [ ] при добавлении формы новой - выбирать режим - Block editor vs Headless API
     - если Headless API - то форма будет доступна только через REST API и не будет отображаться в блоках Gutenberg. и интерфейс сильно проще
     - если выбираем Block editor - то форма будет доступна как блок Gutenberg и через REST API тоже, интерфейс полный
