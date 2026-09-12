@@ -331,10 +331,6 @@ msgstr "У каждого поля должно быть корректное у
 msgid "Export submissions"
 msgstr "Экспорт записей"
 
-#: includes/Dashboard.php:176
-msgid "FAQ"
-msgstr "Частые вопросы"
-
 #: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:133 includes/Post_Types.php:42 src/blocks/form/edit.js:122
 msgid "FForms"
 msgstr ""
@@ -654,6 +650,10 @@ msgstr "Укажите хотя бы одно валидное поле форм
 #: includes/REST_Controller.php:524
 msgid "Provide form_id or form_key."
 msgstr "Укажите form_id или form_key."
+
+#: includes/Dashboard.php:176
+msgid "Questions and answers"
+msgstr "Вопросы и ответы"
 
 #: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1
 msgid "Radio field"

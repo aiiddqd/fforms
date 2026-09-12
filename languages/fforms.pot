@@ -331,10 +331,6 @@ msgstr ""
 msgid "Export submissions"
 msgstr ""
 
-#: includes/Dashboard.php:176
-msgid "FAQ"
-msgstr ""
-
 #: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:133 includes/Post_Types.php:42 src/blocks/form/edit.js:122
 msgid "FForms"
 msgstr ""
@@ -653,6 +649,10 @@ msgstr ""
 
 #: includes/REST_Controller.php:524
 msgid "Provide form_id or form_key."
+msgstr ""
+
+#: includes/Dashboard.php:176
+msgid "Questions and answers"
 msgstr ""
 
 #: build/blocks/field-radio/block.json:1 src/blocks/field-radio/block.json:1

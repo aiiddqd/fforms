@@ -173,7 +173,7 @@ final class Dashboard {
 				<?php endif; ?>
 			</div>
 
-			<h2><?php esc_html_e( 'FAQ', 'fforms' ); ?></h2>
+			<h2><?php esc_html_e( 'Questions and answers', 'fforms' ); ?></h2>
 			<div class="fforms-faq">
 				<details id="fforms-faq-api" open>
 					<summary><?php esc_html_e( 'How do I start receiving messages through the REST API?', 'fforms' ); ?></summary>
