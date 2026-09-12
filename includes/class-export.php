@@ -27,8 +27,16 @@ final class Export {
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="fforms_export_csv"><?php wp_nonce_field( 'fforms_export_csv' ); ?>
 		<label for="fforms-export-form"><strong><?php esc_html_e( 'Форма', 'fforms' ); ?></strong></label>
 		<select id="fforms-export-form" name="form_ref"><option value=""><?php esc_html_e( 'Все формы', 'fforms' ); ?></option><?php foreach ( $forms as $form ) : ?><option value="post:<?php echo esc_attr( $form->ID ); ?>"><?php echo esc_html( get_the_title( $form ) ); ?></option><?php endforeach; ?><?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?><option value="code:<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $code_form->title ); ?></option><?php endforeach; ?></select>
+		<label for="fforms-export-type"><strong><?php esc_html_e( 'Тип заявки', 'fforms' ); ?></strong></label>
+		<select id="fforms-export-type" name="form_type"><option value=""><?php esc_html_e( 'Все типы', 'fforms' ); ?></option><?php foreach ( self::types() as $term ) : ?><option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option><?php endforeach; ?></select>
 		<?php submit_button( __( 'Скачать CSV', 'fforms' ), 'primary', 'submit', false ); ?></form></div>
 		<?php
+	}
+
+	/** @return array<int, \WP_Term> */
+	private static function types(): array {
+		$terms = get_terms( array( 'taxonomy' => Form_Types::TAXONOMY, 'hide_empty' => false, 'orderby' => 'name' ) );
+		return is_array( $terms ) ? $terms : array();
 	}
 
 	public static function download(): void {
@@ -46,7 +54,12 @@ final class Export {
 		} elseif ( ! empty( $_GET['form_id'] ) ) {
 			$meta_query[] = array( 'key' => '_fforms_form_id', 'value' => absint( $_GET['form_id'] ), 'compare' => '=' );
 		}
-		$entry_ids = get_posts( array( 'post_type' => Post_Types::ENTRY, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC', 'fields' => 'ids', 'meta_query' => $meta_query ) );
+		$query_args = array( 'post_type' => Post_Types::ENTRY, 'post_status' => 'private', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC', 'fields' => 'ids', 'meta_query' => $meta_query );
+		$form_type  = isset( $_GET['form_type'] ) ? sanitize_key( wp_unslash( $_GET['form_type'] ) ) : '';
+		if ( '' !== $form_type ) {
+			$query_args['tax_query'] = array( array( 'taxonomy' => Form_Types::TAXONOMY, 'field' => 'slug', 'terms' => $form_type ) );
+		}
+		$entry_ids = get_posts( $query_args );
 
 		$rows       = array();
 		$field_keys = array();
@@ -65,7 +78,7 @@ final class Export {
 			wp_die( esc_html__( 'Не удалось сформировать CSV.', 'fforms' ) );
 		}
 		fwrite( $output, "\xEF\xBB\xBF" );
-		fputcsv( $output, array_merge( array( 'entry_id', 'form_id', 'form_key', 'form', 'status', 'submitted_at', 'source', 'ip', 'user_agent' ), $field_keys ), ',', '"', '' );
+		fputcsv( $output, array_merge( array( 'entry_id', 'form_id', 'form_key', 'form', 'form_type', 'status', 'submitted_at', 'source', 'ip', 'user_agent', 'ref', 'user_id', 'custom_fields', 'meta' ), $field_keys ), ',', '"', '' );
 		foreach ( $rows as $row ) {
 			$entry_id       = (int) $row['id'];
 			$entry          = get_post( $entry_id );
@@ -78,7 +91,22 @@ final class Export {
 					$form_title = $ref->title;
 				}
 			}
-			$csv_row = array( $entry_id, $entry_form_id, $entry_form_key, $form_title, get_post_meta( $entry_id, '_fforms_status', true ), $entry ? $entry->post_date_gmt : '', get_post_meta( $entry_id, '_fforms_source', true ), get_post_meta( $entry_id, '_fforms_ip', true ), get_post_meta( $entry_id, '_fforms_user_agent', true ) );
+			$csv_row = array(
+				$entry_id,
+				$entry_form_id,
+				$entry_form_key,
+				$form_title,
+				Form_Types::entry_type_slug( $entry_id ),
+				get_post_meta( $entry_id, '_fforms_status', true ),
+				$entry ? $entry->post_date_gmt : '',
+				get_post_meta( $entry_id, '_fforms_source', true ),
+				get_post_meta( $entry_id, '_fforms_ip', true ),
+				get_post_meta( $entry_id, '_fforms_user_agent', true ),
+				get_post_meta( $entry_id, '_fforms_ref', true ),
+				get_post_meta( $entry_id, '_fforms_user_id', true ),
+				(string) get_post_meta( $entry_id, '_fforms_custom', true ),
+				(string) get_post_meta( $entry_id, '_fforms_meta', true ),
+			);
 			foreach ( $field_keys as $key ) {
 				$csv_row[] = Post_Types::stringify( $row['data'][ $key ] ?? '' );
 			}

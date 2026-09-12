@@ -33,6 +33,9 @@ final class Code_Forms {
 		if ( '' === $key || ! preg_match( self::KEY_PATTERN, $key ) ) {
 			return new WP_Error( 'fforms_invalid_key', __( 'Некорректный ключ формы.', 'fforms' ) );
 		}
+		if ( Main_Form::KEY === $key ) {
+			return new WP_Error( 'fforms_reserved_key', __( 'Ключ «main» зарезервирован за встроенной главной формой.', 'fforms' ) );
+		}
 		if ( isset( self::$forms[ $key ] ) ) {
 			return new WP_Error( 'fforms_key_exists', __( 'Форма с таким ключом уже зарегистрирована.', 'fforms' ) );
 		}
@@ -50,6 +53,11 @@ final class Code_Forms {
 		$notifications = is_array( $args['notifications'] ?? null ) ? $args['notifications'] : array();
 		$autoreply     = is_array( $args['autoreply'] ?? null ) ? $args['autoreply'] : array();
 
+		$type = \FForms\Form_Types::normalize( $args['type'] ?? '' );
+		if ( is_wp_error( $type ) ) {
+			return new WP_Error( 'fforms_invalid_form_type', __( 'Некорректный тип заявки формы.', 'fforms' ) );
+		}
+
 		self::$forms[ $key ] = new Form_Ref(
 			post_id: 0,
 			key: $key,
@@ -66,7 +74,8 @@ final class Code_Forms {
 				'autoreply_subject'     => sanitize_text_field( (string) ( $autoreply['subject'] ?? '' ) ),
 				'autoreply_message'     => sanitize_textarea_field( (string) ( $autoreply['message'] ?? '' ) ),
 			),
-			source: 'code'
+			source: 'code',
+			type: '' === $type ? null : $type
 		);
 
 		return true;

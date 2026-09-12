@@ -96,10 +96,10 @@ final class Post_Types {
 			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
 		}
 		self::register_form_meta( '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
-		foreach ( array( '_fforms_form_id', '_fforms_created_post_id' ) as $key ) {
+		foreach ( array( '_fforms_form_id', '_fforms_created_post_id', '_fforms_user_id' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'integer', 'single' => true, 'show_in_rest' => false ) );
 		}
-		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent' ) as $key ) {
+		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent', '_fforms_custom', '_fforms_meta', '_fforms_ref', '_fforms_form_type_raw' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		}
 	}
@@ -179,6 +179,7 @@ final class Post_Types {
 
 	public static function add_meta_boxes(): void {
 		add_meta_box( 'fforms_entry_data', __( 'Данные ответа', 'fforms' ), array( self::class, 'render_entry_meta_box' ), self::ENTRY, 'normal', 'high' );
+		add_meta_box( 'fforms_entry_extras', __( 'Дополнительно', 'fforms' ), array( self::class, 'render_entry_extras_meta_box' ), self::ENTRY, 'normal', 'default' );
 	}
 
 	public static function enqueue_form_settings_sidebar(): void {
@@ -264,6 +265,57 @@ final class Post_Types {
 		<?php
 	}
 
+	public static function render_entry_extras_meta_box( WP_Post $post ): void {
+		$type    = Form_Types::entry_type_slug( $post->ID );
+		$term    = '' === $type ? null : Form_Types::get_term( $type );
+		$ref     = (string) get_post_meta( $post->ID, '_fforms_ref', true );
+		$user_id = (int) get_post_meta( $post->ID, '_fforms_user_id', true );
+		$custom  = json_decode( (string) get_post_meta( $post->ID, '_fforms_custom', true ), true );
+		$meta    = json_decode( (string) get_post_meta( $post->ID, '_fforms_meta', true ), true );
+
+		if ( '' === $type && '' === $ref && ! $user_id && ! is_array( $custom ) && ! is_array( $meta ) ) {
+			echo '<p>' . esc_html__( 'Дополнительных данных нет.', 'fforms' ) . '</p>';
+			return;
+		}
+		?>
+		<table class="widefat striped"><tbody>
+			<?php if ( '' !== $type ) : ?>
+				<tr><th style="width:25%"><?php esc_html_e( 'Тип заявки', 'fforms' ); ?></th><td>
+					<?php if ( $term ) : ?>
+						<a href="<?php echo esc_url( (string) get_edit_term_link( $term->term_id, Form_Types::TAXONOMY ) ); ?>"><?php echo esc_html( $term->name ); ?></a>
+						<code><?php echo esc_html( $term->slug ); ?></code>
+					<?php else : ?>
+						<code><?php echo esc_html( $type ); ?></code>
+						<span class="description"><?php esc_html_e( '— термин не создан (достигнут лимит типов)', 'fforms' ); ?></span>
+					<?php endif; ?>
+				</td></tr>
+			<?php endif; ?>
+			<?php if ( '' !== $ref ) : ?>
+				<tr><th><?php esc_html_e( 'Ref', 'fforms' ); ?></th><td><?php echo esc_html( $ref ); ?></td></tr>
+			<?php endif; ?>
+			<?php if ( $user_id ) : ?>
+				<tr><th><?php esc_html_e( 'User ID', 'fforms' ); ?></th><td>
+					<?php
+					// The id comes from the client and grants nothing; link it only when it resolves.
+					$user = get_userdata( $user_id );
+					if ( $user ) :
+						?>
+						<a href="<?php echo esc_url( (string) get_edit_user_link( $user_id ) ); ?>"><?php echo esc_html( $user->user_login ); ?></a>
+					<?php else : ?>
+						<?php echo esc_html( (string) $user_id ); ?>
+					<?php endif; ?>
+				</td></tr>
+			<?php endif; ?>
+			<?php foreach ( is_array( $custom ) ? $custom : array() as $key => $value ) : ?>
+				<tr><th><?php echo esc_html( (string) $key ); ?></th><td><?php echo nl2br( esc_html( self::stringify( $value ) ) ); ?></td></tr>
+			<?php endforeach; ?>
+			<?php if ( is_array( $meta ) && array() !== $meta ) : ?>
+				<tr><th><?php esc_html_e( 'Meta', 'fforms' ); ?></th><td><pre style="margin:0;white-space:pre-wrap"><?php echo esc_html( (string) wp_json_encode( $meta, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ) ); ?></pre></td></tr>
+			<?php endif; ?>
+		</tbody></table>
+		<?php
+	}
+
 	public static function save_entry( int $post_id ): void {
 		if ( ! self::can_save( $post_id, 'fforms_entry_nonce', 'fforms_save_entry' ) ) {
 			return;
@@ -273,7 +325,21 @@ final class Post_Types {
 	}
 
 	public static function entry_columns( array $columns ): array {
-		return array( 'cb' => $columns['cb'] ?? '<input type="checkbox" />', 'title' => __( 'Ответ', 'fforms' ), 'fforms_form' => __( 'Форма', 'fforms' ), 'fforms_status' => __( 'Статус', 'fforms' ), 'fforms_preview' => __( 'Данные', 'fforms' ), 'date' => $columns['date'] ?? __( 'Дата', 'fforms' ) );
+		$type_column = 'taxonomy-' . Form_Types::TAXONOMY;
+		$rebuilt     = array(
+			'cb'             => $columns['cb'] ?? '<input type="checkbox" />',
+			'title'          => __( 'Ответ', 'fforms' ),
+			'fforms_form'    => __( 'Форма', 'fforms' ),
+		);
+		// Core renders taxonomy-* columns itself; keep the key it generated.
+		if ( isset( $columns[ $type_column ] ) ) {
+			$rebuilt[ $type_column ] = __( 'Тип заявки', 'fforms' );
+		}
+		$rebuilt['fforms_status']  = __( 'Статус', 'fforms' );
+		$rebuilt['fforms_preview'] = __( 'Данные', 'fforms' );
+		$rebuilt['date']           = $columns['date'] ?? __( 'Дата', 'fforms' );
+
+		return $rebuilt;
 	}
 
 	public static function append_entry_id_to_title( string $title, int $post_id ): string {
@@ -350,10 +416,12 @@ final class Post_Types {
 	/** @param array<string, string> $actions */
 	public static function add_view_entries_row_action( array $actions, WP_Post $post ): array {
 		if ( self::FORM === $post->post_type && current_user_can( 'manage_options' ) ) {
-			$url = add_query_arg(
-				array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post->ID ),
-				admin_url( 'edit.php' )
-			);
+			// Prefer the form's own type term; fall back to the form-ref filter for
+			// forms that have no term yet (drafts, or entries saved before types).
+			$slug = Form_Types::slug_for_form( $post->ID );
+			$url  = '' !== $slug
+				? Form_Types::entries_url( $slug )
+				: add_query_arg( array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post->ID ), admin_url( 'edit.php' ) );
 			$actions['fforms_view_entries'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Смотреть заявки', 'fforms' ) . '</a>';
 		}
 		return $actions;

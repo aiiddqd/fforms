@@ -1,6 +1,7 @@
 <?php
 /**
- * Resolves a post ID or a code-form key to a single Form_Ref shape.
+ * Resolves a post ID, a code-form key, the built-in main form key or a
+ * fform_type term slug owned by a form to a single Form_Ref shape.
  *
  * @package FForms
  */
@@ -14,7 +15,23 @@ final class Form_Locator {
 		if ( is_int( $ref ) || ( is_string( $ref ) && '' !== $ref && ctype_digit( $ref ) ) ) {
 			return self::resolve_post( (int) $ref );
 		}
-		return self::resolve_code( (string) $ref );
+
+		$key = sanitize_key( (string) $ref );
+		if ( Registry\Main_Form::KEY === $key ) {
+			return Registry\Main_Form::ref();
+		}
+
+		$code = Registry\Code_Forms::get( $key );
+		if ( $code ) {
+			return $code;
+		}
+
+		$form_id = Form_Types::form_id_for_slug( $key );
+		if ( $form_id > 0 ) {
+			return self::resolve_post( $form_id );
+		}
+
+		return new WP_Error( 'fforms_form_not_found', __( 'Форма не найдена.', 'fforms' ), array( 'status' => 404 ) );
 	}
 
 	private static function resolve_post( int $post_id ): Form_Ref|WP_Error {
@@ -44,12 +61,9 @@ final class Form_Locator {
 				'autoreply_subject'     => (string) get_post_meta( $post_id, '_fforms_autoreply_subject', true ),
 				'autoreply_message'     => (string) get_post_meta( $post_id, '_fforms_autoreply_message', true ),
 			),
-			source: 'post'
+			source: 'post',
+			type: Form_Types::slug_for_form( $post_id ) ?: null
 		);
 	}
 
-	private static function resolve_code( string $key ): Form_Ref|WP_Error {
-		$form = Registry\Code_Forms::get( sanitize_key( $key ) );
-		return $form ?? new WP_Error( 'fforms_form_not_found', __( 'Форма не найдена.', 'fforms' ), array( 'status' => 404 ) );
-	}
 }

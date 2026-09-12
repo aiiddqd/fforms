@@ -8,8 +8,12 @@
 namespace FForms;
 
 final class Dashboard {
+	public const PAGE = 'fforms-dashboard';
+
 	public static function boot(): void {
 		add_action( 'admin_menu', array( self::class, 'admin_menu' ) );
+		add_action( 'admin_menu', array( self::class, 'drop_duplicate_submenu' ), 100 );
+		add_action( 'load-toplevel_page_fforms', array( self::class, 'redirect_legacy_page' ) );
 	}
 
 	public static function admin_menu(): void {
@@ -29,13 +33,61 @@ final class Dashboard {
 			__( 'Обзор', 'fforms' ),
 			__( 'Обзор', 'fforms' ),
 			'edit_posts',
-			'fforms',
+			self::PAGE,
 			array( self::class, 'render_page' ),
 			0
 		);
 	}
 
+	/**
+	 * The top-level slug stays `fforms` — both CPTs use it as show_in_menu and
+	 * the settings/export pages as their parent. Only the overview page moved,
+	 * so the auto-generated duplicate entry goes away.
+	 */
+	public static function drop_duplicate_submenu(): void {
+		remove_submenu_page( 'fforms', 'fforms' );
+	}
+
+	/** Keep old bookmarks and documentation links working. */
+	public static function redirect_legacy_page(): void {
+		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE ) );
+		exit;
+	}
+
 	private const REPO_URL = 'https://github.com/aiiddqd/fforms';
+
+	/**
+	 * Copy-ready requests built from the live endpoint URL, so a frontend
+	 * developer pastes working values instead of reading documentation.
+	 *
+	 * @return array<int, array{title: string, description: string, code: string}>
+	 */
+	private static function api_examples( string $main_url ): array {
+		$curl = static fn( string $body ): string => sprintf( "curl -X POST %s \\\n  -H \"Content-Type: application/json\" \\\n  -d '%s'", $main_url, $body );
+
+		return array(
+			array(
+				'title'       => __( 'Контактная форма', 'fforms' ),
+				'description' => __( 'Без formType — заявка попадает в главную форму.', 'fforms' ),
+				'code'        => $curl( "{\n    \"name\": \"Иван\",\n    \"email\": \"ivan@example.com\",\n    \"message\": \"Здравствуйте!\"\n  }" ),
+			),
+			array(
+				'title'       => __( 'Заявка на консультацию', 'fforms' ),
+				'description' => __( 'formType заводит тип заявки: переименуйте термин в админке, slug останется прежним.', 'fforms' ),
+				'code'        => $curl( "{\n    \"formType\": \"consultation_request\",\n    \"name\": \"Иван\",\n    \"phone\": \"+7 900 000-00-00\",\n    \"email\": \"ivan@example.com\"\n  }" ),
+			),
+			array(
+				'title'       => __( 'Email и сайт компании', 'fforms' ),
+				'description' => __( 'Поле website не входит в схему и сохраняется в customFields — настраивать ничего не нужно.', 'fforms' ),
+				'code'        => $curl( "{\n    \"email\": \"sales@acme.dev\",\n    \"website\": \"https://acme.dev\"\n  }" ),
+			),
+			array(
+				'title'       => __( 'Заявка с UTM-меткой', 'fforms' ),
+				'description' => __( 'ref и meta сохраняют контекст запроса отдельно от проверенных полей схемы.', 'fforms' ),
+				'code'        => $curl( "{\n    \"message\": \"Перезвоните\",\n    \"phone\": \"+7 900 000-00-00\",\n    \"ref\": \"yandex-direct\",\n    \"meta\": { \"page\": \"/pricing\", \"locale\": \"ru\" }\n  }" ),
+			),
+		);
+	}
 
 	public static function render_page(): void {
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -48,6 +100,11 @@ final class Dashboard {
 		$smtp           = Settings::get();
 		$can_view_entries = current_user_can( 'manage_options' );
 		$entries_count    = $can_view_entries ? (int) ( wp_count_posts( Post_Types::ENTRY )->private ?? 0 ) : 0;
+		$main_url         = rest_url( 'fforms/v1/main' );
+		$origins          = (array) $smtp['main_form_origins'];
+		$strict_types     = ! empty( $smtp['form_types_strict'] );
+		$types            = get_terms( array( 'taxonomy' => Form_Types::TAXONOMY, 'hide_empty' => false, 'orderby' => 'name' ) );
+		$types            = is_array( $types ) ? $types : array();
 		?>
 		<div class="wrap fforms-dashboard">
 			<style>
@@ -63,6 +120,15 @@ final class Dashboard {
 				.fforms-dashboard .fforms-faq details { background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 12px 16px; margin-bottom: 8px; }
 				.fforms-dashboard .fforms-faq summary { cursor: pointer; font-weight: 600; }
 				.fforms-dashboard .fforms-faq pre { background: #f6f7f7; border: 1px solid #dcdcde; padding: 12px 16px; overflow: auto; }
+				.fforms-dashboard .fforms-api { background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 16px 20px; margin-bottom: 32px; max-width: 860px; }
+				.fforms-dashboard .fforms-api h2 { margin-top: 0; }
+				.fforms-dashboard .fforms-api dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 16px; }
+				.fforms-dashboard .fforms-api dt { color: #646970; }
+				.fforms-dashboard .fforms-api dd { margin: 0; }
+				.fforms-dashboard .fforms-api .fforms-example { border-top: 1px solid #f0f0f1; padding-top: 12px; margin-top: 12px; }
+				.fforms-dashboard .fforms-api .fforms-example-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+				.fforms-dashboard .fforms-api h3 { margin: 0; font-size: 13px; }
+				.fforms-dashboard .fforms-api pre { background: #f6f7f7; border: 1px solid #dcdcde; padding: 12px 16px; overflow: auto; margin: 8px 0 0; }
 			</style>
 
 			<div class="fforms-hero">
@@ -108,6 +174,58 @@ final class Dashboard {
 				</div>
 				<?php endif; ?>
 			</div>
+
+			<div class="fforms-api">
+				<h2><?php esc_html_e( 'Приём заявок через API', 'fforms' ); ?></h2>
+				<p><?php esc_html_e( 'Главная форма работает сразу после активации плагина: создавать форму заранее не нужно.', 'fforms' ); ?></p>
+				<dl>
+					<dt><?php esc_html_e( 'Endpoint', 'fforms' ); ?></dt>
+					<dd><code><?php echo esc_html( $main_url ); ?></code></dd>
+					<dt><?php esc_html_e( 'Разрешённые origins', 'fforms' ); ?></dt>
+					<dd><?php echo array() === $origins ? esc_html__( 'не заданы — кросс-доменные запросы заблокированы', 'fforms' ) : esc_html( implode( ', ', $origins ) ); ?> — <a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'изменить', 'fforms' ); ?></a></dd>
+					<dt><?php esc_html_e( 'Строгий режим типов', 'fforms' ); ?></dt>
+					<dd><?php echo $strict_types ? esc_html__( 'включён — принимаются только существующие типы', 'fforms' ) : esc_html__( 'выключен — новый тип создаётся автоматически', 'fforms' ); ?></dd>
+					<dt><?php esc_html_e( 'Вложения', 'fforms' ); ?></dt>
+					<dd><?php esc_html_e( 'не принимаются — файлы возвращают 400', 'fforms' ); ?></dd>
+					<dt><?php esc_html_e( 'Типы заявок', 'fforms' ); ?></dt>
+					<dd>
+						<?php if ( array() === $types ) : ?>
+							<?php esc_html_e( 'пока нет — первый появится после первой заявки с formType', 'fforms' ); ?>
+						<?php else : ?>
+							<?php foreach ( $types as $term ) : ?>
+								<code><?php echo esc_html( $term->slug ); ?></code> — <?php echo esc_html( $term->name ); ?><br>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</dd>
+				</dl>
+
+				<?php foreach ( self::api_examples( $main_url ) as $index => $example ) : ?>
+					<div class="fforms-example">
+						<div class="fforms-example-head">
+							<h3><?php echo esc_html( $example['title'] ); ?></h3>
+							<button type="button" class="button button-small fforms-copy" data-target="fforms-example-<?php echo esc_attr( (string) $index ); ?>"><?php esc_html_e( 'Скопировать', 'fforms' ); ?></button>
+						</div>
+						<p class="description"><?php echo esc_html( $example['description'] ); ?></p>
+						<pre id="fforms-example-<?php echo esc_attr( (string) $index ); ?>"><code><?php echo esc_html( $example['code'] ); ?></code></pre>
+					</div>
+				<?php endforeach; ?>
+			</div>
+
+			<script>
+				document.querySelectorAll( '.fforms-copy' ).forEach( function ( button ) {
+					button.addEventListener( 'click', function () {
+						var source = document.getElementById( button.dataset.target );
+						if ( ! source || ! navigator.clipboard ) {
+							return;
+						}
+						navigator.clipboard.writeText( source.innerText ).then( function () {
+							var label = button.textContent;
+							button.textContent = <?php echo wp_json_encode( __( 'Скопировано', 'fforms' ) ); ?>;
+							window.setTimeout( function () { button.textContent = label; }, 1500 );
+						} );
+					} );
+				} );
+			</script>
 
 			<h2><?php esc_html_e( 'Частые вопросы', 'fforms' ); ?></h2>
 			<div class="fforms-faq">

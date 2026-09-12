@@ -39,7 +39,16 @@ final class CORS {
 
 		$is_preflight = 'OPTIONS' === $request->get_method();
 		$origin       = self::request_origin();
-		$allowed      = $is_preflight ? self::global_allowed_origins() : self::allowed_origins_for( self::resolve_form( $request ) );
+		if ( $is_preflight ) {
+			$allowed = self::global_allowed_origins();
+		} else {
+			$allowed = self::allowed_origins_for( self::resolve_form( $request ) );
+			if ( self::is_main_route( $request ) ) {
+				// The settings list is named after this route, so it applies whichever
+				// form the payload happened to address.
+				$allowed = array_values( array_unique( array_merge( $allowed, Registry\Main_Form::ref()->origins ) ) );
+			}
+		}
 
 		if ( '' !== $origin && in_array( $origin, $allowed, true ) ) {
 			header( 'Access-Control-Allow-Origin: ' . $origin );
@@ -57,6 +66,10 @@ final class CORS {
 		return $served;
 	}
 
+	private static function is_main_route( WP_REST_Request $request ): bool {
+		return str_starts_with( $request->get_route(), self::ROUTE_PREFIX . '/main' );
+	}
+
 	private static function is_own_route( WP_REST_Request $request ): bool {
 		return str_starts_with( $request->get_route(), self::ROUTE_PREFIX );
 	}
@@ -68,9 +81,14 @@ final class CORS {
 
 	/**
 	 * A real (non-preflight) request always carries form_id/form_key, either as
-	 * a submit() body param or as a /forms/{id|key} route segment.
+	 * a submit() body param or as a /forms/{id|key} route segment. POST /main
+	 * addresses its form through formType and falls back to the main form.
 	 */
 	private static function resolve_form( WP_REST_Request $request ): ?Form_Ref {
+		if ( self::is_main_route( $request ) ) {
+			return self::resolve_main_form( $request );
+		}
+
 		$form_id  = absint( $request->get_param( 'form_id' ) );
 		$form_key = sanitize_key( (string) $request->get_param( 'form_key' ) );
 
@@ -78,7 +96,7 @@ final class CORS {
 			$matches = array();
 			if ( preg_match( '#^/fforms/v1/forms/(\d+)#', $request->get_route(), $matches ) ) {
 				$form_id = absint( $matches[1] );
-			} elseif ( preg_match( '#^/fforms/v1/forms/([a-z0-9_]+)#', $request->get_route(), $matches ) ) {
+			} elseif ( preg_match( '#^/fforms/v1/forms/([a-z0-9_-]+)#', $request->get_route(), $matches ) ) {
 				$form_key = sanitize_key( $matches[1] );
 			}
 		}
@@ -88,6 +106,19 @@ final class CORS {
 
 		$ref = Form_Locator::resolve( $form_id ?: $form_key );
 		return is_wp_error( $ref ) ? null : $ref;
+	}
+
+	private static function resolve_main_form( WP_REST_Request $request ): Form_Ref {
+		foreach ( array( 'formType', 'formId', 'form_type', 'form_id' ) as $alias ) {
+			$value = $request->get_param( $alias );
+			if ( is_scalar( $value ) && '' !== trim( (string) $value ) ) {
+				$ref = Form_Locator::resolve( trim( (string) $value ) );
+				if ( ! is_wp_error( $ref ) ) {
+					return $ref;
+				}
+			}
+		}
+		return Registry\Main_Form::ref();
 	}
 
 	/** @return array<int, string> */
@@ -103,7 +134,7 @@ final class CORS {
 	 * @return array<int, string>
 	 */
 	private static function global_allowed_origins(): array {
-		$origins = array();
+		$origins = Registry\Main_Form::ref()->origins;
 		foreach ( Registry\Code_Forms::all() as $form_ref ) {
 			$origins = array_merge( $origins, $form_ref->origins );
 		}
