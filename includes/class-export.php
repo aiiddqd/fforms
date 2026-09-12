@@ -27,7 +27,7 @@ final class Export {
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="fforms_export_csv"><?php wp_nonce_field( 'fforms_export_csv' ); ?>
 		<label for="fforms-export-form"><strong><?php esc_html_e( 'Форма', 'fforms' ); ?></strong></label>
 		<select id="fforms-export-form" name="form_ref"><option value=""><?php esc_html_e( 'Все формы', 'fforms' ); ?></option><?php foreach ( $forms as $form ) : ?><option value="post:<?php echo esc_attr( $form->ID ); ?>"><?php echo esc_html( get_the_title( $form ) ); ?></option><?php endforeach; ?><?php foreach ( Registry\Code_Forms::all() as $key => $code_form ) : ?><option value="code:<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $code_form->title ); ?></option><?php endforeach; ?></select>
-		<label for="fforms-export-type"><strong><?php esc_html_e( 'Тип заявки', 'fforms' ); ?></strong></label>
+		<label for="fforms-export-type"><strong><?php esc_html_e( 'Тип формы', 'fforms' ); ?></strong></label>
 		<select id="fforms-export-type" name="form_type"><option value=""><?php esc_html_e( 'Все типы', 'fforms' ); ?></option><?php foreach ( self::types() as $term ) : ?><option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option><?php endforeach; ?></select>
 		<?php submit_button( __( 'Скачать CSV', 'fforms' ), 'primary', 'submit', false ); ?></form></div>
 		<?php

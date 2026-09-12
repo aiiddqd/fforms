@@ -56,7 +56,7 @@ final class Notifications {
 
 		if ( '' !== $type ) {
 			$term    = Form_Types::get_term( $type );
-			$lines[] = sprintf( __( 'Тип заявки: %s', 'fforms' ), $term ? $term->name : $type );
+			$lines[] = sprintf( __( 'Тип формы: %s', 'fforms' ), $term ? $term->name : $type );
 		}
 		if ( '' !== (string) ( $extras['ref'] ?? '' ) ) {
 			$lines[] = sprintf( __( 'Ref: %s', 'fforms' ), (string) $extras['ref'] );

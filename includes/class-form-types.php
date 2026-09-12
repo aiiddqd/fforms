@@ -41,13 +41,13 @@ final class Form_Types {
 			array( Post_Types::ENTRY, Post_Types::FORM ),
 			array(
 				'labels' => array(
-					'name'          => __( 'Типы заявок', 'fforms' ),
-					'singular_name' => __( 'Тип заявки', 'fforms' ),
-					'menu_name'     => __( 'Типы заявок', 'fforms' ),
-					'edit_item'     => __( 'Редактировать тип заявки', 'fforms' ),
-					'add_new_item'  => __( 'Добавить тип заявки', 'fforms' ),
-					'search_items'  => __( 'Искать типы заявок', 'fforms' ),
-					'all_items'     => __( 'Все типы заявок', 'fforms' ),
+					'name'          => __( 'Типы форм', 'fforms' ),
+					'singular_name' => __( 'Тип формы', 'fforms' ),
+					'menu_name'     => __( 'Типы форм', 'fforms' ),
+					'edit_item'     => __( 'Редактировать тип формы', 'fforms' ),
+					'add_new_item'  => __( 'Добавить тип формы', 'fforms' ),
+					'search_items'  => __( 'Искать типы форм', 'fforms' ),
+					'all_items'     => __( 'Все типы форм', 'fforms' ),
 				),
 				'public'             => false,
 				'publicly_queryable' => false,
@@ -74,12 +74,12 @@ final class Form_Types {
 		register_term_meta( self::TAXONOMY, self::TERM_AUTOCREATED, array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => false ) );
 	}
 
-	/** One "Типы заявок" entry right after "Ответы". */
+	/** One "Типы форм" entry right after "Ответы". */
 	public static function admin_menu(): void {
 		add_submenu_page(
 			'fforms',
-			__( 'Типы заявок', 'fforms' ),
-			__( 'Типы заявок', 'fforms' ),
+			__( 'Типы форм', 'fforms' ),
+			__( 'Типы форм', 'fforms' ),
 			'manage_options',
 			'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . Post_Types::ENTRY,
 			'',
@@ -102,7 +102,7 @@ final class Form_Types {
 		if ( '' === $slug || ! preg_match( self::SLUG_PATTERN, $slug ) ) {
 			return new WP_Error(
 				'fforms_invalid_form_type',
-				__( 'Некорректный тип заявки: допустимы латиница, цифры, дефис и подчёркивание, до 32 символов.', 'fforms' ),
+				__( 'Некорректный тип формы: допустимы латиница, цифры, дефис и подчёркивание, до 32 символов.', 'fforms' ),
 				array( 'status' => 422 )
 			);
 		}
@@ -130,7 +130,7 @@ final class Form_Types {
 		if ( self::is_strict() ) {
 			return new WP_Error(
 				'fforms_unknown_form_type',
-				__( 'Неизвестный тип заявки.', 'fforms' ),
+				__( 'Неизвестный тип формы.', 'fforms' ),
 				array( 'status' => 422 )
 			);
 		}
@@ -273,9 +273,9 @@ final class Form_Types {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only admin list filter.
 		$current = isset( $_GET[ self::TAXONOMY ] ) ? sanitize_key( wp_unslash( $_GET[ self::TAXONOMY ] ) ) : '';
 		?>
-		<label class="screen-reader-text" for="fforms-filter-type"><?php esc_html_e( 'Фильтр по типу заявки', 'fforms' ); ?></label>
+		<label class="screen-reader-text" for="fforms-filter-type"><?php esc_html_e( 'Фильтр по типу формы', 'fforms' ); ?></label>
 		<select id="fforms-filter-type" name="<?php echo esc_attr( self::TAXONOMY ); ?>">
-			<option value=""><?php esc_html_e( 'Все типы заявок', 'fforms' ); ?></option>
+			<option value=""><?php esc_html_e( 'Все типы форм', 'fforms' ); ?></option>
 			<?php foreach ( $terms as $term ) : ?>
 				<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $current, $term->slug ); ?>><?php echo esc_html( $term->name ); ?></option>
 			<?php endforeach; ?>

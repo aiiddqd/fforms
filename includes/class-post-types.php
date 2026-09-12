@@ -280,7 +280,7 @@ final class Post_Types {
 		?>
 		<table class="widefat striped"><tbody>
 			<?php if ( '' !== $type ) : ?>
-				<tr><th style="width:25%"><?php esc_html_e( 'Тип заявки', 'fforms' ); ?></th><td>
+				<tr><th style="width:25%"><?php esc_html_e( 'Тип формы', 'fforms' ); ?></th><td>
 					<?php if ( $term ) : ?>
 						<a href="<?php echo esc_url( (string) get_edit_term_link( $term->term_id, Form_Types::TAXONOMY ) ); ?>"><?php echo esc_html( $term->name ); ?></a>
 						<code><?php echo esc_html( $term->slug ); ?></code>
@@ -333,7 +333,7 @@ final class Post_Types {
 		);
 		// Core renders taxonomy-* columns itself; keep the key it generated.
 		if ( isset( $columns[ $type_column ] ) ) {
-			$rebuilt[ $type_column ] = __( 'Тип заявки', 'fforms' );
+			$rebuilt[ $type_column ] = __( 'Тип формы', 'fforms' );
 		}
 		$rebuilt['fforms_status']  = __( 'Статус', 'fforms' );
 		$rebuilt['fforms_preview'] = __( 'Данные', 'fforms' );

@@ -55,7 +55,7 @@ final class Code_Forms {
 
 		$type = \FForms\Form_Types::normalize( $args['type'] ?? '' );
 		if ( is_wp_error( $type ) ) {
-			return new WP_Error( 'fforms_invalid_form_type', __( 'Некорректный тип заявки формы.', 'fforms' ) );
+			return new WP_Error( 'fforms_invalid_form_type', __( 'Некорректный тип формы.', 'fforms' ) );
 		}
 
 		self::$forms[ $key ] = new Form_Ref(
