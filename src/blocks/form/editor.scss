@@ -18,3 +18,25 @@
 	margin-top: 1rem;
 	padding-top: 1rem;
 }
+
+// The server-rendered preview is not interactive: the Interactivity API is not
+// loaded in the editor, and a click anywhere in it must select the block
+// instead of putting the caret into a field.
+:where(.editor-styles-wrapper .fforms-block-preview) {
+	pointer-events: none;
+	user-select: none;
+}
+
+// `view.css` (viewStyle) is not enqueued in the editor, so the honeypot would
+// otherwise show up in the canvas as a visible "Website" field.
+:where(.editor-styles-wrapper .fforms-hp) {
+	border: 0 !important;
+	clip: rect(0, 0, 0, 0) !important;
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	white-space: nowrap !important;
+	width: 1px !important;
+}

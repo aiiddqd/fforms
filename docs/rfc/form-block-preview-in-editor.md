@@ -1,6 +1,6 @@
 ---
 title: "Блок fforms/form: превью выбранной формы вместо плейсхолдера"
-status: draft
+status: implementing
 created: 2026-09-13
 ---
 

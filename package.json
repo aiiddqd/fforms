@@ -28,7 +28,8 @@
 		"@wordpress/data": "wp-6.5",
 		"@wordpress/element": "wp-6.5",
 		"@wordpress/i18n": "wp-6.5",
-		"@wordpress/interactivity": "wp-6.5"
+		"@wordpress/interactivity": "wp-6.5",
+		"@wordpress/server-side-render": "wp-6.5"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.62.1",
