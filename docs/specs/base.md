@@ -19,7 +19,7 @@ Current system requirements:
 
 ## 2. Primary user flow
 
-1. The user creates a post under **FForms → Add form**. A form has one shape: the `fforms/form` block tree in `post_content`. There is no mode to choose.
+1. The user creates a post under **FForms → Add form**. A form has one shape: the `fforms/form` block tree in `post_content`. There is no mode to choose. The block does not have to sit at the top level — wrapping it in a Group, Columns, or any other container is a normal layout choice, and the compiler looks for it anywhere in the tree.
 2. With global mail settings enabled, the user turns on the notification for that specific form and configures recipients, the success message, and optionally an autoreply.
 3. The user publishes the form. Every published form is then insertable through the `fforms/form` block and the `[fform id=…]` shortcode; the "Share via link" toggle in the Publication panel additionally opens its token URL, iframe, and js-script.
 4. A public submission is validated server-side and stored as a private entry with status `new`.
