@@ -26,6 +26,7 @@ require_once FFORMS_DIR . 'includes/Schema/Schema_Compiler.php';
 require_once FFORMS_DIR . 'includes/Schema/Schema_Repository.php';
 require_once FFORMS_DIR . 'includes/Migration/Legacy_Migration.php';
 require_once FFORMS_DIR . 'includes/Migration/Mode_Migration.php';
+require_once FFORMS_DIR . 'includes/Migration/Type_Meta_Migration.php';
 require_once FFORMS_DIR . 'includes/Post_Types.php';
 require_once FFORMS_DIR . 'includes/Form_Types.php';
 require_once FFORMS_DIR . 'includes/Default_Forms.php';

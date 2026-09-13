@@ -18,6 +18,7 @@ final class Plugin {
 		Registry\Code_Forms::boot();
 		Migration\Legacy_Migration::boot();
 		Migration\Mode_Migration::boot();
+		Migration\Type_Meta_Migration::boot();
 		Dashboard::boot();
 		Settings::boot();
 		REST_Controller::boot();

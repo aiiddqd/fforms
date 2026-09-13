@@ -66,7 +66,7 @@ Entry meta:
 
 ### 3.1. The `fform_type` taxonomy
 
-`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Submissions". A form has no type field of its own: the form *is* the type, through the term linked to it below. The `_fforms_type` meta (`contact`/`lead`) that predated the taxonomy is no longer registered, written, or read; rows left in `postmeta` are inert.
+`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Submissions". A form has no type field of its own: the form *is* the type, through the term linked to it below. The `_fforms_type` meta (`contact`/`lead`) that predated the taxonomy is no longer registered, written, or read, and the one-time `Type_Meta_Migration` drops its remaining rows on the next admin request.
 
 - Value normalization: `sanitize_key`, pattern `^[a-z0-9_-]{1,32}$`; anything else returns HTTP 422 `fforms_invalid_form_type`.
 - Upsert by slug: an unknown slug creates a term with `name = slug` and the `_fforms_autocreated` meta. Renaming the term in the admin does not affect matching — the link is by slug.
