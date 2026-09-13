@@ -2,13 +2,14 @@
 
 ## Next
 
-- [ ] pr https://github.com/aiiddqd/fforms/pull/6/
+- [ ] pr https://github.com/aiiddqd/fforms/pull/6 
+    - translate to english
+
+- [ ] testing
+
+- [ ] settings - Email отправителя & Имя отправителя - make as optional - add new option like "Custom Email & Name"
 
 - [x] classes nameing Notifications as Notifications.php `./includes/class-notifications.php`
-
-- [ ] при добавлении формы новой - выбирать режим - Block editor vs Headless API
-    - если Headless API - то форма будет доступна только через REST API и не будет отображаться в блоках Gutenberg. и интерфейс сильно проще
-    - если выбираем Block editor - то форма будет доступна как блок Gutenberg и через REST API тоже, интерфейс полный
 
     
 - [x] insert form to pages as block with select of available forms
@@ -21,23 +22,7 @@
 - [x] в коллекции ответов (заявок) - важно иметь возможность фильтрации заявок по форме
     - у формы должа быть ссылка на список ответов-заявок - например, "View Entries" или "Смотреть заявки" - и она должна вести уже на фильтрованный список
 
-- [ ] testing
-
-
-
-- [ ] беда с категорией полей ![alt text](image-1.png) http://localhost:8890/wp-admin/post-new.php?post_type=fform
-    - поля должны быть в своей категории FForms
-    - доступны только внутри блока формы - тип поста формы
-    - если это обычные страницы или посты в блоге - поля недоступны
-
-- [ ] settings - Email отправителя & Имя отправителя - make as optional - add new option like "Custom Email & Name"
-
-
-
 - [x] fix styles about basic forms /Users/aa/Projects/ddhq/gits/wpcraft/wp/wp-content/plugins/_fforms/docs/rfc/gutenberg-styles-and-icons.md 
-
-- [ ] pr https://github.com/aiiddqd/fforms/pull/6 
-    - translate to english
 
 - [x] публичные формы имеют урл и открываются по урл - своя шапка и подвал минимальные и кнопка отправить - сценарий как у как Гугл Формы
 - [x] публичные формы - поддержка вставки через iframe
