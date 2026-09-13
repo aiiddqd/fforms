@@ -19,6 +19,7 @@ Entry format:
 - The form sidebar replaced the "Form mode" select with a "Publication" panel: shortcode, the "Share via link" toggle, and under it the URL, the iframe and js-script snippets and a "Reissue link" button.
 - REST reads return `share_link` (bool) instead of `mode` (string) — a breaking change for `GET /forms` and `GET /forms/{id|key}`; the dashboard's questions and answers now describe the two modes.
 - `docs/specs/base.md`, `docs/specs/api-route-headless-cms-mode.md` and `README.md` rewritten around the two entry points; `specs/form-creation-mode.spec.js` replaced by `specs/form-publication.spec.js`.
+- Fixed a bug that predates the RFC and surfaced while checking it: `update_metadata()` unslashes what it stores, so the backslashes JSON uses to escape a quote were stripped and any submitted value containing `"` left `_fforms_data` unparseable. JSON meta (`_fforms_data`, `_fforms_meta`, `_fforms_schema`) is now written through `wp_slash()`. Entries saved before this keep the corrupted value; nothing migrates them.
 
 ## 2026-09-12
 - docs: RFC `two-modes-headless-and-builder` — the plugin collapses to two modes (schema-free headless route `/main`, builder form published via block, shortcode, iframe, js snippet and an optional token share link); marks the three mode/embed RFCs as superseded.

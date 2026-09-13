@@ -291,7 +291,7 @@ final class REST_Controller {
 		}
 		update_post_meta( $entry_id, '_fforms_form_id', $form->post_id );
 		update_post_meta( $entry_id, '_fforms_form_key', (string) $form->key );
-		update_post_meta( $entry_id, '_fforms_data', (string) wp_json_encode( $data, JSON_UNESCAPED_UNICODE ) );
+		update_post_meta( $entry_id, '_fforms_data', self::encode_meta( $data ) );
 		update_post_meta( $entry_id, '_fforms_status', 'new' );
 		update_post_meta( $entry_id, '_fforms_source', $source );
 		update_post_meta( $entry_id, '_fforms_ip', self::client_ip() );
@@ -500,7 +500,7 @@ final class REST_Controller {
 			return;
 		}
 		if ( array() !== ( $extras['meta'] ?? array() ) ) {
-			update_post_meta( $entry_id, '_fforms_meta', (string) wp_json_encode( $extras['meta'], JSON_UNESCAPED_UNICODE ) );
+			update_post_meta( $entry_id, '_fforms_meta', self::encode_meta( $extras['meta'] ) );
 		}
 		if ( '' !== ( $extras['ref'] ?? '' ) ) {
 			update_post_meta( $entry_id, '_fforms_ref', $extras['ref'] );
@@ -526,6 +526,17 @@ final class REST_Controller {
 			);
 		}
 		return $meta;
+	}
+
+	/**
+	 * update_metadata() unslashes what it is given, which would strip the
+	 * backslashes JSON uses to escape quotes and leave unparseable meta behind.
+	 * Slashing here means the value reaches the database exactly as encoded.
+	 *
+	 * @param array<string, mixed> $value
+	 */
+	private static function encode_meta( array $value ): string {
+		return wp_slash( (string) wp_json_encode( $value, JSON_UNESCAPED_UNICODE ) );
 	}
 
 	/** @param array<mixed> $value */

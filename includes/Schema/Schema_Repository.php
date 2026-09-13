@@ -40,7 +40,9 @@ final class Schema_Repository {
 
 	/** @param array{fields: array<int, array<string, mixed>>} $schema */
 	public static function store_cache( int $form_id, array $schema, ?string $hash = null ): void {
-		update_post_meta( $form_id, '_fforms_schema', (string) wp_json_encode( $schema, JSON_UNESCAPED_UNICODE ) );
+		// Slashed: update_metadata() unslashes, which would break the escaping of
+		// any quote inside a label, placeholder or option.
+		update_post_meta( $form_id, '_fforms_schema', wp_slash( (string) wp_json_encode( $schema, JSON_UNESCAPED_UNICODE ) ) );
 		update_post_meta( $form_id, '_fforms_schema_hash', $hash ?: hash( 'sha256', (string) get_post_field( 'post_content', $form_id ) ) );
 	}
 
