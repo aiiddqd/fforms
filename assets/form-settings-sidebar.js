@@ -8,6 +8,7 @@
 	const PUBLICATION_PANEL_NAME = 'fforms-form-settings/publication';
 	const PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted-v3';
 	const Button = components.Button;
+	const RadioControl = components.RadioControl;
 	const SelectControl = components.SelectControl;
 	const TextControl = components.TextControl;
 	const TextareaControl = components.TextareaControl;
@@ -20,6 +21,7 @@
 	const META = {
 		type: '_fforms_type',
 		shareLink: '_fforms_share_link',
+		shareLayout: '_fforms_share_layout',
 		shareToken: '_fforms_share_token',
 		schema: '_fforms_schema',
 		notificationTo: '_fforms_notification_to',
@@ -170,10 +172,57 @@
 					  )
 					: helpText(
 							__(
-								'Publish the form to get its shortcode and link.',
+								'Publish the form to get its shortcode.',
 								'fforms'
 							)
 					  ),
+				shareEnabled && isPublished && url
+					? el(
+							element.Fragment,
+							null,
+							snippetField(
+								__( 'Iframe', 'fforms' ),
+								iframeSnippet( token, editor.title ),
+								__(
+									'Embed on an external site with a fixed height.',
+									'fforms'
+								)
+							),
+							snippetField(
+								__( 'Js-script', 'fforms' ),
+								scriptSnippet( token, editor.id ),
+								__(
+									'Embed on an external site: the script inserts the iframe and adjusts its height.',
+									'fforms'
+								)
+							),
+							el(
+								Button,
+								{
+									variant: 'secondary',
+									isDestructive: true,
+									isBusy: isReissuing,
+									disabled: isReissuing,
+									onClick: reissue,
+								},
+								__( 'Reissue link', 'fforms' )
+							),
+							helpText(
+								__(
+									'The current link stops working immediately.',
+									'fforms'
+								)
+							)
+					  )
+					: null
+			),
+			el(
+				PluginDocumentSettingPanel,
+				{
+					name: 'share-link',
+					title: __( 'Share via link', 'fforms' ),
+					className: 'fforms-form-share-link',
+				},
 				el( ToggleControl, {
 					label: __( 'Share via link', 'fforms' ),
 					checked: shareEnabled,
@@ -217,41 +266,33 @@
 									},
 									__( 'Open the form', 'fforms' )
 								)
-							),
-							snippetField(
-								__( 'Iframe', 'fforms' ),
-								iframeSnippet( token, editor.title ),
-								__(
-									'Embed on an external site with a fixed height.',
-									'fforms'
-								)
-							),
-							snippetField(
-								__( 'Js-script', 'fforms' ),
-								scriptSnippet( token, editor.id ),
-								__(
-									'Embed on an external site: the script inserts the iframe and adjusts its height.',
-									'fforms'
-								)
-							),
-							el(
-								Button,
-								{
-									variant: 'secondary',
-									isDestructive: true,
-									isBusy: isReissuing,
-									disabled: isReissuing,
-									onClick: reissue,
-								},
-								__( 'Reissue link', 'fforms' )
-							),
-							helpText(
-								__(
-									'The current link stops working immediately.',
-									'fforms'
-								)
 							)
 					  )
+					: null,
+				// The layout is the link's own business: a frame on someone else's
+				// page never wants this site's header, so the snippets ignore it.
+				shareEnabled
+					? el( RadioControl, {
+							label: __( 'Page layout', 'fforms' ),
+							selected: meta[ META.shareLayout ] || 'site',
+							options: [
+								{
+									label: __( 'With site header', 'fforms' ),
+									value: 'site',
+								},
+								{
+									label: __( 'Form only', 'fforms' ),
+									value: 'standalone',
+								},
+							],
+							help: __(
+								'Applies to the link only. The iframe and js-script always embed the form on its own.',
+								'fforms'
+							),
+							onChange( value ) {
+								updateMeta( META.shareLayout, value );
+							},
+					  } )
 					: null
 			),
 			el(

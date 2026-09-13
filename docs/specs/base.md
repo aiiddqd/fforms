@@ -43,6 +43,7 @@ Form meta:
 
 - `_fforms_type` — `contact` or `lead`;
 - `_fforms_share_link` — boolean, `false` by default: whether the form is reachable through its share link, the embed view, and the two embed snippets;
+- `_fforms_share_layout` — `site` (default) or `standalone`: whether the share link opens inside the theme's page or as a page of the form alone. Anything else falls back to `site`, so forms that predate the setting render exactly as before;
 - `_fforms_share_token` — 16 hex characters from `random_bytes()`, issued on the form's first publish and used as its only public address. Reissuing it invalidates the previous link immediately;
 - `_fforms_schema` — the normalized JSON schema: a derived cache of the schema compiled from blocks, and the compatible format for legacy forms that have no blocks;
 - `_fforms_notifications_enabled` — enables the main notification for the form;
@@ -124,7 +125,15 @@ Namespace: `fforms/v1`.
 
 ### 5.1. Public form page
 
-A form with `_fforms_share_link` on is additionally reachable without authentication at `/forms/{token}/` (`Public_Form`, rewrite rule `^forms/([a-f0-9]{16})/?$`). The page renders the same block markup as a regular `fforms/form` block on the site, inside the current theme's markup (`get_header()`/`get_footer()`). Access is checked by `status === 'publish'` and `Public_Form::is_enabled( $id )`; a missing form, a different status, or the toggle being off returns a 404 page.
+A form with `_fforms_share_link` on is additionally reachable without authentication at `/forms/{token}/` (`Public_Form`, rewrite rule `^forms/([a-f0-9]{16})/?$`). The page renders the same block markup as a regular `fforms/form` block on the site. Access is checked by `status === 'publish'` and `Public_Form::is_enabled( $id )`; a missing form, a different status, or the toggle being off returns a 404 page.
+
+The request picks one of three renderings, in this order:
+
+- `?fforms_embed=1` — the bare frame document (§7.2), whatever `_fforms_share_layout` says: inside someone else's page the chrome is that page's business, so the snippets never change when the layout does;
+- `_fforms_share_layout = standalone` — a page of the form alone: `wp_head()`/`wp_footer()` but no theme header, footer, navigation or admin bar, and, unlike the frame, the form's title and the same padded, centred `fforms-public-form__content` column as the full page (`body` class `fforms-standalone`);
+- otherwise — the full theme page through `get_header()`/`get_footer()`.
+
+All three block indexing identically and the height reporter is enqueued in all of them; outside a frame it does not activate.
 
 The address is the secret. `/forms/{id}/` no longer exists, so a form cannot be found by walking post IDs, and a token that is reissued invalidates every link already shared. The page is kept out of search entirely: `wp_robots` emits `noindex, nofollow`, the response carries the same `X-Robots-Tag` header, and the `fform` CPT is non-public, so neither the form nor its token URL appears in the sitemap or in site search.
 
@@ -225,7 +234,7 @@ Height is measured from the content (`.fforms-embed__content`) rather than from 
 
 The `fforms_embed=1` parameter switches the public page into "bare" mode: a minimal HTML document with no header, footer, or admin bar, but still with `wp_head()`/`wp_footer()`, so block styles, Global Styles, and the Interactivity runtime work as usual. Without the parameter, `/forms/{token}/` stays a full theme page — it remains the link to share. Padding in bare mode is zero: spacing is the embedding page's job.
 
-All insertion points are collected in the "Publication" panel of the form editor sidebar: the shortcode for any published form, and — while "Share via link" is on — the link, the iframe and the js-script, plus a "Reissue link" button. Every field is read-only and ready to copy. With the toggle off, both `/forms/{token}/` and its `?fforms_embed=1` view return 404 and the link fields are hidden.
+The form editor sidebar splits the two scenarios into two independently collapsible panels. "Publication" is about this site and the sites that embed the form: the shortcode for any published form, and — while "Share via link" is on — the iframe and js-script snippets plus a "Reissue link" button. "Share via link" is about the link itself: the toggle that turns it on, the read-only link with "Open the form", and the "Page layout" choice between "With site header" (`site`) and "Form only" (`standalone`). The layout choice is shown only while the toggle is on and changes nothing about the snippets. Every snippet field is read-only and ready to copy. With the toggle off, both `/forms/{token}/` and its `?fforms_embed=1` view return 404 and the link fields are hidden.
 
 ## 8. Admin, mail, and export
 

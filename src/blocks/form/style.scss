@@ -76,3 +76,10 @@
 :where(.fforms-public-form__title) {
 	margin: 0;
 }
+
+/* The link opened as a page of its own: no theme header or footer frames it,
+   so the body loses the browser's default margin and the content column above
+   does the centring and the spacing. */
+:where(body.fforms-standalone) {
+	margin: 0;
+}

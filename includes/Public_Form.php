@@ -19,6 +19,11 @@ final class Public_Form {
 	public const ENABLED_META = '_fforms_share_link';
 	public const TOKEN_META   = '_fforms_share_token';
 
+	/** Post meta: how the shared link renders — the theme's page, or the form alone. */
+	public const LAYOUT_META       = '_fforms_share_layout';
+	public const LAYOUT_SITE       = 'site';
+	public const LAYOUT_STANDALONE = 'standalone';
+
 	private const TOKEN_PATTERN = '/^[a-f0-9]{16}$/';
 
 	public static function boot(): void {
@@ -135,6 +140,19 @@ final class Public_Form {
 		return (bool) get_post_meta( $form_id, self::ENABLED_META, true );
 	}
 
+	/** Anything but the two known layouts means the theme page, as before. */
+	public static function sanitize_layout( mixed $value ): string {
+		return self::LAYOUT_STANDALONE === $value ? self::LAYOUT_STANDALONE : self::LAYOUT_SITE;
+	}
+
+	/**
+	 * Layout of the shared link. Forms created before the setting existed have no
+	 * meta and fall back to the theme page they have always rendered in.
+	 */
+	public static function layout( int $form_id ): string {
+		return self::sanitize_layout( get_post_meta( $form_id, self::LAYOUT_META, true ) );
+	}
+
 	/** URL of the script third-party sites load to embed a form. */
 	public static function embed_script_url(): string {
 		return FFORMS_URL . 'assets/embed.js';
@@ -204,8 +222,14 @@ final class Public_Form {
 
 		add_filter( 'pre_get_document_title', static fn(): string => get_the_title( $form_id ) );
 
+		// A frame is a frame whatever the link is set to: the embedding page owns
+		// the chrome around it, so the setting only decides how the link renders.
 		if ( self::is_embed_request() ) {
 			self::render_embed( $form_id, $form_markup );
+		}
+
+		if ( self::LAYOUT_STANDALONE === self::layout( $form_id ) ) {
+			self::render_standalone( $form_id, $form_markup );
 		}
 
 		add_filter( 'body_class', static fn( array $classes ): array => array_merge( $classes, array( 'fforms-public-form' ) ) );
@@ -245,6 +269,33 @@ body.fforms-embed{display:block!important}
 </head>
 <body <?php body_class(); ?>>
 <main class="fforms-embed__content"><?php echo $form_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already-rendered block markup ?></main>
+<?php wp_footer(); ?>
+</body>
+</html>
+		<?php
+		exit;
+	}
+
+	/**
+	 * The link as a page of its own: no theme header, footer, navigation or admin
+	 * bar, but — unlike the frame — a page someone actually reads, so it keeps the
+	 * form's title and the padded, centred column of the full page.
+	 */
+	private static function render_standalone( int $form_id, string $form_markup ): void {
+		show_admin_bar( false );
+		add_filter( 'body_class', static fn( array $classes ): array => array_merge( $classes, array( 'fforms-public-form', 'fforms-standalone' ) ) );
+		status_header( 200 );
+		nocache_headers();
+		?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+<meta charset="<?php bloginfo( 'charset' ); ?>">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<main class="fforms-public-form__content"><article class="fforms-public-form__article"><header class="fforms-public-form__header"><h1 class="fforms-public-form__title"><?php echo esc_html( get_the_title( $form_id ) ); ?></h1></header><?php echo $form_markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already-rendered block markup ?></article></main>
 <?php wp_footer(); ?>
 </body>
 </html>

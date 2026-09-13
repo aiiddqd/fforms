@@ -20,7 +20,11 @@ test.describe( 'FForms admin menu links', () => {
 		test( `"${ label }" submenu link resolves without a 404`, async ( { page } ) => {
 			await page.goto( '/wp-admin/edit.php?post_type=fform_entry' );
 
-			const link = page.locator( '#adminmenu' ).getByRole( 'link', { name: label, exact: true } );
+			// Scoped to the plugin's own top-level menu: WordPress has a
+			// "Settings" menu of its own further down the sidebar.
+			const link = page
+				.locator( '#toplevel_page_fforms' )
+				.getByRole( 'link', { name: label, exact: true } );
 			await expect( link ).toHaveAttribute( 'href', new RegExp( `admin\\.php\\?${ expectedQuery }` ) );
 
 			await link.click();

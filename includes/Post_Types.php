@@ -91,6 +91,7 @@ final class Post_Types {
 	private static function register_meta(): void {
 		self::register_form_meta( '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
 		self::register_form_meta( '_fforms_share_link', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
+		self::register_form_meta( '_fforms_share_layout', array( 'type' => 'string', 'single' => true, 'default' => Public_Form::LAYOUT_SITE, 'show_in_rest' => true, 'sanitize_callback' => array( Public_Form::class, 'sanitize_layout' ) ) );
 		self::register_form_meta( '_fforms_share_token', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Public_Form::class, 'sanitize_token' ) ) );
 		self::register_form_meta( '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		self::register_form_meta( '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );

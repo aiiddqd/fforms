@@ -1,6 +1,6 @@
 ---
 title: "Share via link: отдельная секция настроек и выбор оформления страницы"
-status: draft
+status: implementing
 created: 2026-09-13
 ---
 
