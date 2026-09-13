@@ -48,11 +48,20 @@ final class Schema_Compiler {
 		return (bool) self::find_form_block( parse_blocks( $content ) );
 	}
 
-	/** @param array<int, array<string, mixed>> $blocks */
+	/**
+	 * The root block may sit inside any wrapper (a Group with the form padding,
+	 * Columns, a template part), so look through the whole tree, not just the top level.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks
+	 */
 	private static function find_form_block( array $blocks ): array|false {
 		foreach ( $blocks as $block ) {
 			if ( self::FORM_BLOCK === ( $block['blockName'] ?? '' ) ) {
 				return $block;
+			}
+			$nested = self::find_form_block( $block['innerBlocks'] ?? array() );
+			if ( $nested ) {
+				return $nested;
 			}
 		}
 		return false;
