@@ -1,5 +1,6 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
+	Button,
 	PanelBody,
 	Placeholder,
 	SelectControl,
@@ -64,6 +65,19 @@ export default function EditReference( { attributes, setAttributes } ) {
 			<InspectorControls>
 				<PanelBody title={ __( 'Form settings', 'fforms' ) }>
 					{ control }
+					{ !! ref && (
+						// The editor always lives under /wp-admin/, so a
+						// relative href needs no site URL to resolve. A new
+						// tab keeps the unsaved page behind it intact.
+						<Button
+							variant="secondary"
+							href={ `post.php?post=${ ref }&action=edit` }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ __( 'Edit form', 'fforms' ) }
+						</Button>
+					) }
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>

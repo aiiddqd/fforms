@@ -255,7 +255,7 @@ msgstr ""
 msgid "Download CSV"
 msgstr ""
 
-#: includes/Post_Types.php:40
+#: build/blocks/form/index.js:1 includes/Post_Types.php:40 src/blocks/form/edit-reference.js:78
 msgid "Edit form"
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "Export submissions"
 msgstr ""
 
-#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:50
+#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:51
 msgid "FForms"
 msgstr ""
 
@@ -351,7 +351,7 @@ msgstr ""
 msgid "Filter by form type"
 msgstr ""
 
-#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit-reference.js:38
+#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit-reference.js:39
 msgid "Form"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgstr ""
 msgid "Form not found: check the id in the [fform] shortcode."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:65
+#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:66
 msgid "Form settings"
 msgstr ""
 
@@ -719,7 +719,7 @@ msgstr ""
 msgid "Search submissions"
 msgstr ""
 
-#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:29
+#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:30
 msgid "Select a published form"
 msgstr ""
 
