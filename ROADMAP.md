@@ -2,6 +2,8 @@
 
 ## Next
 
+- [ ] afla 2 [](https://github.com/aiiddqd/fforms/pull/7)
+
 - [ ] share-link-panel [rfc](docs/rfc/share-link-panel-and-page-layout.md)
 
 - [ ] testing
