@@ -47,7 +47,7 @@ msgstr ""
 msgid "Add at least one form field."
 msgstr ""
 
-#: includes/Dashboard.php:165 includes/Post_Types.php:39
+#: includes/Dashboard.php:165 includes/Post_Types.php:40
 msgid "Add form"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Add the button that submits this FForms form."
 msgstr ""
 
-#: includes/Post_Types.php:152
+#: includes/Post_Types.php:171
 msgid "Additional data"
 msgstr ""
 
@@ -235,11 +235,11 @@ msgstr ""
 msgid "Could not save the submission."
 msgstr ""
 
-#: includes/Post_Types.php:315
+#: includes/Post_Types.php:334
 msgid "Data"
 msgstr ""
 
-#: includes/Post_Types.php:316
+#: includes/Post_Types.php:335
 msgid "Date"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr ""
 msgid "Download CSV"
 msgstr ""
 
-#: build/blocks/form/index.js:1 includes/Post_Types.php:40 src/blocks/form/edit-reference.js:78
+#: build/blocks/form/index.js:1 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:90
 msgid "Edit form"
 msgstr ""
 
@@ -263,7 +263,7 @@ msgstr ""
 msgid "Edit form type"
 msgstr ""
 
-#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
+#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:55 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
 msgid "Email"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr ""
 msgid "Enter a valid email address."
 msgstr ""
 
-#: includes/Schema/Schema_Compiler.php:97
+#: includes/Schema/Schema_Compiler.php:106
 msgid "Every field must have a valid, unique name."
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "Export submissions"
 msgstr ""
 
-#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:51
+#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:42 src/blocks/form/edit-reference.js:60
 msgid "FForms"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr ""
 msgid "Filter by form type"
 msgstr ""
 
-#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:308 src/blocks/form/edit-reference.js:39
+#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:39 includes/Post_Types.php:327 src/blocks/form/edit-reference.js:48
 msgid "Form"
 msgstr ""
 
@@ -367,11 +367,11 @@ msgstr ""
 msgid "Form only"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:327 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:66
+#: assets/form-settings-sidebar.js:327 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:75
 msgid "Form settings"
 msgstr ""
 
-#: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:259 includes/Post_Types.php:312
+#: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:278 includes/Post_Types.php:331
 msgid "Form type"
 msgstr ""
 
@@ -387,7 +387,7 @@ msgstr ""
 msgid "Form: %s"
 msgstr ""
 
-#: includes/Dashboard.php:179 includes/Post_Types.php:37 includes/Post_Types.php:42
+#: includes/Dashboard.php:179 includes/Post_Types.php:38 includes/Post_Types.php:43
 msgid "Forms"
 msgstr ""
 
@@ -515,11 +515,11 @@ msgstr ""
 msgid "Maximum length"
 msgstr ""
 
-#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
+#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Post_Types.php:56 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
 msgid "Message"
 msgstr ""
 
-#: includes/Post_Types.php:289
+#: includes/Post_Types.php:308
 msgid "Meta"
 msgstr ""
 
@@ -527,11 +527,11 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:18 includes/Default_Forms.php:29 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:170 src/blocks/form/edit-builder.js:10
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:18 includes/Default_Forms.php:29 includes/Post_Types.php:54 includes/Schema.php:27 src/blocks/field.js:170 src/blocks/form/edit-builder.js:10
 msgid "Name"
 msgstr ""
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "New"
 msgstr ""
 
@@ -543,19 +543,19 @@ msgstr ""
 msgid "New submission: %s"
 msgstr ""
 
-#: includes/Post_Types.php:414
+#: includes/Post_Types.php:433
 msgid "No"
 msgstr ""
 
-#: includes/Post_Types.php:253
+#: includes/Post_Types.php:272
 msgid "No additional data."
 msgstr ""
 
-#: includes/Post_Types.php:75
+#: includes/Post_Types.php:76
 msgid "No submissions found in Trash."
 msgstr ""
 
-#: includes/Post_Types.php:74
+#: includes/Post_Types.php:75
 msgid "No submissions found."
 msgstr ""
 
@@ -655,7 +655,7 @@ msgstr ""
 msgid "Radio field"
 msgstr ""
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Read"
 msgstr ""
 
@@ -667,7 +667,7 @@ msgstr ""
 msgid "Recipients"
 msgstr ""
 
-#: includes/Post_Types.php:270
+#: includes/Post_Types.php:289
 msgid "Ref"
 msgstr ""
 
@@ -687,7 +687,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Replied"
 msgstr ""
 
@@ -719,11 +719,11 @@ msgstr ""
 msgid "Search form types"
 msgstr ""
 
-#: includes/Post_Types.php:73
+#: includes/Post_Types.php:74
 msgid "Search submissions"
 msgstr ""
 
-#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:30
+#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:39
 msgid "Select a published form"
 msgstr ""
 
@@ -739,7 +739,7 @@ msgstr ""
 msgid "Select field"
 msgstr ""
 
-#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:22 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:22 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:57 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
 msgid "Send"
 msgstr ""
 
@@ -779,11 +779,11 @@ msgstr ""
 msgid "Shortcode"
 msgstr ""
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Spam"
 msgstr ""
 
-#: includes/Post_Types.php:238 includes/Post_Types.php:314
+#: includes/Post_Types.php:257 includes/Post_Types.php:333
 msgid "Status"
 msgstr ""
 
@@ -795,7 +795,7 @@ msgstr ""
 msgid "Strict form types"
 msgstr ""
 
-#: includes/Post_Types.php:68 includes/Post_Types.php:307
+#: includes/Post_Types.php:69 includes/Post_Types.php:326
 msgid "Submission"
 msgstr ""
 
@@ -803,7 +803,7 @@ msgstr ""
 msgid "Submission #%d"
 msgstr ""
 
-#: includes/Post_Types.php:151
+#: includes/Post_Types.php:170
 msgid "Submission data"
 msgstr ""
 
@@ -815,7 +815,7 @@ msgstr ""
 msgid "Submission with a UTM tag"
 msgstr ""
 
-#: includes/Dashboard.php:173 includes/Post_Types.php:67 includes/Post_Types.php:69 includes/Post_Types.php:70
+#: includes/Dashboard.php:173 includes/Post_Types.php:68 includes/Post_Types.php:70 includes/Post_Types.php:71
 msgid "Submissions"
 msgstr ""
 
@@ -859,7 +859,7 @@ msgstr ""
 msgid "The current link stops working immediately."
 msgstr ""
 
-#: includes/Schema/Schema_Compiler.php:76
+#: includes/Schema/Schema_Compiler.php:85
 msgid "The field name “%s” is duplicated."
 msgstr ""
 
@@ -903,7 +903,7 @@ msgstr ""
 msgid "The “%s” field is required."
 msgstr ""
 
-#: includes/Schema/Schema_Compiler.php:118
+#: includes/Schema/Schema_Compiler.php:127
 msgid "The “%s” field must have valid options."
 msgstr ""
 
@@ -931,7 +931,7 @@ msgstr ""
 msgid "Use the FForms SMTP"
 msgstr ""
 
-#: includes/Post_Types.php:273
+#: includes/Post_Types.php:292
 msgid "User ID"
 msgstr ""
 
@@ -947,11 +947,11 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: includes/Post_Types.php:71 includes/Post_Types.php:72
+#: includes/Post_Types.php:72 includes/Post_Types.php:73
 msgid "View submission"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:171 includes/Post_Types.php:407
+#: assets/form-settings-sidebar.js:171 build/blocks/form/index.js:1 includes/Post_Types.php:426 src/blocks/form/edit-reference.js:101
 msgid "View submissions"
 msgstr ""
 
@@ -975,7 +975,7 @@ msgstr ""
 msgid "Without formType the submission gets the “main” type."
 msgstr ""
 
-#: includes/Post_Types.php:414
+#: includes/Post_Types.php:433
 msgid "Yes"
 msgstr ""
 
@@ -1147,6 +1147,6 @@ msgstr ""
 msgid "website"
 msgstr ""
 
-#: includes/Post_Types.php:265
+#: includes/Post_Types.php:284
 msgid "— the term was not created (form type limit reached)"
 msgstr ""

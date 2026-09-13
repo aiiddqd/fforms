@@ -47,7 +47,7 @@ msgstr "Принимать только существующие типы"
 msgid "Add at least one form field."
 msgstr "Добавьте хотя бы одно поле формы."
 
-#: includes/Dashboard.php:165 includes/Post_Types.php:39
+#: includes/Dashboard.php:165 includes/Post_Types.php:40
 msgid "Add form"
 msgstr "Добавить форму"
 
@@ -63,7 +63,7 @@ msgstr "Добавить вариант"
 msgid "Add the button that submits this FForms form."
 msgstr "Добавьте кнопку, которая отправляет эту форму FForms."
 
-#: includes/Post_Types.php:152
+#: includes/Post_Types.php:171
 msgid "Additional data"
 msgstr "Дополнительно"
 
@@ -235,11 +235,11 @@ msgstr "Не удалось сформировать CSV."
 msgid "Could not save the submission."
 msgstr "Не удалось сохранить запись."
 
-#: includes/Post_Types.php:315
+#: includes/Post_Types.php:334
 msgid "Data"
 msgstr "Данные"
 
-#: includes/Post_Types.php:316
+#: includes/Post_Types.php:335
 msgid "Date"
 msgstr "Дата"
 
@@ -255,7 +255,7 @@ msgstr "Выключен"
 msgid "Download CSV"
 msgstr "Скачать CSV"
 
-#: build/blocks/form/index.js:1 includes/Post_Types.php:40 src/blocks/form/edit-reference.js:78
+#: build/blocks/form/index.js:1 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:90
 msgid "Edit form"
 msgstr "Редактировать форму"
 
@@ -263,7 +263,7 @@ msgstr "Редактировать форму"
 msgid "Edit form type"
 msgstr "Редактировать тип формы"
 
-#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
+#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:55 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
 msgid "Email"
 msgstr ""
 
@@ -319,7 +319,7 @@ msgstr "Укажите корректный URL."
 msgid "Enter a valid email address."
 msgstr "Укажите корректный email."
 
-#: includes/Schema/Schema_Compiler.php:97
+#: includes/Schema/Schema_Compiler.php:106
 msgid "Every field must have a valid, unique name."
 msgstr "У каждого поля должно быть корректное уникальное имя."
 
@@ -327,7 +327,7 @@ msgstr "У каждого поля должно быть корректное у
 msgid "Export submissions"
 msgstr "Экспорт записей"
 
-#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:51
+#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:42 src/blocks/form/edit-reference.js:60
 msgid "FForms"
 msgstr ""
 
@@ -347,7 +347,7 @@ msgstr "Настройки поля"
 msgid "Filter by form type"
 msgstr "Фильтр по типу формы"
 
-#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:308 src/blocks/form/edit-reference.js:39
+#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:39 includes/Post_Types.php:327 src/blocks/form/edit-reference.js:48
 msgid "Form"
 msgstr "Форма"
 
@@ -367,11 +367,11 @@ msgstr "Форма не найдена: проверьте id в шорткод�
 msgid "Form only"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:327 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:66
+#: assets/form-settings-sidebar.js:327 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:75
 msgid "Form settings"
 msgstr "Настройки формы"
 
-#: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:259 includes/Post_Types.php:312
+#: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:278 includes/Post_Types.php:331
 msgid "Form type"
 msgstr "Тип формы"
 
@@ -387,7 +387,7 @@ msgstr "Типы форм"
 msgid "Form: %s"
 msgstr "Форма: %s"
 
-#: includes/Dashboard.php:179 includes/Post_Types.php:37 includes/Post_Types.php:42
+#: includes/Dashboard.php:179 includes/Post_Types.php:38 includes/Post_Types.php:43
 msgid "Forms"
 msgstr "Формы"
 
@@ -515,11 +515,11 @@ msgstr "Уведомления главной формы"
 msgid "Maximum length"
 msgstr "Максимальная длина"
 
-#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
+#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Post_Types.php:56 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
 msgid "Message"
 msgstr "Сообщение"
 
-#: includes/Post_Types.php:289
+#: includes/Post_Types.php:308
 msgid "Meta"
 msgstr ""
 
@@ -527,11 +527,11 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:18 includes/Default_Forms.php:29 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:170 src/blocks/form/edit-builder.js:10
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:18 includes/Default_Forms.php:29 includes/Post_Types.php:54 includes/Schema.php:27 src/blocks/field.js:170 src/blocks/form/edit-builder.js:10
 msgid "Name"
 msgstr "Имя"
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "New"
 msgstr "Новый"
 
@@ -543,19 +543,19 @@ msgstr "Новое поле"
 msgid "New submission: %s"
 msgstr "Новая запись: %s"
 
-#: includes/Post_Types.php:414
+#: includes/Post_Types.php:433
 msgid "No"
 msgstr "Нет"
 
-#: includes/Post_Types.php:253
+#: includes/Post_Types.php:272
 msgid "No additional data."
 msgstr "Дополнительных данных нет."
 
-#: includes/Post_Types.php:75
+#: includes/Post_Types.php:76
 msgid "No submissions found in Trash."
 msgstr "В корзине записей нет."
 
-#: includes/Post_Types.php:74
+#: includes/Post_Types.php:75
 msgid "No submissions found."
 msgstr "Записи не найдены."
 
@@ -655,7 +655,7 @@ msgstr "Вопросы и ответы"
 msgid "Radio field"
 msgstr "Поле «Переключатель»"
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Read"
 msgstr "Прочитан"
 
@@ -667,7 +667,7 @@ msgstr "Читать документацию"
 msgid "Recipients"
 msgstr "Получатели"
 
-#: includes/Post_Types.php:270
+#: includes/Post_Types.php:289
 msgid "Ref"
 msgstr ""
 
@@ -687,7 +687,7 @@ msgstr "Перевыпустить ссылку"
 msgid "Remove"
 msgstr "Удалить"
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Replied"
 msgstr "Отвечен"
 
@@ -719,11 +719,11 @@ msgstr "Сохраните форму и вставьте её ссылку на
 msgid "Search form types"
 msgstr "Искать типы форм"
 
-#: includes/Post_Types.php:73
+#: includes/Post_Types.php:74
 msgid "Search submissions"
 msgstr "Искать записи"
 
-#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:30
+#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:39
 msgid "Select a published form"
 msgstr "Выберите опубликованную форму"
 
@@ -739,7 +739,7 @@ msgstr "Выберите вариант"
 msgid "Select field"
 msgstr "Поле «Выпадающий список»"
 
-#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:22 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:22 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:57 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
 msgid "Send"
 msgstr "Отправить"
 
@@ -779,11 +779,11 @@ msgstr "Доступ по ссылке"
 msgid "Shortcode"
 msgstr "Шорткод"
 
-#: includes/Post_Types.php:238
+#: includes/Post_Types.php:257
 msgid "Spam"
 msgstr "Спам"
 
-#: includes/Post_Types.php:238 includes/Post_Types.php:314
+#: includes/Post_Types.php:257 includes/Post_Types.php:333
 msgid "Status"
 msgstr "Статус"
 
@@ -795,7 +795,7 @@ msgstr "Сохранено записей: %d"
 msgid "Strict form types"
 msgstr "Строгий режим типов"
 
-#: includes/Post_Types.php:68 includes/Post_Types.php:307
+#: includes/Post_Types.php:69 includes/Post_Types.php:326
 msgid "Submission"
 msgstr "Запись"
 
@@ -803,7 +803,7 @@ msgstr "Запись"
 msgid "Submission #%d"
 msgstr "Запись #%d"
 
-#: includes/Post_Types.php:151
+#: includes/Post_Types.php:170
 msgid "Submission data"
 msgstr "Данные записи"
 
@@ -815,7 +815,7 @@ msgstr "Запись не найдена."
 msgid "Submission with a UTM tag"
 msgstr "Запись с UTM-меткой"
 
-#: includes/Dashboard.php:173 includes/Post_Types.php:67 includes/Post_Types.php:69 includes/Post_Types.php:70
+#: includes/Dashboard.php:173 includes/Post_Types.php:68 includes/Post_Types.php:70 includes/Post_Types.php:71
 msgid "Submissions"
 msgstr "Записи"
 
@@ -859,7 +859,7 @@ msgstr "Спасибо! Запись отправлена."
 msgid "The current link stops working immediately."
 msgstr "Текущая ссылка перестанет работать сразу."
 
-#: includes/Schema/Schema_Compiler.php:76
+#: includes/Schema/Schema_Compiler.php:85
 msgid "The field name “%s” is duplicated."
 msgstr "Имя поля «%s» повторяется."
 
@@ -903,7 +903,7 @@ msgstr "Роут работает сразу после активации пл�
 msgid "The “%s” field is required."
 msgstr "Поле «%s» обязательно."
 
-#: includes/Schema/Schema_Compiler.php:118
+#: includes/Schema/Schema_Compiler.php:127
 msgid "The “%s” field must have valid options."
 msgstr "Поле «%s» должно иметь корректные варианты."
 
@@ -931,7 +931,7 @@ msgstr "Неизвестный тип формы."
 msgid "Use the FForms SMTP"
 msgstr "Использовать SMTP FForms"
 
-#: includes/Post_Types.php:273
+#: includes/Post_Types.php:292
 msgid "User ID"
 msgstr ""
 
@@ -947,11 +947,11 @@ msgstr "Логин"
 msgid "Value"
 msgstr "Значение"
 
-#: includes/Post_Types.php:71 includes/Post_Types.php:72
+#: includes/Post_Types.php:72 includes/Post_Types.php:73
 msgid "View submission"
 msgstr "Просмотреть запись"
 
-#: assets/form-settings-sidebar.js:171 includes/Post_Types.php:407
+#: assets/form-settings-sidebar.js:171 build/blocks/form/index.js:1 includes/Post_Types.php:426 src/blocks/form/edit-reference.js:101
 msgid "View submissions"
 msgstr "Смотреть записи"
 
@@ -975,7 +975,7 @@ msgstr ""
 msgid "Without formType the submission gets the “main” type."
 msgstr "Без formType заявка получает тип «main»."
 
-#: includes/Post_Types.php:414
+#: includes/Post_Types.php:433
 msgid "Yes"
 msgstr "Да"
 
@@ -1147,6 +1147,6 @@ msgstr "url"
 msgid "website"
 msgstr "сайт"
 
-#: includes/Post_Types.php:265
+#: includes/Post_Types.php:284
 msgid "— the term was not created (form type limit reached)"
 msgstr "— термин не создан (достигнут лимит типов)"

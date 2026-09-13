@@ -17,6 +17,7 @@ final class Post_Types {
 		add_action( 'add_meta_boxes', array( self::class, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
+		add_action( 'rest_api_init', array( self::class, 'register_rest_fields' ) );
 		add_filter( 'allowed_block_types_all', array( self::class, 'limit_internal_blocks_to_form_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
@@ -106,6 +107,24 @@ final class Post_Types {
 		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent', '_fforms_custom', '_fforms_meta', '_fforms_ref', '_fforms_form_type_raw' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		}
+	}
+
+	/**
+	 * The block editor links a form block to its submissions, and the URL depends
+	 * on server-side state (the form's type term). Expose the same URL the forms
+	 * list row action uses so both entry points land on the same filtered list.
+	 */
+	public static function register_rest_fields(): void {
+		register_rest_field(
+			self::FORM,
+			'fforms_entries_url',
+			array(
+				// Submissions are a manage_options screen; hand the URL only to
+				// users who can actually open it, so the button stays hidden.
+				'get_callback' => static fn( array $post ): string => current_user_can( 'manage_options' ) ? self::entries_url_for_form( (int) $post['id'] ) : '',
+				'schema'       => array( 'type' => 'string', 'format' => 'uri', 'context' => array( 'view', 'edit' ), 'readonly' => true ),
+			)
+		);
 	}
 
 	/** @param array<string, mixed> $args */
