@@ -11,6 +11,15 @@ Entry format:
 - ...
 ```
 
+## 2026-09-13
+- Implemented the `two-modes-headless-and-builder` RFC. `POST /main` dropped its schema: every non-reserved top-level key is stored in `_fforms_data` as sent (≤ 50 fields, ≤ 2,000 characters, non-scalars as JSON), `formType` only classifies and no longer addresses a CPT or code form, a submission without one gets the type `main`, and an entirely empty payload is 422 `fforms_empty_submission`. `_fforms_custom` is no longer written and stays readable for older entries.
+- The form mode is gone: `_fforms_mode`, `Post_Types::form_mode()`/`sanitize_form_mode()`, the headless editor branch and every render/shortcode/`ref`-picker check of it were removed, as were the `fforms/headless-schema` block and its compiler support. Any published form now renders through the block and the shortcode.
+- The share link became a toggle plus a secret token: `_fforms_share_link` and `_fforms_share_token` (16 hex from `random_bytes()`, issued on first publish), the rewrite is `^forms/([a-f0-9]{16})/?$`, `/forms/{id}/` is gone, the page answers `noindex, nofollow` in both `wp_robots` and `X-Robots-Tag`, and `POST /fforms/v1/forms/{id}/share-token` reissues the link.
+- `Mode_Migration` revision 2 converts existing forms: `public` → share link plus a token, `headless` → the same fields in an `fforms/form` block with a submit button, and `_fforms_mode`/`_fforms_public` are deleted everywhere.
+- The form sidebar replaced the "Form mode" select with a "Publication" panel: shortcode, the "Share via link" toggle, and under it the URL, the iframe and js-script snippets and a "Reissue link" button.
+- REST reads return `share_link` (bool) instead of `mode` (string) — a breaking change for `GET /forms` and `GET /forms/{id|key}`; the dashboard's questions and answers now describe the two modes.
+- `docs/specs/base.md`, `docs/specs/api-route-headless-cms-mode.md` and `README.md` rewritten around the two entry points; `specs/form-creation-mode.spec.js` replaced by `specs/form-publication.spec.js`.
+
 ## 2026-09-12
 - docs: RFC `two-modes-headless-and-builder` — the plugin collapses to two modes (schema-free headless route `/main`, builder form published via block, shortcode, iframe, js snippet and an optional token share link); marks the three mode/embed RFCs as superseded.
 

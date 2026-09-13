@@ -10,21 +10,21 @@ msgstr ""
 "X-Generator: tools/i18n.py\n"
 "X-Domain: fforms\n"
 
-#: includes/Dashboard.php:144
+#: includes/Dashboard.php:151
 msgid "%d form"
 msgid_plural "%d forms"
 msgstr[0] "%d форма"
 msgstr[1] "%d формы"
 msgstr[2] "%d форм"
 
-#: includes/Dashboard.php:163
+#: includes/Dashboard.php:170
 msgid "%d form in code"
 msgid_plural "%d forms in code"
 msgstr[0] "%d форма из кода"
 msgstr[1] "%d формы из кода"
 msgstr[2] "%d форм из кода"
 
-#: includes/Dashboard.php:170
+#: includes/Dashboard.php:145
 msgid "%d submission"
 msgid_plural "%d submissions"
 msgstr[0] "%d запись"
@@ -35,15 +35,19 @@ msgstr[2] "%d записей"
 msgid "A form with this key is already registered."
 msgstr "Форма с таким ключом уже зарегистрирована."
 
+#: assets/form-settings-sidebar.js:203
+msgid "A secret address: it cannot be guessed from the form id."
+msgstr "Секретный адрес: его нельзя подобрать по идентификатору формы."
+
 #: includes/Settings.php:118
 msgid "Accept only existing types"
 msgstr "Принимать только существующие типы"
 
-#: includes/Schema/Schema_Compiler.php:43
+#: includes/Schema/Schema_Compiler.php:38
 msgid "Add at least one form field."
 msgstr "Добавьте хотя бы одно поле формы."
 
-#: includes/Dashboard.php:136 includes/Post_Types.php:40
+#: includes/Dashboard.php:136 includes/Post_Types.php:39
 msgid "Add form"
 msgstr "Добавить форму"
 
@@ -59,7 +63,7 @@ msgstr "Добавить вариант"
 msgid "Add the button that submits this FForms form."
 msgstr "Добавьте кнопку, которая отправляет эту форму FForms."
 
-#: includes/Post_Types.php:186
+#: includes/Post_Types.php:152
 msgid "Additional data"
 msgstr "Дополнительно"
 
@@ -71,11 +75,11 @@ msgstr "Все типы форм"
 msgid "All forms"
 msgstr "Все формы"
 
-#: includes/Dashboard.php:145
+#: includes/Dashboard.php:152
 msgid "All forms →"
 msgstr "Все формы →"
 
-#: includes/Dashboard.php:171
+#: includes/Dashboard.php:146
 msgid "All submissions →"
 msgstr "Все записи →"
 
@@ -91,15 +95,23 @@ msgstr "Разрешённые origins"
 msgid "Allowed origins of the main form"
 msgstr "Разрешённые origins главной формы"
 
+#: assets/form-settings-sidebar.js:180
+msgid "Anyone with the link can open and submit the form. The page is not indexed by search engines."
+msgstr "Любой, у кого есть ссылка, может открыть и отправить форму. Страница не индексируется поисковиками."
+
+#: includes/Dashboard.php:80
+msgid "Arbitrary fields"
+msgstr "Произвольные поля"
+
 #: includes/Dashboard.php:188
 msgid "Attachments"
 msgstr "Вложения"
 
-#: includes/REST_Controller.php:364
+#: includes/REST_Controller.php:440
 msgid "Attachments are disabled."
 msgstr "Приём вложений отключён."
 
-#: includes/REST_Controller.php:367
+#: includes/REST_Controller.php:443
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr "Вложения передаются только через multipart/form-data."
 
@@ -107,21 +119,17 @@ msgstr "Вложения передаются только через multipart/
 msgid "Authentication"
 msgstr "Авторизация"
 
-#: assets/form-settings-sidebar.js:444
+#: assets/form-settings-sidebar.js:354
 msgid "Auto-reply"
 msgstr "Автоответ"
 
-#: assets/form-settings-sidebar.js:487
+#: assets/form-settings-sidebar.js:400
 msgid "Auto-reply body"
 msgstr "Текст автоответа"
 
-#: assets/form-settings-sidebar.js:473
+#: assets/form-settings-sidebar.js:386
 msgid "Auto-reply subject"
 msgstr "Тема автоответа"
-
-#: assets/form-settings-sidebar.js:271
-msgid "Block editor"
-msgstr "Редактор блоков"
 
 #: build/blocks/form/block.json:1 src/blocks/form/block.json:1
 msgid "Build a reusable FForms form or insert a published form."
@@ -131,7 +139,7 @@ msgstr "Соберите форму FForms или вставьте уже опу
 msgid "Button text"
 msgstr "Текст кнопки"
 
-#: build/blocks/form/index.js:1 src/blocks/form/edit.js:113
+#: build/blocks/form/index.js:1 src/blocks/form/edit.js:108
 msgid "Button text (legacy)"
 msgstr "Текст кнопки (legacy)"
 
@@ -151,13 +159,13 @@ msgstr "Поле «Чекбокс»"
 msgid "Choose one of the allowed options."
 msgstr "Выберите допустимый вариант."
 
-#: includes/Blocks/Form_Renderer.php:47
+#: includes/Blocks/Form_Renderer.php:46
 msgid "Circular form reference detected."
 msgstr "Обнаружена циклическая ссылка формы."
 
 #: includes/Dashboard.php:215
-msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post — the form becomes available on the site and through the REST API right away."
-msgstr "Нажмите «Добавить форму», соберите поля блоками FForms прямо в редакторе Gutenberg и опубликуйте запись — форма сразу становится доступна на сайте и через REST API."
+msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “FForms Form” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites."
+msgstr "Нажмите «Добавить форму», соберите поля блоками FForms прямо в редакторе Gutenberg и опубликуйте запись. Опубликованную форму можно вставить блоком «FForms Form» или шорткодом [fform id=…]; если включить «Доступ по ссылке» в панели «Публикация», у неё появятся ещё и секретный URL, iframe- и js-сниппеты для внешних сайтов."
 
 #: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
 msgid "Collect a longer multi-line response."
@@ -191,7 +199,7 @@ msgstr "Собирает один или несколько отмеченных
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr "Домены через запятую, которым разрешён кросс-доменный запрос к POST /fforms/v1/main. Пусто — CORS-заголовки не отправляются."
 
-#: assets/form-settings-sidebar.js:399
+#: assets/form-settings-sidebar.js:306
 msgid "Comma-separated emails; the administrator email when empty."
 msgstr "Email через запятую; если пусто — email администратора."
 
@@ -207,7 +215,7 @@ msgstr "Подтверждение"
 msgid "Consultation request"
 msgstr "Заявка на консультацию"
 
-#: assets/form-settings-sidebar.js:362
+#: assets/form-settings-sidebar.js:269
 msgid "Contact"
 msgstr "Контактная"
 
@@ -227,27 +235,23 @@ msgstr "Скопировать"
 msgid "Could not build the CSV file."
 msgstr "Не удалось сформировать CSV."
 
-#: includes/REST_Controller.php:235
+#: includes/REST_Controller.php:284
 msgid "Could not save the submission."
 msgstr "Не удалось сохранить запись."
 
-#: includes/Post_Types.php:344
+#: includes/Post_Types.php:312
 msgid "Data"
 msgstr "Данные"
 
-#: includes/Post_Types.php:345
+#: includes/Post_Types.php:313
 msgid "Date"
 msgstr "Дата"
-
-#: build/blocks/headless-schema/block.json:1 src/blocks/headless-schema/block.json:1
-msgid "Define the fields exposed by an FForms Headless API form."
-msgstr "Описывает поля формы FForms для Headless API."
 
 #: includes/Settings.php:126
 msgid "Delete the saved password"
 msgstr "Удалить сохранённый пароль"
 
-#: includes/Dashboard.php:153
+#: includes/Dashboard.php:160
 msgid "Disabled"
 msgstr "Выключен"
 
@@ -255,7 +259,7 @@ msgstr "Выключен"
 msgid "Download CSV"
 msgstr "Скачать CSV"
 
-#: includes/Post_Types.php:41
+#: includes/Post_Types.php:40
 msgid "Edit form"
 msgstr "Редактировать форму"
 
@@ -263,31 +267,27 @@ msgstr "Редактировать форму"
 msgid "Edit form type"
 msgstr "Редактировать тип формы"
 
-#: assets/fallback-editor.js:29 assets/form-settings-sidebar.js:36 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Default_Forms.php:33 includes/Post_Types.php:55 includes/Post_Types.php:178 includes/Registry/Main_Form.php:49 includes/Schema.php:28 src/blocks/form/edit.js:32
+#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Default_Forms.php:33 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit.js:32
 msgid "Email"
 msgstr ""
-
-#: includes/Dashboard.php:80
-msgid "Email and company website"
-msgstr "Email и сайт компании"
 
 #: build/blocks/field-email/block.json:1 src/blocks/field-email/block.json:1
 msgid "Email field"
 msgstr "Поле «Email»"
 
-#: assets/form-settings-sidebar.js:461
+#: assets/form-settings-sidebar.js:371
 msgid "Email field name"
 msgstr "Имя email-поля"
 
-#: includes/Dashboard.php:154
+#: includes/Dashboard.php:161
 msgid "Email is sent through the default wp_mail()"
 msgstr "Письма уходят через стандартный wp_mail()"
 
-#: assets/form-settings-sidebar.js:331
+#: assets/form-settings-sidebar.js:224
 msgid "Embed on an external site with a fixed height."
 msgstr "Вставка на сторонний сайт с фиксированной высотой."
 
-#: assets/form-settings-sidebar.js:341
+#: assets/form-settings-sidebar.js:232
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr "Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту."
 
@@ -299,7 +299,7 @@ msgstr "Включить настройки уведомлений и автоо
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
 msgstr "Встроенный SMTP включайте только в том случае, если отправкой почты не управляет другой SMTP-плагин."
 
-#: includes/Dashboard.php:150
+#: includes/Dashboard.php:157
 msgid "Enabled"
 msgstr "Включён"
 
@@ -323,7 +323,7 @@ msgstr "Укажите корректный URL."
 msgid "Enter a valid email address."
 msgstr "Укажите корректный email."
 
-#: includes/Schema/Schema_Compiler.php:141
+#: includes/Schema/Schema_Compiler.php:97
 msgid "Every field must have a valid, unique name."
 msgstr "У каждого поля должно быть корректное уникальное имя."
 
@@ -331,7 +331,7 @@ msgstr "У каждого поля должно быть корректное у
 msgid "Export submissions"
 msgstr "Экспорт записей"
 
-#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:133 includes/Post_Types.php:42 src/blocks/form/edit.js:122
+#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:133 includes/Post_Types.php:41 src/blocks/form/edit.js:117
 msgid "FForms"
 msgstr ""
 
@@ -347,27 +347,19 @@ msgstr "Настройки FForms"
 msgid "Field"
 msgstr "Поле"
 
-#: assets/fallback-editor.js:187 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:162
+#: assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:162
 msgid "Field settings"
 msgstr "Настройки поля"
-
-#: includes/REST_Controller.php:190
-msgid "Fill in at least one of these fields: email, phone or message."
-msgstr "Заполните хотя бы одно из полей: email, телефон или сообщение."
 
 #: includes/Form_Types.php:276
 msgid "Filter by form type"
 msgstr "Фильтр по типу формы"
 
-#: assets/fallback-editor.js:120 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:249 includes/Post_Types.php:39 includes/Post_Types.php:337 src/blocks/form/edit.js:89
+#: assets/fallback-editor.js:120 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:249 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit.js:84
 msgid "Form"
 msgstr "Форма"
 
-#: assets/form-settings-sidebar.js:267
-msgid "Form mode"
-msgstr "Режим формы"
-
-#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/Schema/Schema_Repository.php:19
+#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/REST_Controller.php:402 includes/Schema/Schema_Repository.php:19
 msgid "Form not found."
 msgstr "Форма не найдена."
 
@@ -375,11 +367,11 @@ msgstr "Форма не найдена."
 msgid "Form not found: check the id in the [fform] shortcode."
 msgstr "Форма не найдена: проверьте id в шорткоде [fform]."
 
-#: assets/form-settings-sidebar.js:263 build/blocks/form/index.js:1 src/blocks/form/edit.js:103
+#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit.js:98
 msgid "Form settings"
 msgstr "Настройки формы"
 
-#: assets/form-settings-sidebar.js:358 includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:288 includes/Post_Types.php:341
+#: assets/form-settings-sidebar.js:265 includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:256 includes/Post_Types.php:309
 msgid "Form type"
 msgstr "Тип формы"
 
@@ -395,9 +387,13 @@ msgstr "Типы форм"
 msgid "Form: %s"
 msgstr "Форма: %s"
 
-#: includes/Dashboard.php:143 includes/Post_Types.php:38 includes/Post_Types.php:43
+#: includes/Dashboard.php:150 includes/Post_Types.php:37 includes/Post_Types.php:42
 msgid "Forms"
 msgstr "Формы"
+
+#: includes/Dashboard.php:166
+msgid "Forms in code"
+msgstr "Формы в коде"
 
 #: includes/Settings.php:127
 msgid "From email"
@@ -407,27 +403,11 @@ msgstr "Email отправителя"
 msgid "From name"
 msgstr "Имя отправителя"
 
-#: assets/form-settings-sidebar.js:279
-msgid "Headless API"
-msgstr ""
-
-#: assets/fallback-editor.js:139 build/blocks/headless-schema/block.json:1 src/blocks/headless-schema/block.json:1
-msgid "Headless API fields"
-msgstr "Поля Headless API"
-
-#: includes/Schema/Schema_Compiler.php:64
-msgid "Headless API form may contain only FForms field blocks."
-msgstr "Форма Headless API может содержать только блоки полей FForms."
-
-#: includes/Dashboard.php:159
-msgid "Headless mode"
-msgstr "Headless-режим"
-
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/block.json:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field-hidden/block.json:1 src/blocks/field.js:89
 msgid "Hidden field"
 msgstr "Скрытое поле"
 
-#: includes/Dashboard.php:151
+#: includes/Dashboard.php:158
 msgid "Host is not set"
 msgstr "Хост не указан"
 
@@ -451,11 +431,11 @@ msgstr "Как настроить отправку писем?"
 msgid "How do I start receiving messages through the REST API?"
 msgstr "Как быстро добавить приём сообщений через REST API?"
 
-#: includes/Dashboard.php:165
+#: includes/Dashboard.php:172
 msgid "How to connect →"
 msgstr "Как подключить →"
 
-#: assets/form-settings-sidebar.js:329
+#: assets/form-settings-sidebar.js:222
 msgid "Iframe"
 msgstr ""
 
@@ -467,9 +447,9 @@ msgstr "В разделе «Экспорт CSV» выберите форму (и
 msgid "In “Settings”, enable the built-in SMTP and fill in the host, port and username — or leave it off when another SMTP plugin already handles email. Notifications and auto-replies for a particular form are configured in the form itself."
 msgstr "В разделе «Настройки» включите встроенный SMTP и укажите хост, порт и логин — либо оставьте выключенным, если почтой уже управляет другой SMTP-плагин. Уведомления и автоответы для конкретной формы настраиваются в самой форме."
 
-#: assets/form-settings-sidebar.js:321
-msgid "Insert it into any page or widget of this site."
-msgstr "Вставьте на любую страницу или в виджет этого сайта."
+#: assets/form-settings-sidebar.js:166
+msgid "Insert it into any page or widget of this site. The block “FForms Form” inserts the same form."
+msgstr "Вставьте на любую страницу или в виджет этого сайта. Блок «FForms Form» вставляет ту же форму."
 
 #: includes/Export.php:44 includes/Migration/Legacy_Migration.php:26
 msgid "Insufficient permissions."
@@ -491,11 +471,11 @@ msgstr "Некорректный тип формы."
 msgid "Invalid form type: Latin letters, digits, hyphen and underscore only, up to 32 characters."
 msgstr "Некорректный тип формы: допустимы латиница, цифры, дефис и подчёркивание, до 32 символов."
 
-#: assets/form-settings-sidebar.js:339
+#: assets/form-settings-sidebar.js:230
 msgid "Js-script"
 msgstr ""
 
-#: assets/fallback-editor.js:199 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:180 src/blocks/field.js:231
+#: assets/fallback-editor.js:171 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:180 src/blocks/field.js:231
 msgid "Label"
 msgstr "Подпись"
 
@@ -503,7 +483,7 @@ msgstr "Подпись"
 msgid "Latin letters, digits, hyphens and underscores."
 msgstr "Латиница, цифры, дефисы и подчёркивания."
 
-#: assets/form-settings-sidebar.js:365
+#: assets/form-settings-sidebar.js:272
 msgid "Lead"
 msgstr "Лид"
 
@@ -523,7 +503,11 @@ msgstr "Позволяет выбрать один из показанных в�
 msgid "Lightweight, headless-friendly form handling: collect data from Gutenberg blocks or from external sites through the REST API."
 msgstr "Лёгкий, headless-friendly приём форм: собирайте данные из блоков Gutenberg или из внешних сайтов через REST API."
 
-#: includes/Registry/Main_Form.php:27
+#: assets/form-settings-sidebar.js:201
+msgid "Link"
+msgstr "Ссылка"
+
+#: includes/Registry/Main_Form.php:26
 msgid "Main form (API)"
 msgstr "Главная форма (API)"
 
@@ -535,11 +519,11 @@ msgstr "Уведомления главной формы"
 msgid "Maximum length"
 msgstr "Максимальная длина"
 
-#: assets/fallback-editor.js:38 assets/form-settings-sidebar.js:42 build/blocks/form/index.js:1 includes/Default_Forms.php:21 includes/Post_Types.php:56 includes/Post_Types.php:179 includes/Registry/Main_Form.php:51 includes/Schema.php:29 src/blocks/form/edit.js:41
+#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:21 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit.js:41
 msgid "Message"
 msgstr "Сообщение"
 
-#: includes/Post_Types.php:318
+#: includes/Post_Types.php:286
 msgid "Meta"
 msgstr ""
 
@@ -547,15 +531,15 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#: assets/fallback-editor.js:20 assets/fallback-editor.js:189 assets/form-settings-sidebar.js:30 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:54 includes/Post_Types.php:177 includes/Registry/Main_Form.php:48 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit.js:23
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:161 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit.js:23
 msgid "Name"
 msgstr "Имя"
 
-#: includes/Post_Types.php:267
+#: includes/Post_Types.php:235
 msgid "New"
 msgstr "Новый"
 
-#: assets/fallback-editor.js:247
+#: assets/fallback-editor.js:219
 msgid "New field"
 msgstr "Новое поле"
 
@@ -563,19 +547,19 @@ msgstr "Новое поле"
 msgid "New submission: %s"
 msgstr "Новая запись: %s"
 
-#: includes/Post_Types.php:421
+#: includes/Post_Types.php:389
 msgid "No"
 msgstr "Нет"
 
-#: includes/Post_Types.php:282
+#: includes/Post_Types.php:250
 msgid "No additional data."
 msgstr "Дополнительных данных нет."
 
-#: includes/Post_Types.php:76
+#: includes/Post_Types.php:75
 msgid "No submissions found in Trash."
 msgstr "В корзине записей нет."
 
-#: includes/Post_Types.php:75
+#: includes/Post_Types.php:74
 msgid "No submissions found."
 msgstr "Записи не найдены."
 
@@ -583,11 +567,11 @@ msgstr "Записи не найдены."
 msgid "None"
 msgstr "Нет"
 
-#: includes/Dashboard.php:161
+#: includes/Dashboard.php:168
 msgid "Not in use"
 msgstr "Не используется"
 
-#: assets/form-settings-sidebar.js:411
+#: assets/form-settings-sidebar.js:318
 msgid "Notification subject"
 msgstr "Тема уведомления"
 
@@ -603,9 +587,9 @@ msgstr "Поле «Число»"
 msgid "Once enabled, configure notifications and auto-replies separately for each form."
 msgstr "После включения настройте отправку уведомлений и автоответы отдельно для каждой формы."
 
-#: assets/form-settings-sidebar.js:302
-msgid "Open the public form"
-msgstr "Открыть публичную форму"
+#: assets/form-settings-sidebar.js:218
+msgid "Open the form"
+msgstr "Открыть форму"
 
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:39 src/blocks/field.js:63 src/blocks/field.js:262
 msgid "Option"
@@ -623,7 +607,7 @@ msgstr "Обзор"
 msgid "Password"
 msgstr "Пароль"
 
-#: includes/Default_Forms.php:32 includes/Registry/Main_Form.php:50
+#: includes/Default_Forms.php:32
 msgid "Phone"
 msgstr "Телефон"
 
@@ -631,7 +615,7 @@ msgstr "Телефон"
 msgid "Phone field"
 msgstr "Поле «Телефон»"
 
-#: assets/fallback-editor.js:206 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:186
+#: assets/fallback-editor.js:178 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:186
 msgid "Placeholder"
 msgstr "Подсказка"
 
@@ -643,13 +627,25 @@ msgstr "Порт"
 msgid "Provide a form title."
 msgstr "Укажите название формы."
 
+#: includes/REST_Controller.php:180
+msgid "Provide at least one non-empty field."
+msgstr "Передайте хотя бы одно непустое поле."
+
 #: includes/Registry/Code_Forms.php:50
 msgid "Provide at least one valid form field."
 msgstr "Укажите хотя бы одно валидное поле формы."
 
-#: includes/REST_Controller.php:524
+#: includes/REST_Controller.php:550
 msgid "Provide form_id or form_key."
 msgstr "Укажите form_id или form_key."
+
+#: assets/form-settings-sidebar.js:159
+msgid "Publication"
+msgstr "Публикация"
+
+#: assets/form-settings-sidebar.js:172
+msgid "Publish the form to get its shortcode and link."
+msgstr "Опубликуйте форму, чтобы получить шорткод и ссылку."
 
 #: includes/Dashboard.php:176
 msgid "Questions and answers"
@@ -659,7 +655,7 @@ msgstr "Вопросы и ответы"
 msgid "Radio field"
 msgstr "Поле «Переключатель»"
 
-#: includes/Post_Types.php:267
+#: includes/Post_Types.php:235
 msgid "Read"
 msgstr "Прочитан"
 
@@ -667,11 +663,11 @@ msgstr "Прочитан"
 msgid "Read the documentation"
 msgstr "Читать документацию"
 
-#: assets/form-settings-sidebar.js:395
+#: assets/form-settings-sidebar.js:302
 msgid "Recipients"
 msgstr "Получатели"
 
-#: includes/Post_Types.php:299
+#: includes/Post_Types.php:267
 msgid "Ref"
 msgstr ""
 
@@ -683,11 +679,15 @@ msgstr ""
 msgid "Register the form on the fforms_register_forms hook — it becomes available through the REST API under its key, with no post created in Gutenberg."
 msgstr "Зарегистрируйте форму на хуке fforms_register_forms — она станет доступна через REST API по своему ключу, без создания записи в Gutenberg."
 
+#: assets/form-settings-sidebar.js:246
+msgid "Reissue link"
+msgstr "Перевыпустить ссылку"
+
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:249
 msgid "Remove"
 msgstr "Удалить"
 
-#: includes/Post_Types.php:267
+#: includes/Post_Types.php:235
 msgid "Replied"
 msgstr "Отвечен"
 
@@ -695,11 +695,11 @@ msgstr "Отвечен"
 msgid "Request a call"
 msgstr "Оставить заявку"
 
-#: assets/fallback-editor.js:215 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:211
+#: assets/fallback-editor.js:187 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:211
 msgid "Required field"
 msgstr "Обязательное поле"
 
-#: includes/Dashboard.php:148 includes/Settings.php:119
+#: includes/Dashboard.php:155 includes/Settings.php:119
 msgid "SMTP"
 msgstr ""
 
@@ -711,7 +711,7 @@ msgstr "Хост SMTP"
 msgid "SMTP requires a username and password"
 msgstr "SMTP требует логин и пароль"
 
-#: includes/Blocks/Form_Renderer.php:72
+#: includes/Blocks/Form_Renderer.php:71
 msgid "Save the form and insert a reference to it into a page."
 msgstr "Сохраните форму и вставьте её ссылку на страницу."
 
@@ -719,7 +719,7 @@ msgstr "Сохраните форму и вставьте её ссылку на
 msgid "Search form types"
 msgstr "Искать типы форм"
 
-#: includes/Post_Types.php:74
+#: includes/Post_Types.php:73
 msgid "Search submissions"
 msgstr "Искать записи"
 
@@ -731,7 +731,7 @@ msgstr "Выберите опубликованную форму"
 msgid "Select a published form in the block settings."
 msgstr "Выберите опубликованную форму в настройках блока."
 
-#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 includes/Blocks/Form_Renderer.php:109 src/blocks/field.js:33
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 includes/Blocks/Form_Renderer.php:108 src/blocks/field.js:33
 msgid "Select an option"
 msgstr "Выберите вариант"
 
@@ -739,7 +739,7 @@ msgstr "Выберите вариант"
 msgid "Select field"
 msgstr "Поле «Выпадающий список»"
 
-#: assets/fallback-editor.js:42 assets/fallback-editor.js:289 assets/form-settings-sidebar.js:138 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:23 includes/Migration/Legacy_Migration.php:44 includes/Post_Types.php:57 src/blocks/form/edit.js:45 src/blocks/submit/index.js:28
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:261 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:23 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit.js:45 src/blocks/submit/index.js:28
 msgid "Send"
 msgstr "Отправить"
 
@@ -747,7 +747,7 @@ msgstr "Отправить"
 msgid "Send a value without showing a control to visitors."
 msgstr "Передаёт значение, не показывая поле посетителю."
 
-#: assets/form-settings-sidebar.js:447
+#: assets/form-settings-sidebar.js:357
 msgid "Send an auto-reply to the user"
 msgstr "Отправлять автоответ пользователю"
 
@@ -755,7 +755,7 @@ msgstr "Отправлять автоответ пользователю"
 msgid "Send an email about a new main form submission"
 msgstr "Отправлять письмо о новой записи главной формы"
 
-#: assets/form-settings-sidebar.js:376
+#: assets/form-settings-sidebar.js:283
 msgid "Send notifications about submissions"
 msgstr "Отправлять уведомления о записях"
 
@@ -763,31 +763,31 @@ msgstr "Отправлять уведомления о записях"
 msgid "Settings"
 msgstr "Настройки"
 
-#: includes/Dashboard.php:156
+#: includes/Dashboard.php:163
 msgid "Settings →"
 msgstr "Настройки →"
 
-#: includes/REST_Controller.php:391
+#: includes/REST_Controller.php:467
 msgid "Several different formType/formId values were provided."
 msgstr "Передано несколько разных значений formType/formId."
 
-#: assets/form-settings-sidebar.js:275
-msgid "Share via URL"
-msgstr ""
+#: assets/form-settings-sidebar.js:178
+msgid "Share via link"
+msgstr "Доступ по ссылке"
 
-#: assets/form-settings-sidebar.js:319
+#: assets/form-settings-sidebar.js:164
 msgid "Shortcode"
 msgstr "Шорткод"
 
-#: build/blocks/form/index.js:1 src/blocks/form/edit.js:106
+#: build/blocks/form/index.js:1 src/blocks/form/edit.js:101
 msgid "Show the title"
 msgstr "Показывать заголовок"
 
-#: includes/Post_Types.php:267
+#: includes/Post_Types.php:235
 msgid "Spam"
 msgstr "Спам"
 
-#: includes/Post_Types.php:267 includes/Post_Types.php:343
+#: includes/Post_Types.php:235 includes/Post_Types.php:311
 msgid "Status"
 msgstr "Статус"
 
@@ -795,7 +795,7 @@ msgstr "Статус"
 msgid "Strict form types"
 msgstr "Строгий режим типов"
 
-#: includes/Post_Types.php:69 includes/Post_Types.php:336
+#: includes/Post_Types.php:68 includes/Post_Types.php:304
 msgid "Submission"
 msgstr "Запись"
 
@@ -803,11 +803,11 @@ msgstr "Запись"
 msgid "Submission #%d"
 msgstr "Запись #%d"
 
-#: includes/Post_Types.php:185
+#: includes/Post_Types.php:151
 msgid "Submission data"
 msgstr "Данные записи"
 
-#: includes/REST_Controller.php:338
+#: includes/REST_Controller.php:387
 msgid "Submission not found."
 msgstr "Запись не найдена."
 
@@ -815,11 +815,11 @@ msgstr "Запись не найдена."
 msgid "Submission with a UTM tag"
 msgstr "Запись с UTM-меткой"
 
-#: includes/Dashboard.php:169 includes/Post_Types.php:68 includes/Post_Types.php:70 includes/Post_Types.php:71
+#: includes/Dashboard.php:144 includes/Post_Types.php:67 includes/Post_Types.php:69 includes/Post_Types.php:70
 msgid "Submissions"
 msgstr "Записи"
 
-#: assets/fallback-editor.js:260 assets/fallback-editor.js:273 build/blocks/submit/block.json:1 build/blocks/submit/index.js:1 src/blocks/submit/block.json:1 src/blocks/submit/index.js:15
+#: assets/fallback-editor.js:232 assets/fallback-editor.js:245 build/blocks/submit/block.json:1 build/blocks/submit/index.js:1 src/blocks/submit/block.json:1 src/blocks/submit/index.js:15
 msgid "Submit button"
 msgstr "Кнопка отправки"
 
@@ -827,15 +827,11 @@ msgstr "Кнопка отправки"
 msgid "Submitting form data from an external site:"
 msgstr "Отправка данных формы с внешнего сайта:"
 
-#: assets/form-settings-sidebar.js:431
+#: assets/form-settings-sidebar.js:338
 msgid "Success message"
 msgstr "Сообщение об успехе"
 
-#: assets/form-settings-sidebar.js:283
-msgid "Switching the mode keeps the form fields and converts them to the required format."
-msgstr "При смене режима поля формы сохраняются и преобразуются в нужный формат."
-
-#: assets/fallback-editor.js:275
+#: assets/fallback-editor.js:247
 msgid "Text"
 msgstr "Текст"
 
@@ -847,7 +843,7 @@ msgstr "Поле «Текст»"
 msgid "Textarea field"
 msgstr "Поле «Многострочный текст»"
 
-#: assets/form-settings-sidebar.js:433 includes/Form_Locator.php:53 includes/Registry/Code_Forms.php:66
+#: assets/form-settings-sidebar.js:340 includes/Form_Locator.php:53 includes/Registry/Code_Forms.php:66
 msgid "Thank you! The form has been sent."
 msgstr "Спасибо! Форма отправлена."
 
@@ -855,31 +851,31 @@ msgstr "Спасибо! Форма отправлена."
 msgid "Thank you! We have received your message and will reply soon."
 msgstr "Спасибо! Мы получили ваше сообщение и скоро ответим."
 
-#: includes/Registry/Main_Form.php:29
+#: includes/Registry/Main_Form.php:30
 msgid "Thank you! Your submission has been sent."
 msgstr "Спасибо! Запись отправлена."
 
-#: includes/Schema/Schema_Compiler.php:120
+#: assets/form-settings-sidebar.js:249
+msgid "The current link stops working immediately."
+msgstr "Текущая ссылка перестанет работать сразу."
+
+#: includes/Schema/Schema_Compiler.php:76
 msgid "The field name “%s” is duplicated."
 msgstr "Имя поля «%s» повторяется."
 
-#: assets/fallback-editor.js:149 build/blocks/headless-schema/index.js:1 src/blocks/headless-schema/index.js:28
-msgid "The fields below define the form schema for the REST API. This block is not rendered on the site."
-msgstr "Поля ниже определяют схему формы для REST API. Этот блок не выводится на сайте."
-
-#: includes/REST_Controller.php:116
+#: includes/REST_Controller.php:128
 msgid "The fields parameter must be an object."
 msgstr "Поле fields должно быть объектом."
 
-#: includes/Schema/Schema_Compiler.php:27
+#: includes/Schema/Schema_Compiler.php:25
 msgid "The form must contain a root FForms block."
 msgstr "Форма должна содержать корневой блок FForms."
 
-#: includes/Schema/Schema_Compiler.php:40
+#: includes/Schema/Schema_Compiler.php:35
 msgid "The form must contain exactly one submit button."
 msgstr "В форме должна быть ровно одна кнопка отправки."
 
-#: includes/Schema/Schema_Compiler.php:46
+#: includes/Schema/Schema_Compiler.php:41
 msgid "The form structure contains errors."
 msgstr "Структура формы содержит ошибки."
 
@@ -887,31 +883,27 @@ msgstr "Структура формы содержит ошибки."
 msgid "The form with this type no longer exists — its submissions keep the classification."
 msgstr "Формы с этим типом больше нет — записи сохраняют классификацию."
 
-#: assets/form-settings-sidebar.js:311
+#: assets/form-settings-sidebar.js:190
 msgid "The link becomes available once the form is published."
 msgstr "Ссылка станет доступна после публикации формы."
 
-#: includes/Dashboard.php:180
-msgid "The main form works right after the plugin is activated: there is no need to create a form first."
-msgstr "Главная форма работает сразу после активации плагина: создавать форму заранее не нужно."
-
-#: includes/REST_Controller.php:498
+#: includes/REST_Controller.php:524
 msgid "The meta field is too large or nested too deeply."
 msgstr "Поле meta слишком большое или слишком глубоко вложено."
 
-#: includes/REST_Controller.php:351
+#: includes/REST_Controller.php:427
 msgid "The request is too large."
 msgstr "Запрос слишком большой."
 
-#: includes/Dashboard.php:81
-msgid "The website field is not part of the schema and is stored in customFields — nothing to configure."
-msgstr "Поле website не входит в схему и сохраняется в customFields — настраивать ничего не нужно."
+#: includes/Dashboard.php:180
+msgid "The route works right after the plugin is activated: there is no form to create and no schema to declare. Whatever top-level keys you send are stored as the submission; formType classifies it so submissions can be filtered."
+msgstr "Роут работает сразу после активации плагина: форму создавать не нужно, схему объявлять тоже. Какие ключи верхнего уровня передали — такие и сохранились как заявка; formType классифицирует её, чтобы записи можно было фильтровать."
 
 #: includes/Schema.php:127
 msgid "The “%s” field is required."
 msgstr "Поле «%s» обязательно."
 
-#: includes/Schema/Schema_Compiler.php:162
+#: includes/Schema/Schema_Compiler.php:118
 msgid "The “%s” field must have valid options."
 msgstr "Поле «%s» должно иметь корректные варианты."
 
@@ -919,7 +911,11 @@ msgstr "Поле «%s» должно иметь корректные вариа�
 msgid "The “main” key is reserved for the built-in main form."
 msgstr "Ключ «main» зарезервирован за встроенной главной формой."
 
-#: includes/REST_Controller.php:570
+#: includes/Dashboard.php:81
+msgid "There is no schema: every key you send is stored as a field of the submission."
+msgstr "Схемы нет: каждый переданный ключ сохраняется как поле заявки."
+
+#: includes/REST_Controller.php:596
 msgid "Too many submissions. Try again later."
 msgstr "Слишком много отправок. Попробуйте позже."
 
@@ -935,7 +931,7 @@ msgstr "Неизвестный тип формы."
 msgid "Use the FForms SMTP"
 msgstr "Использовать SMTP FForms"
 
-#: includes/Post_Types.php:302
+#: includes/Post_Types.php:270
 msgid "User ID"
 msgstr ""
 
@@ -951,11 +947,11 @@ msgstr "Логин"
 msgid "Value"
 msgstr "Значение"
 
-#: includes/Post_Types.php:72 includes/Post_Types.php:73
+#: includes/Post_Types.php:71 includes/Post_Types.php:72
 msgid "View submission"
 msgstr "Просмотреть запись"
 
-#: includes/Post_Types.php:414
+#: includes/Post_Types.php:382
 msgid "View submissions"
 msgstr "Смотреть записи"
 
@@ -972,10 +968,10 @@ msgid "When enabled, an unknown formType returns 422 and the submission is not s
 msgstr "При включении неизвестный formType возвращает 422 и запись не сохраняется. По умолчанию новый тип создаётся автоматически."
 
 #: includes/Dashboard.php:71
-msgid "Without formType the submission goes to the main form."
-msgstr "Без formType — запись попадает в главную форму."
+msgid "Without formType the submission gets the “main” type."
+msgstr "Без formType заявка получает тип «main»."
 
-#: includes/Post_Types.php:421
+#: includes/Post_Types.php:389
 msgid "Yes"
 msgstr "Да"
 
@@ -1026,10 +1022,6 @@ msgstr "formType заводит тип формы: переименуйте те
 #: build/blocks/field-hidden/block.json:1 src/blocks/field-hidden/block.json:1
 msgid "hidden"
 msgstr "скрытое"
-
-#: assets/form-settings-sidebar.js:351
-msgid "iframe and js-script embedding is available in “Share via URL” mode."
-msgstr "Вставка через iframe и js-script доступна в режиме «Share via URL»."
 
 #: build/blocks/field-text/block.json:1 src/blocks/field-text/block.json:1
 msgid "input"
@@ -1104,8 +1096,8 @@ msgid "radio"
 msgstr "радиокнопка"
 
 #: includes/Dashboard.php:86
-msgid "ref and meta keep the request context separate from the validated schema fields."
-msgstr "ref и meta сохраняют контекст запроса отдельно от проверенных полей схемы."
+msgid "ref and meta are reserved keys: they keep the request context separate from the submitted fields."
+msgstr "ref и meta — зарезервированные ключи: они отделяют контекст запроса от переданных полей."
 
 #: build/blocks/field-select/block.json:1 src/blocks/field-select/block.json:1
 msgid "select"
@@ -1151,6 +1143,6 @@ msgstr "url"
 msgid "website"
 msgstr "сайт"
 
-#: includes/Post_Types.php:294
+#: includes/Post_Types.php:262
 msgid "— the term was not created (form type limit reached)"
 msgstr "— термин не создан (достигнут лимит типов)"

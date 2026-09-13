@@ -1,11 +1,13 @@
 ---
 status: current
-updated: 2026-08-30
+updated: 2026-09-13
 ---
 
-# FForms: headless mode (code forms)
+# FForms: the headless entry point and code forms
 
 Supplements [`base.md`](base.md): describes registering forms programmatically in code and the related REST contract changes introduced by the `use-fforms-as-headlesscms-backend` RFC. The base flow with CPT forms (`base.md`) is unchanged — code forms are a second, fully equal way to address a form.
+
+Headless is a property of the entry point, not of a form. The plugin has exactly two modes: the schema-free route `POST /fforms/v1/main` (`base.md` §5.2), and the builder, whose published forms go out through the block, the shortcode, the share link, and the two embed snippets. A form has no mode setting, and there is no schema-container block — `_fforms_mode` and `fforms/headless-schema` were removed by the `two-modes-headless-and-builder` RFC.
 
 ## 1. Purpose
 
@@ -58,12 +60,13 @@ CPT forms always resolve with `origins = []` — per-form CORS is configured for
 | Method and route | Access | Purpose |
 | --- | --- | --- |
 | `POST /submit` | public | `form_id` OR `form_key` — exactly one is required. |
-| `POST /main` | public | Lenient flat payload; see `base.md` §5.2. |
-| `GET /forms` | public | The main form, CPT forms, and code forms together; each carries `key` (`null` for CPT forms), `source` (`post`\|`code`\|`builtin`), `mode`, and `form_type`. |
+| `POST /main` | public | Schema-free flat payload; see `base.md` §5.2. |
+| `GET /forms` | public | The main form, CPT forms, and code forms together; each carries `key` (`null` for CPT forms), `source` (`post`\|`code`\|`builtin`), `share_link`, and `form_type`. |
 | `GET /forms/{id}` | public | As before, for a CPT form. |
 | `GET /forms/{id}/schema` | public | As before. |
 | `GET /forms/{key}` | public | A code form by key, `main`, or the slug of a CPT form's term; registered after the numeric route, pattern `[a-z0-9_-]+`. |
-| `GET /forms/{key}/schema` | public | The schema of the form addressed by that same key. |
+| `GET /forms/{key}/schema` | public | The schema of the form addressed by that same key. `main` answers with an empty field list: the route has no schema. |
+| `POST /forms/{id}/share-token` | `edit_post` | Issues a new share token for a CPT form. |
 | `GET /entries` | `manage_options` | `form_id`, `form_key`, `form_type`, and `status` filters (combinable). |
 | `POST /entries/{id}/status` | `manage_options` | Unchanged. |
 
@@ -71,12 +74,14 @@ A submit with neither `form_id` nor `form_key` returns 400 `fforms_form_ref_requ
 
 `fforms_entry_created` now receives a `Form_Ref` as its second argument instead of `int $form_id`.
 
+**Breaking changes from the `two-modes-headless-and-builder` RFC.** `GET /forms` and `GET /forms/{id|key}` return `share_link` (bool) where they used to return `mode` (string). `POST /main` no longer resolves its value to a form: `formId: 123` classifies the submission as type `123` instead of directing it at form 123 — that resolution lives on `POST /submit`. `/main` also stopped validating against a schema and stopped writing `_fforms_custom`; unknown keys are now ordinary fields in `_fforms_data`.
+
 ## 5. Entries, emails, admin
 
 - Code-form entry: `_fforms_form_id = 0`, `_fforms_form_key = <key>`. Main-form entry: `_fforms_form_id = 0`, `_fforms_form_key = main`. A CPT-form entry is unchanged (`_fforms_form_key` is an empty string).
 - An entry's classification is stored as an `fform_type` term (`base.md` §3.1), separately from addressing: a submission can land in the main form and still carry the business type "consultation request".
 - The entry list, the "Form" column, the CSV export, and the export select all resolve the title through `Form_Locator` rather than `get_the_title()`. If an entry's key is no longer registered in code, the column and the CSV show the key itself — no data is lost.
-- The CSV gains the `form_key`, `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns; the export parameters are `form_ref` (`post:{id}` or `code:{key}`; the old `form_id` is still accepted for backward compatibility) and `form_type`.
+- The CSV gains the `form_key`, `form_type`, `ref`, `user_id`, `custom_fields` (legacy entries only), and `meta` columns; the export parameters are `form_ref` (`post:{id}` or `code:{key}`; the old `form_id` is still accepted for backward compatibility) and `form_type`.
 - `Notifications::send( Form_Ref $form, int $entry_id, array $data, array $extras = array() )` takes the mail settings (`notifications`, `autoreply`) from the `Form_Ref` instead of `get_post_meta()`. The global `Settings::get()['notifications']` toggle remains the shared safety switch for both form sources.
 
 ## 6. CORS

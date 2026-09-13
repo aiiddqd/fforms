@@ -8,7 +8,7 @@
 	"description": "Collect a telephone number.",
 	"keywords": [ "phone", "telephone", "tel" ],
 	"textdomain": "fforms",
-	"ancestor": [ "fforms/form", "fforms/headless-schema" ],
+	"ancestor": [ "fforms/form" ],
 	"attributes": {
 		"fieldId": { "type": "string", "role": "content" },
 		"name": { "type": "string", "role": "content" },

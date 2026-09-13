@@ -12,18 +12,25 @@ use FForms\Blocks\Form_Renderer;
 final class Public_Form {
 	private const QUERY_VAR       = 'fforms_public_form';
 	private const EMBED_VAR       = 'fforms_embed';
-	private const REWRITE_VERSION = '1';
+	private const REWRITE_VERSION = '2';
 	private const REWRITE_OPTION  = 'fforms_public_form_rewrite_version';
+
+	/** Post meta: the share link is on, and the secret that addresses the form. */
+	public const ENABLED_META = '_fforms_share_link';
+	public const TOKEN_META   = '_fforms_share_token';
+
+	private const TOKEN_PATTERN = '/^[a-f0-9]{16}$/';
 
 	public static function boot(): void {
 		add_action( 'init', array( self::class, 'register_rewrite_rule' ) );
 		add_action( 'init', array( self::class, 'maybe_flush_rewrite_rules' ), 99 );
 		add_filter( 'query_vars', array( self::class, 'add_query_var' ) );
+		add_action( 'wp_after_insert_post', array( self::class, 'issue_token_on_publish' ), 10, 2 );
 		add_action( 'template_redirect', array( self::class, 'render' ) );
 	}
 
 	public static function register_rewrite_rule(): void {
-		add_rewrite_rule( '^forms/([0-9]+)/?$', 'index.php?' . self::QUERY_VAR . '=$matches[1]', 'top' );
+		add_rewrite_rule( '^forms/([a-f0-9]{16})/?$', 'index.php?' . self::QUERY_VAR . '=$matches[1]', 'top' );
 	}
 
 	/** @param array<int, string> $vars */
@@ -42,8 +49,72 @@ final class Public_Form {
 		update_option( self::REWRITE_OPTION, self::REWRITE_VERSION );
 	}
 
+	public static function sanitize_token( mixed $value ): string {
+		$value = strtolower( trim( (string) $value ) );
+		return preg_match( self::TOKEN_PATTERN, $value ) ? $value : '';
+	}
+
+	public static function token( int $form_id ): string {
+		return self::sanitize_token( get_post_meta( $form_id, self::TOKEN_META, true ) );
+	}
+
+	/**
+	 * A form carries its token from its first publish, whether or not the share
+	 * link is on: turning the toggle on should never mean waiting for a new URL.
+	 */
+	public static function issue_token_on_publish( int $post_id, \WP_Post $post ): void {
+		if ( Post_Types::FORM !== $post->post_type || 'publish' !== $post->post_status || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		self::ensure_token( $post_id );
+	}
+
+	public static function ensure_token( int $form_id ): string {
+		$token = self::token( $form_id );
+		if ( '' !== $token ) {
+			return $token;
+		}
+
+		return self::regenerate_token( $form_id );
+	}
+
+	/** Issuing a new token invalidates the previous link immediately. */
+	public static function regenerate_token( int $form_id ): string {
+		$token = bin2hex( random_bytes( 8 ) );
+		update_post_meta( $form_id, self::TOKEN_META, $token );
+		return $token;
+	}
+
+	/**
+	 * The token is the only address a form has, so it must resolve without a
+	 * public query: meta lookup, restricted to published forms.
+	 */
+	public static function form_id_by_token( string $token ): int {
+		$token = self::sanitize_token( $token );
+		if ( '' === $token ) {
+			return 0;
+		}
+
+		$forms = get_posts(
+			array(
+				'post_type'        => Post_Types::FORM,
+				'post_status'      => 'publish',
+				'numberposts'      => 1,
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => false,
+				'meta_key'         => self::TOKEN_META,
+				'meta_value'       => $token,
+			)
+		);
+
+		return $forms ? (int) $forms[0] : 0;
+	}
+
 	public static function url( int $form_id ): string {
-		return home_url( user_trailingslashit( 'forms/' . absint( $form_id ) ) );
+		$token = self::token( $form_id );
+		return '' === $token ? '' : home_url( user_trailingslashit( 'forms/' . $token ) );
 	}
 
 	/**
@@ -51,15 +122,17 @@ final class Public_Form {
 	 * The shareable URL keeps the full page; only frames use this one.
 	 */
 	public static function embed_url( int $form_id ): string {
-		return add_query_arg( self::EMBED_VAR, '1', self::url( $form_id ) );
+		$url = self::url( $form_id );
+		return '' === $url ? '' : add_query_arg( self::EMBED_VAR, '1', $url );
 	}
 
 	private static function is_embed_request(): bool {
 		return '' !== (string) get_query_var( self::EMBED_VAR );
 	}
 
+	/** Whether the form is reachable by its link, iframe and js-snippet. */
 	public static function is_enabled( int $form_id ): bool {
-		return 'public' === Post_Types::form_mode( $form_id );
+		return (bool) get_post_meta( $form_id, self::ENABLED_META, true );
 	}
 
 	/** URL of the script third-party sites load to embed a form. */
@@ -67,23 +140,33 @@ final class Public_Form {
 		return FFORMS_URL . 'assets/embed.js';
 	}
 
-	/** Ready-to-copy iframe snippet for a public form. */
+	/** Ready-to-copy iframe snippet; empty while the form has no link. */
 	public static function iframe_snippet( int $form_id, string $title = '' ): string {
+		$embed_url = self::embed_url( $form_id );
+		if ( '' === $embed_url ) {
+			return '';
+		}
+
 		return sprintf(
 			'<iframe src="%s" title="%s" style="width:100%%;border:0" height="600" loading="lazy"></iframe>',
-			esc_url( self::embed_url( $form_id ) ),
+			esc_url( $embed_url ),
 			esc_attr( $title ?: get_the_title( $form_id ) )
 		);
 	}
 
 	/** Ready-to-copy script snippet; the script injects and auto-sizes the iframe. */
 	public static function script_snippet( int $form_id ): string {
+		$embed_url = self::embed_url( $form_id );
+		if ( '' === $embed_url ) {
+			return '';
+		}
+
 		return sprintf(
 			'<script src="%s" data-fforms-form="%d" data-fforms-origin="%s" data-fforms-src="%s"></script>',
 			esc_url( self::embed_script_url() ),
 			absint( $form_id ),
 			esc_url( home_url() ),
-			esc_url( self::embed_url( $form_id ) )
+			esc_url( $embed_url )
 		);
 	}
 
@@ -103,16 +186,18 @@ final class Public_Form {
 	}
 
 	public static function render(): void {
-		$form_id = absint( get_query_var( self::QUERY_VAR ) );
-		if ( ! $form_id ) {
+		$token = self::sanitize_token( get_query_var( self::QUERY_VAR ) );
+		if ( '' === $token ) {
 			return;
 		}
 
-		$form = get_post( $form_id );
+		$form_id = self::form_id_by_token( $token );
+		$form    = $form_id ? get_post( $form_id ) : null;
 		if ( ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status || ! self::is_enabled( $form_id ) ) {
 			self::render_not_found();
 		}
 
+		self::block_indexing();
 		Block::enqueue_form_assets();
 		self::enqueue_frame_reporter( $form_id );
 		$form_markup = Form_Renderer::render_form( $form_id );
@@ -137,6 +222,7 @@ final class Public_Form {
 	 * Global Styles CSS and the Interactivity runtime.
 	 */
 	private static function render_embed( int $form_id, string $form_markup ): void {
+		self::block_indexing();
 		show_admin_bar( false );
 		add_filter( 'body_class', static fn( array $classes ): array => array_merge( $classes, array( 'fforms-public-form', 'fforms-embed' ) ) );
 		status_header( 200 );
@@ -164,6 +250,27 @@ body.fforms-embed{display:block!important}
 </html>
 		<?php
 		exit;
+	}
+
+	/**
+	 * A form link is shared with the people meant to fill it in, never indexed:
+	 * the meta tag covers crawlers reading the page, the header covers the rest.
+	 */
+	private static function block_indexing(): void {
+		// Not wp_robots_no_robots(): on a public site it emits "noindex, follow",
+		// and a shared form link must not be crawled onwards either.
+		add_filter(
+			'wp_robots',
+			static function ( array $robots ): array {
+				unset( $robots['index'], $robots['follow'] );
+				$robots['noindex']  = true;
+				$robots['nofollow'] = true;
+				return $robots;
+			}
+		);
+		if ( ! headers_sent() ) {
+			header( 'X-Robots-Tag: noindex, nofollow', true );
+		}
 	}
 
 	private static function render_not_found(): void {

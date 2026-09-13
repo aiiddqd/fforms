@@ -135,39 +135,11 @@
 		},
 	} );
 
-	blocks.registerBlockType( 'fforms/headless-schema', {
-		title: __( 'Headless API fields', 'fforms' ),
-		icon: 'database',
-		category: 'fforms',
-		edit() {
-			return el(
-				'div',
-				useBlockProps( { className: 'fforms-headless-schema' } ),
-				el(
-					'p',
-					null,
-					__(
-						'The fields below define the form schema for the REST API. This block is not rendered on the site.',
-						'fforms'
-					)
-				),
-				el( InnerBlocks, {
-					allowedBlocks: FIELDS.map( function ( type ) {
-						return 'fforms/field-' + type;
-					} ),
-				} )
-			);
-		},
-		save() {
-			return el( InnerBlocks.Content );
-		},
-	} );
-
 	FIELDS.forEach( function ( type ) {
 		blocks.registerBlockType( 'fforms/field-' + type, {
 			title: __( type + ' field', 'fforms' ),
 			category: 'fforms',
-			parent: [ 'fforms/form', 'fforms/headless-schema' ],
+			parent: [ 'fforms/form' ],
 			attributes: {
 				fieldId: { type: 'string' },
 				name: { type: 'string' },

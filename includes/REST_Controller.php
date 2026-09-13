@@ -18,16 +18,19 @@ final class REST_Controller {
 	private const NAMESPACE = 'fforms/v1';
 
 	/**
-	 * Top-level keys of POST /main that carry their own meaning. Everything
-	 * else either matches a schema field or is kept as a custom field.
+	 * Top-level keys of POST /main that carry their own meaning. Every other
+	 * key is a form field and is stored exactly as it arrived.
 	 */
-	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'customFields', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source' );
+	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source' );
 
-	private const MAX_CUSTOM_FIELDS     = 20;
-	private const MAX_CUSTOM_VALUE_LEN  = 2000;
-	private const MAX_META_DEPTH        = 3;
-	private const MAX_META_BYTES        = 8192;
-	private const MAX_REF_LEN           = 200;
+	/** Type assigned when a /main submission names none, so every entry is filterable. */
+	private const MAIN_DEFAULT_TYPE = 'main';
+
+	private const MAX_MAIN_FIELDS      = 50;
+	private const MAX_MAIN_VALUE_LEN   = 2000;
+	private const MAX_META_DEPTH       = 3;
+	private const MAX_META_BYTES       = 8192;
+	private const MAX_REF_LEN          = 200;
 
 	public static function boot(): void {
 		add_action( 'rest_api_init', array( self::class, 'register_routes' ) );
@@ -64,6 +67,15 @@ final class REST_Controller {
 		register_rest_route( self::NAMESPACE, '/forms/(?P<id>[\d]+)/schema', array( 'methods' => WP_REST_Server::READABLE, 'callback' => array( self::class, 'form_schema' ), 'permission_callback' => '__return_true' ) );
 		register_rest_route( self::NAMESPACE, '/forms/(?P<key>[a-z0-9_-]+)', array( 'methods' => WP_REST_Server::READABLE, 'callback' => array( self::class, 'form_by_key' ), 'permission_callback' => '__return_true' ) );
 		register_rest_route( self::NAMESPACE, '/forms/(?P<key>[a-z0-9_-]+)/schema', array( 'methods' => WP_REST_Server::READABLE, 'callback' => array( self::class, 'form_schema_by_key' ), 'permission_callback' => '__return_true' ) );
+		register_rest_route(
+			self::NAMESPACE,
+			'/forms/(?P<id>[\d]+)/share-token',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( self::class, 'reissue_share_token' ),
+				'permission_callback' => array( self::class, 'can_edit_form' ),
+			)
+		);
 		register_rest_route(
 			self::NAMESPACE,
 			'/entries',
@@ -120,8 +132,10 @@ final class REST_Controller {
 	}
 
 	/**
-	 * Loose contract for headless frontends: a flat camelCase payload, no form
-	 * to create up front, and a submission type that doubles as the form address.
+	 * Schema-free contract for headless frontends: a flat payload whose keys are
+	 * whatever the integration sends, plus a form type that classifies the entry.
+	 * Submissions always land in the built-in main form — `formType` addresses
+	 * nothing, it only labels.
 	 */
 	public static function submit_main( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$too_large = self::reject_oversized_body( $request );
@@ -147,74 +161,109 @@ final class REST_Controller {
 			return $reference;
 		}
 
-		$form = '' === $reference ? Registry\Main_Form::ref() : Form_Locator::resolve( $reference );
-		if ( is_wp_error( $form ) ) {
-			// An unmatched value is a submission type, not a missing form.
-			$form = Registry\Main_Form::ref();
-		}
-
-		$type_slug = self::main_form_type_slug( $form, $reference );
+		$type_slug = '' === $reference ? self::MAIN_DEFAULT_TYPE : Form_Types::normalize( $reference );
 		if ( is_wp_error( $type_slug ) ) {
 			return $type_slug;
 		}
+
+		$form = Registry\Main_Form::ref();
 
 		// Honeypot is `_hp` here: `website` is a legitimate field name in a flat payload.
 		if ( '' !== trim( (string) ( $params['_hp'] ?? '' ) ) ) {
 			return new WP_REST_Response( array( 'success' => true, 'message' => $form->success_message ), 200 );
 		}
 
-		$term = null;
-		if ( '' !== $type_slug ) {
-			$term = Form_Types::upsert( $type_slug );
-			if ( is_wp_error( $term ) ) {
-				return $term;
-			}
-		}
-
-		$fields = array();
-		foreach ( $form->schema['fields'] as $field ) {
-			$name = (string) ( $field['name'] ?? '' );
-			if ( '' !== $name && array_key_exists( $name, $params ) ) {
-				$fields[ $name ] = $params[ $name ];
-			}
-		}
-
-		if ( 'builtin' === $form->source ) {
-			$filled = array_filter(
-				array( $fields['email'] ?? '', $fields['phone'] ?? '', $fields['message'] ?? '' ),
-				static fn( $value ): bool => is_scalar( $value ) && '' !== trim( (string) $value )
+		$fields = self::main_fields( $params );
+		if ( array() === array_filter( $fields, static fn( string $value ): bool => '' !== trim( $value ) ) ) {
+			return new WP_Error(
+				'fforms_empty_submission',
+				__( 'Provide at least one non-empty field.', 'fforms' ),
+				array( 'status' => 422 )
 			);
-			if ( array() === $filled ) {
-				return new WP_Error(
-					'fforms_empty_submission',
-					__( 'Fill in at least one of these fields: email, phone or message.', 'fforms' ),
-					array( 'status' => 422 )
-				);
-			}
 		}
 
-		$extras = self::collect_extras( $params, $form );
+		$term = Form_Types::upsert( $type_slug );
+		if ( is_wp_error( $term ) ) {
+			return $term;
+		}
+
+		$extras = self::collect_extras( $params );
 		if ( is_wp_error( $extras ) ) {
 			return $extras;
 		}
 
-		return self::process( $form, $fields, $request, $type_slug, $term, $extras );
+		return self::process( $form, $fields, $request, $type_slug, $term, $extras, false );
+	}
+
+	/**
+	 * Everything that is not a reserved key is a field: the key is normalized,
+	 * the value is sanitized, and both are stored as sent. Nothing is dropped
+	 * for failing a type check, because this route declares no types.
+	 *
+	 * @param array<string, mixed> $params
+	 * @return array<string, string>
+	 */
+	private static function main_fields( array $params ): array {
+		$fields = array();
+		foreach ( $params as $key => $value ) {
+			if ( in_array( (string) $key, self::MAIN_RESERVED_KEYS, true ) ) {
+				continue;
+			}
+			if ( count( $fields ) >= self::MAX_MAIN_FIELDS ) {
+				break;
+			}
+			$name = sanitize_key( (string) $key );
+			if ( '' === $name || isset( $fields[ $name ] ) ) {
+				continue;
+			}
+			$fields[ $name ] = self::main_value( $name, $value );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Scalars are sanitized text; anything structured is kept as its JSON so the
+	 * submission is never silently truncated to an empty value.
+	 */
+	private static function main_value( string $name, mixed $value ): string {
+		if ( null === $value ) {
+			return '';
+		}
+		if ( ! is_scalar( $value ) ) {
+			$encoded = wp_json_encode( $value, JSON_UNESCAPED_UNICODE );
+			return self::truncate( is_string( $encoded ) ? $encoded : '', self::MAX_MAIN_VALUE_LEN );
+		}
+		if ( is_bool( $value ) ) {
+			$value = $value ? '1' : '';
+		}
+
+		$clean = self::truncate( sanitize_text_field( (string) $value ), self::MAX_MAIN_VALUE_LEN );
+		if ( 'email' !== $name ) {
+			return $clean;
+		}
+
+		// Normalize the address, but keep an unparseable value rather than losing
+		// it: an invalid address only means the auto-reply is not sent.
+		$email = sanitize_email( $clean );
+		return '' !== $email ? $email : $clean;
 	}
 
 	/**
 	 * Shared pipeline: rate limit → schema validation → entry → type term →
 	 * mail → fforms_entry_created.
 	 *
-	 * @param array<string, mixed> $fields Raw values keyed by schema field name.
-	 * @param array<string, mixed> $extras Off-schema data stored beside _fforms_data.
+	 * @param array<string, mixed> $fields   Raw values keyed by field name.
+	 * @param array<string, mixed> $extras   Off-schema data stored beside _fforms_data.
+	 * @param bool                 $validate Whether the form declares a schema to validate against.
 	 */
-	private static function process( Form_Ref $form, array $fields, WP_REST_Request $request, string $type_slug = '', ?WP_Term $term = null, array $extras = array() ): WP_REST_Response|WP_Error {
+	private static function process( Form_Ref $form, array $fields, WP_REST_Request $request, string $type_slug = '', ?WP_Term $term = null, array $extras = array(), bool $validate = true ): WP_REST_Response|WP_Error {
 		$rate_error = self::check_rate_limit( $form, self::client_ip() );
 		if ( is_wp_error( $rate_error ) ) {
 			return $rate_error;
 		}
 
-		$data = Schema::validate_submission( $form->schema, $fields );
+		$data = $validate ? Schema::validate_submission( $form->schema, $fields ) : $fields;
 		if ( is_wp_error( $data ) ) {
 			return $data;
 		}
@@ -342,8 +391,35 @@ final class REST_Controller {
 		return new WP_REST_Response( array( 'id' => $entry->ID, 'status' => $status ) );
 	}
 
+	/**
+	 * Reissuing invalidates the link everyone already has, so it is deliberately
+	 * a write, restricted to whoever may edit the form.
+	 */
+	public static function reissue_share_token( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$form_id = absint( $request['id'] );
+		$form    = get_post( $form_id );
+		if ( ! $form || Post_Types::FORM !== $form->post_type ) {
+			return new WP_Error( 'fforms_form_not_found', __( 'Form not found.', 'fforms' ), array( 'status' => 404 ) );
+		}
+
+		$token = Public_Form::regenerate_token( $form_id );
+		return new WP_REST_Response(
+			array(
+				'token'          => $token,
+				'url'            => Public_Form::url( $form_id ),
+				'embed_url'      => Public_Form::embed_url( $form_id ),
+				'iframe_snippet' => Public_Form::iframe_snippet( $form_id ),
+				'script_snippet' => Public_Form::script_snippet( $form_id ),
+			)
+		);
+	}
+
 	public static function can_manage(): bool {
 		return current_user_can( 'manage_options' );
+	}
+
+	public static function can_edit_form( WP_REST_Request $request ): bool {
+		return current_user_can( 'edit_post', absint( $request['id'] ) );
 	}
 
 	private static function reject_oversized_body( WP_REST_Request $request ): true|WP_Error {
@@ -394,47 +470,19 @@ final class REST_Controller {
 	}
 
 	/**
-	 * Addressing and classification are independent: a resolved form dictates
-	 * its own type, an unmatched value becomes the type itself.
-	 */
-	private static function main_form_type_slug( Form_Ref $form, string $reference ): string|WP_Error {
-		if ( 'post' === $form->source ) {
-			return (string) ( $form->type ?? '' );
-		}
-		if ( 'code' === $form->source && null !== $form->type ) {
-			return (string) $form->type;
-		}
-		return Form_Types::normalize( $reference );
-	}
-
-	/**
+	 * Context that is not part of the submission itself. Ordinary fields no
+	 * longer pass through here: they go straight into _fforms_data.
+	 *
 	 * @param array<string, mixed> $params
 	 * @return array<string, mixed>|WP_Error
 	 */
-	private static function collect_extras( array $params, Form_Ref $form ): array|WP_Error {
-		$schema_names = array();
-		foreach ( $form->schema['fields'] as $field ) {
-			$name = (string) ( $field['name'] ?? '' );
-			if ( '' !== $name ) {
-				$schema_names[ $name ] = true;
-			}
-		}
-
-		$custom = is_array( $params['customFields'] ?? null ) ? $params['customFields'] : array();
-		foreach ( $params as $key => $value ) {
-			if ( isset( $schema_names[ $key ] ) || in_array( $key, self::MAIN_RESERVED_KEYS, true ) || array_key_exists( $key, $custom ) ) {
-				continue;
-			}
-			$custom[ $key ] = $value;
-		}
-
+	private static function collect_extras( array $params ): array|WP_Error {
 		$meta = self::sanitize_meta( $params['meta'] ?? null );
 		if ( is_wp_error( $meta ) ) {
 			return $meta;
 		}
 
 		return array(
-			'custom'  => self::sanitize_custom_fields( $custom ),
 			'meta'    => $meta,
 			'ref'     => self::truncate( sanitize_text_field( (string) ( is_scalar( $params['ref'] ?? null ) ? $params['ref'] : '' ) ), self::MAX_REF_LEN ),
 			'user_id' => absint( $params['userId'] ?? 0 ),
@@ -442,17 +490,14 @@ final class REST_Controller {
 	}
 
 	/**
-	 * Off-schema data never enters _fforms_data — the "passed server validation"
-	 * boundary stays sharp.
+	 * Request context stored beside the submission. `_fforms_custom` is no longer
+	 * written; it stays readable for entries created before /main dropped its schema.
 	 *
 	 * @param array<string, mixed> $extras
 	 */
 	private static function store_extras( int $entry_id, array $extras ): void {
 		if ( array() === $extras ) {
 			return;
-		}
-		if ( array() !== ( $extras['custom'] ?? array() ) ) {
-			update_post_meta( $entry_id, '_fforms_custom', (string) wp_json_encode( $extras['custom'], JSON_UNESCAPED_UNICODE ) );
 		}
 		if ( array() !== ( $extras['meta'] ?? array() ) ) {
 			update_post_meta( $entry_id, '_fforms_meta', (string) wp_json_encode( $extras['meta'], JSON_UNESCAPED_UNICODE ) );
@@ -463,25 +508,6 @@ final class REST_Controller {
 		if ( ! empty( $extras['user_id'] ) ) {
 			update_post_meta( $entry_id, '_fforms_user_id', (int) $extras['user_id'] );
 		}
-	}
-
-	/**
-	 * @param array<string, mixed> $custom
-	 * @return array<string, string>
-	 */
-	private static function sanitize_custom_fields( array $custom ): array {
-		$clean = array();
-		foreach ( $custom as $key => $value ) {
-			if ( count( $clean ) >= self::MAX_CUSTOM_FIELDS ) {
-				break;
-			}
-			$name = sanitize_key( (string) $key );
-			if ( '' === $name || ! is_scalar( $value ) ) {
-				continue;
-			}
-			$clean[ $name ] = self::truncate( sanitize_text_field( (string) $value ), self::MAX_CUSTOM_VALUE_LEN );
-		}
-		return $clean;
 	}
 
 	/**
@@ -531,7 +557,7 @@ final class REST_Controller {
 			'id'              => $form->post_id,
 			'key'             => $form->key,
 			'source'          => $form->source,
-			'mode'            => 'post' === $form->source ? Post_Types::form_mode( $form->post_id ) : 'headless',
+			'share_link'      => 'post' === $form->source && Public_Form::is_enabled( $form->post_id ),
 			'title'           => $form->title,
 			'type'            => 'post' === $form->source ? ( get_post_meta( $form->post_id, '_fforms_type', true ) ?: 'contact' ) : 'contact',
 			'form_type'       => $form->type,

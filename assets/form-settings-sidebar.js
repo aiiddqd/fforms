@@ -1,57 +1,26 @@
-( function ( components, data, editPost, element, i18n, plugins, blocks ) {
+( function ( apiFetch, components, data, editPost, element, i18n, plugins ) {
 	'use strict';
 
 	const el = element.createElement;
 	const useEffect = element.useEffect;
+	const useState = element.useState;
 	const __ = i18n.__;
-	const FORM_SETTINGS_PANEL_NAME = 'fforms-form-settings/form-settings';
-	const PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted-v2';
+	const PUBLICATION_PANEL_NAME = 'fforms-form-settings/publication';
+	const PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted-v3';
+	const Button = components.Button;
 	const SelectControl = components.SelectControl;
 	const TextControl = components.TextControl;
 	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
 	const PluginDocumentSettingPanel = editPost.PluginDocumentSettingPanel;
-	const FIELD_TYPES = [
-		'text',
-		'textarea',
-		'email',
-		'tel',
-		'url',
-		'number',
-		'select',
-		'radio',
-		'checkbox',
-		'hidden',
-	];
-	const DEFAULT_SCHEMA = {
-		fields: [
-			{
-				name: 'name',
-				label: __( 'Name', 'fforms' ),
-				type: 'text',
-				required: true,
-			},
-			{
-				name: 'email',
-				label: __( 'Email', 'fforms' ),
-				type: 'email',
-				required: true,
-			},
-			{
-				name: 'message',
-				label: __( 'Message', 'fforms' ),
-				type: 'textarea',
-				required: true,
-			},
-		],
-	};
+	const settings = window.fformsFormSettings || {};
 	const notificationSettingsEnabled = Boolean(
-		window.fformsFormSettings &&
-			window.fformsFormSettings.notificationSettingsEnabled
+		settings.notificationSettingsEnabled
 	);
 	const META = {
 		type: '_fforms_type',
-		mode: '_fforms_mode',
+		shareLink: '_fforms_share_link',
+		shareToken: '_fforms_share_token',
 		schema: '_fforms_schema',
 		notificationTo: '_fforms_notification_to',
 		notificationSubject: '_fforms_notification_subject',
@@ -63,92 +32,47 @@
 		autoreplyMessage: '_fforms_autoreply_message',
 	};
 
-	function findSchemaBlock( blockList ) {
-		for ( const block of blockList ) {
-			if (
-				'fforms/form' === block.name ||
-				'fforms/headless-schema' === block.name
-			) {
-				return block;
-			}
-			const nested = findSchemaBlock( block.innerBlocks || [] );
-			if ( nested ) {
-				return nested;
-			}
+	function shareUrl( token ) {
+		if ( ! token || ! settings.shareUrlTemplate ) {
+			return '';
 		}
-		return null;
+		return settings.shareUrlTemplate.replace( '{token}', token );
 	}
 
-	function schemaFromBlockEditor() {
-		const blockEditor = data.select( 'core/block-editor' );
-		const form = blockEditor
-			? findSchemaBlock( blockEditor.getBlocks() )
-			: null;
-		if ( ! form ) {
-			return DEFAULT_SCHEMA;
+	function embedUrl( token ) {
+		const url = shareUrl( token );
+		if ( ! url ) {
+			return '';
 		}
-
-		const fields = ( form.innerBlocks || [] )
-			.filter( ( block ) => block.name.startsWith( 'fforms/field-' ) )
-			.map( ( block ) => {
-				const attributes = block.attributes || {};
-				const type = block.name.replace( 'fforms/field-', '' );
-				const field = {
-					name: attributes.name || '',
-					label: attributes.label || attributes.name || '',
-					type,
-					required: Boolean( attributes.required ),
-					placeholder: attributes.placeholder || '',
-				};
-				if ( attributes.maxLength ) {
-					field.max_length = attributes.maxLength;
-				}
-				if ( attributes.options ) {
-					field.options = attributes.options;
-				}
-				return field;
-			} )
-			.filter(
-				( field ) => field.name && FIELD_TYPES.includes( field.type )
-			);
-
-		return fields.length ? { fields } : DEFAULT_SCHEMA;
-	}
-
-	function fieldBlocksFromSchema( schema ) {
-		return schema.fields
-			.filter( ( field ) => FIELD_TYPES.includes( field.type ) )
-			.map( ( field ) =>
-				blocks.createBlock( `fforms/field-${ field.type }`, {
-					fieldId: field.name,
-					name: field.name,
-					label: field.label,
-					required: Boolean( field.required ),
-					placeholder: field.placeholder || '',
-					maxLength: field.max_length || undefined,
-					options: field.options || undefined,
-				} )
-			);
-	}
-
-	function blocksFromSchema( schema ) {
-		const innerBlocks = fieldBlocksFromSchema( schema );
-		innerBlocks.push(
-			blocks.createBlock( 'fforms/submit', {
-				label: __( 'Send', 'fforms' ),
-			} )
+		return (
+			url + ( url.indexOf( '?' ) === -1 ? '?' : '&' ) + 'fforms_embed=1'
 		);
-		return [ blocks.createBlock( 'fforms/form', {}, innerBlocks ) ];
 	}
 
-	function headlessBlocksFromSchema( schema ) {
-		return [
-			blocks.createBlock(
-				'fforms/headless-schema',
-				{ lock: { move: true, remove: true } },
-				fieldBlocksFromSchema( schema )
-			),
-		];
+	function iframeSnippet( token, title ) {
+		const url = embedUrl( token );
+		return url
+			? '<iframe src="' +
+					url +
+					'" title="' +
+					( title || 'Form' ) +
+					'" style="width:100%;border:0" height="600" loading="lazy"></iframe>'
+			: '';
+	}
+
+	function scriptSnippet( token, formId ) {
+		const url = embedUrl( token );
+		return url && settings.embedScriptUrl
+			? '<script src="' +
+					settings.embedScriptUrl +
+					'" data-fforms-form="' +
+					String( formId ) +
+					'" data-fforms-origin="' +
+					( settings.homeUrl || '' ) +
+					'" data-fforms-src="' +
+					url +
+					'"></script>'
+			: '';
 	}
 
 	function snippetField( label, value, help ) {
@@ -161,6 +85,10 @@
 		} );
 	}
 
+	function helpText( text ) {
+		return el( 'p', { className: 'components-base-control__help' }, text );
+	}
+
 	function FormSettings() {
 		const editor = data.useSelect( function ( select ) {
 			const store = select( 'core/editor' );
@@ -170,7 +98,7 @@
 				meta: store.getEditedPostAttribute( 'meta' ) || {},
 				status: store.getEditedPostAttribute( 'status' ),
 				isPanelOpened: store.isEditorPanelOpened(
-					FORM_SETTINGS_PANEL_NAME
+					PUBLICATION_PANEL_NAME
 				),
 			};
 		}, [] );
@@ -185,77 +113,147 @@
 					return;
 				}
 				window.localStorage.setItem( PANEL_DEFAULTED_KEY, '1' );
-				togglePanelOpened( FORM_SETTINGS_PANEL_NAME );
+				togglePanelOpened( PUBLICATION_PANEL_NAME );
 			},
 			[ editor.isPanelOpened, togglePanelOpened ]
 		);
 		const editPostMeta = data.useDispatch( 'core/editor' ).editPost;
 		const meta = editor.meta;
 		const updateMeta = function ( key, value ) {
-			editPostMeta( {
-				meta: Object.assign(
-					{},
-					meta,
-					( function () {
-						const next = {};
-						next[ key ] = value;
-						return next;
-					} )()
-				),
-			} );
+			const next = {};
+			next[ key ] = value;
+			editPostMeta( { meta: Object.assign( {}, meta, next ) } );
 		};
-		const updateMode = function ( value ) {
-			const mode = [ 'headless', 'public' ].includes( value )
-				? value
-				: 'block';
-			const currentMode = meta[ META.mode ] || 'block';
-			const nextMeta = Object.assign( {}, meta, { [ META.mode ]: mode } );
-			if ( 'headless' === mode ) {
-				const schema = schemaFromBlockEditor();
-				nextMeta[ META.schema ] = JSON.stringify( schema, null, 2 );
-				data.dispatch( 'core/block-editor' ).resetBlocks(
-					headlessBlocksFromSchema( schema )
-				);
-				editPostMeta( { meta: nextMeta } );
-				return;
-			}
-			if ( 'headless' === currentMode ) {
-				data.dispatch( 'core/block-editor' ).resetBlocks(
-					blocksFromSchema( schemaFromBlockEditor() )
-				);
-			}
-			editPostMeta( {
-				meta: nextMeta,
-			} );
-		};
-		const settings = window.fformsFormSettings || {};
-		const publicUrl = settings.publicFormUrl
-			? settings.publicFormUrl.replace(
-					/0\/?$/,
-					String( editor.id ) + '/'
-			  )
-			: '';
-		const mode = meta[ META.mode ] || 'block';
+
+		// A reissued token is already stored server-side; keep it locally so the
+		// panel shows the new link without waiting for the next save.
+		const [ reissuedToken, setReissuedToken ] = useState( '' );
+		const [ isReissuing, setIsReissuing ] = useState( false );
+		const token = reissuedToken || meta[ META.shareToken ] || '';
 		const isPublished = 'publish' === editor.status;
-		const iframeSnippet = publicUrl
-			? '<iframe src="' +
-			  publicUrl +
-			  '" title="' +
-			  ( editor.title || 'Form' ) +
-			  '" style="width:100%;border:0" height="600" loading="lazy"></iframe>'
-			: '';
-		const scriptSnippet = settings.embedScriptUrl
-			? '<script src="' +
-			  settings.embedScriptUrl +
-			  '" data-fforms-form="' +
-			  String( editor.id ) +
-			  '" data-fforms-origin="' +
-			  ( settings.homeUrl || '' ) +
-			  '"></script>'
-			: '';
+		const shareEnabled = Boolean( meta[ META.shareLink ] );
+		const url = shareUrl( token );
+
+		const reissue = function () {
+			setIsReissuing( true );
+			apiFetch( {
+				path:
+					'/fforms/v1/forms/' + String( editor.id ) + '/share-token',
+				method: 'POST',
+			} )
+				.then( function ( response ) {
+					setReissuedToken( response.token || '' );
+				} )
+				.finally( function () {
+					setIsReissuing( false );
+				} );
+		};
+
 		return el(
 			element.Fragment,
 			null,
+			el(
+				PluginDocumentSettingPanel,
+				{
+					name: 'publication',
+					title: __( 'Publication', 'fforms' ),
+					className: 'fforms-form-publication',
+				},
+				isPublished && editor.id
+					? snippetField(
+							__( 'Shortcode', 'fforms' ),
+							'[fform id=' + String( editor.id ) + ']',
+							__(
+								'Insert it into any page or widget of this site. The block “FForms Form” inserts the same form.',
+								'fforms'
+							)
+					  )
+					: helpText(
+							__(
+								'Publish the form to get its shortcode and link.',
+								'fforms'
+							)
+					  ),
+				el( ToggleControl, {
+					label: __( 'Share via link', 'fforms' ),
+					checked: shareEnabled,
+					help: __(
+						'Anyone with the link can open and submit the form. The page is not indexed by search engines.',
+						'fforms'
+					),
+					onChange( value ) {
+						updateMeta( META.shareLink, value );
+					},
+				} ),
+				shareEnabled && ! isPublished
+					? helpText(
+							__(
+								'The link becomes available once the form is published.',
+								'fforms'
+							)
+					  )
+					: null,
+				shareEnabled && isPublished && url
+					? el(
+							element.Fragment,
+							null,
+							snippetField(
+								__( 'Link', 'fforms' ),
+								url,
+								__(
+									'A secret address: it cannot be guessed from the form id.',
+									'fforms'
+								)
+							),
+							el(
+								'p',
+								null,
+								el(
+									'a',
+									{
+										href: url,
+										target: '_blank',
+										rel: 'noopener noreferrer',
+									},
+									__( 'Open the form', 'fforms' )
+								)
+							),
+							snippetField(
+								__( 'Iframe', 'fforms' ),
+								iframeSnippet( token, editor.title ),
+								__(
+									'Embed on an external site with a fixed height.',
+									'fforms'
+								)
+							),
+							snippetField(
+								__( 'Js-script', 'fforms' ),
+								scriptSnippet( token, editor.id ),
+								__(
+									'Embed on an external site: the script inserts the iframe and adjusts its height.',
+									'fforms'
+								)
+							),
+							el(
+								Button,
+								{
+									variant: 'secondary',
+									isDestructive: true,
+									isBusy: isReissuing,
+									disabled: isReissuing,
+									onClick: reissue,
+								},
+								__( 'Reissue link', 'fforms' )
+							),
+							helpText(
+								__(
+									'The current link stops working immediately.',
+									'fforms'
+								)
+							)
+					  )
+					: null
+			),
 			el(
 				PluginDocumentSettingPanel,
 				{
@@ -263,97 +261,6 @@
 					title: __( 'Form settings', 'fforms' ),
 					className: 'fforms-form-settings',
 				},
-				el( SelectControl, {
-					label: __( 'Form mode', 'fforms' ),
-					value: meta[ META.mode ] || 'block',
-					options: [
-						{
-							label: __( 'Block editor', 'fforms' ),
-							value: 'block',
-						},
-						{
-							label: __( 'Share via URL', 'fforms' ),
-							value: 'public',
-						},
-						{
-							label: __( 'Headless API', 'fforms' ),
-							value: 'headless',
-						},
-					],
-					help: __(
-						'Switching the mode keeps the form fields and converts them to the required format.',
-						'fforms'
-					),
-					onChange: updateMode,
-				} ),
-				'public' === ( meta[ META.mode ] || 'block' ) &&
-					'publish' === editor.status &&
-					publicUrl
-					? el(
-							'p',
-							null,
-							el(
-								'a',
-								{
-									href: publicUrl,
-									target: '_blank',
-									rel: 'noopener noreferrer',
-								},
-								__( 'Open the public form', 'fforms' )
-							)
-					  )
-					: null,
-				'public' === ( meta[ META.mode ] || 'block' ) &&
-					'publish' !== editor.status
-					? el(
-							'p',
-							{ className: 'components-base-control__help' },
-							__(
-								'The link becomes available once the form is published.',
-								'fforms'
-							)
-					  )
-					: null,
-				'headless' !== mode && isPublished && editor.id
-					? snippetField(
-							__( 'Shortcode', 'fforms' ),
-							'[fform id=' + String( editor.id ) + ']',
-							__(
-								'Insert it into any page or widget of this site.',
-								'fforms'
-							)
-					  )
-					: null,
-				'public' === mode && isPublished && iframeSnippet
-					? snippetField(
-							__( 'Iframe', 'fforms' ),
-							iframeSnippet,
-							__(
-								'Embed on an external site with a fixed height.',
-								'fforms'
-							)
-					  )
-					: null,
-				'public' === mode && isPublished && scriptSnippet
-					? snippetField(
-							__( 'Js-script', 'fforms' ),
-							scriptSnippet,
-							__(
-								'Embed on an external site: the script inserts the iframe and adjusts its height.',
-								'fforms'
-							)
-					  )
-					: null,
-				'block' === mode && isPublished
-					? el(
-							'p',
-							{ className: 'components-base-control__help' },
-							__(
-								'iframe and js-script embedding is available in “Share via URL” mode.',
-								'fforms'
-							)
-					  )
-					: null,
 				el( SelectControl, {
 					label: __( 'Form type', 'fforms' ),
 					value: meta[ META.type ] || 'contact',
@@ -430,7 +337,10 @@
 				el( TextControl, {
 					label: __( 'Success message', 'fforms' ),
 					value: meta[ META.successMessage ] || '',
-					placeholder: __( 'Thank you! The form has been sent.', 'fforms' ),
+					placeholder: __(
+						'Thank you! The form has been sent.',
+						'fforms'
+					),
 					onChange( value ) {
 						updateMeta( META.successMessage, value );
 					},
@@ -458,7 +368,10 @@
 									element.Fragment,
 									null,
 									el( TextControl, {
-										label: __( 'Email field name', 'fforms' ),
+										label: __(
+											'Email field name',
+											'fforms'
+										),
 										value:
 											meta[ META.autoreplyEmailField ] ||
 											'email',
@@ -506,11 +419,11 @@
 
 	plugins.registerPlugin( 'fforms-form-settings', { render: FormSettings } );
 } )(
+	window.wp.apiFetch,
 	window.wp.components,
 	window.wp.data,
 	window.wp.editPost,
 	window.wp.element,
 	window.wp.i18n,
-	window.wp.plugins,
-	window.wp.blocks
+	window.wp.plugins
 );

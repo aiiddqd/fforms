@@ -17,7 +17,6 @@ final class Post_Types {
 		add_action( 'add_meta_boxes', array( self::class, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
-		add_filter( 'block_editor_settings_all', array( self::class, 'configure_headless_editor' ), 10, 2 );
 		add_filter( 'allowed_block_types_all', array( self::class, 'limit_internal_blocks_to_form_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
@@ -91,7 +90,8 @@ final class Post_Types {
 
 	private static function register_meta(): void {
 		self::register_form_meta( '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
-		self::register_form_meta( '_fforms_mode', array( 'type' => 'string', 'single' => true, 'default' => 'block', 'show_in_rest' => true, 'sanitize_callback' => array( self::class, 'sanitize_form_mode' ) ) );
+		self::register_form_meta( '_fforms_share_link', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
+		self::register_form_meta( '_fforms_share_token', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Public_Form::class, 'sanitize_token' ) ) );
 		self::register_form_meta( '_fforms_schema', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Schema::class, 'sanitize_json' ) ) );
 		self::register_form_meta( '_fforms_schema_hash', array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		self::register_form_meta( '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
@@ -121,29 +121,6 @@ final class Post_Types {
 		return current_user_can( 'edit_post', $post_id );
 	}
 
-	public static function sanitize_form_mode( mixed $value ): string {
-		return in_array( $value, array( 'headless', 'public' ), true ) ? $value : 'block';
-	}
-
-	public static function form_mode( int $form_id ): string {
-		if ( \FForms\Schema\Schema_Compiler::has_headless_schema_block( (string) get_post_field( 'post_content', $form_id ) ) ) {
-			return 'headless';
-		}
-
-		return self::sanitize_form_mode( get_post_meta( $form_id, '_fforms_mode', true ) );
-	}
-
-	/** @param array<string,mixed> $settings */
-	public static function configure_headless_editor( array $settings, \WP_Block_Editor_Context $context ): array {
-		if ( ! isset( $context->post ) || ! $context->post instanceof WP_Post || self::FORM !== $context->post->post_type || 'headless' !== self::form_mode( $context->post->ID ) ) {
-			return $settings;
-		}
-
-		$settings['template']     = self::headless_schema_template();
-		$settings['templateLock'] = 'all';
-		return $settings;
-	}
-
 	/**
 	 * Field-definition blocks build a form schema and have no meaning in posts
 	 * or pages. Keep them available exclusively while editing an FForms CPT.
@@ -160,7 +137,7 @@ final class Post_Types {
 		}
 
 		$internal_blocks = array_merge(
-			array( 'fforms/headless-schema', 'fforms/submit' ),
+			array( 'fforms/submit' ),
 			array_map( static fn( string $type ): string => 'fforms/field-' . $type, array( 'text', 'textarea', 'email', 'tel', 'url', 'number', 'select', 'radio', 'checkbox', 'hidden' ) )
 		);
 		if ( true === $allowed_block_types ) {
@@ -168,17 +145,6 @@ final class Post_Types {
 		}
 
 		return array_values( array_diff( $allowed_block_types, $internal_blocks ) );
-	}
-
-	/** @return array<int, array<int|string, mixed>> */
-	private static function headless_schema_template(): array {
-		return array(
-			array( 'fforms/headless-schema', array( 'lock' => array( 'move' => true, 'remove' => true ) ), array(
-				array( 'fforms/field-text', array( 'fieldId' => 'name', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ) ),
-				array( 'fforms/field-email', array( 'fieldId' => 'email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ) ),
-				array( 'fforms/field-textarea', array( 'fieldId' => 'message', 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'required' => true ) ),
-			) ),
-		);
 	}
 
 	public static function add_meta_boxes(): void {
@@ -198,7 +164,7 @@ final class Post_Types {
 		wp_enqueue_script(
 			$handle,
 			FFORMS_URL . 'assets/form-settings-sidebar.js',
-			array( 'wp-blocks', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
+			array( 'wp-api-fetch', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
 			$version,
 			true
 		);
@@ -207,9 +173,11 @@ final class Post_Types {
 			$handle,
 			'window.fformsFormSettings = ' . wp_json_encode(
 				array(
-					'publicFormUrl'          => Public_Form::url( 0 ),
-					'embedScriptUrl'         => Public_Form::embed_script_url(),
-					'homeUrl'                => home_url(),
+					// The token itself comes from post meta, so the panel updates as
+					// soon as publishing issues one — no editor reload required.
+					'shareUrlTemplate'            => home_url( user_trailingslashit( 'forms/{token}' ) ),
+					'embedScriptUrl'              => Public_Form::embed_script_url(),
+					'homeUrl'                     => home_url(),
 					'notificationSettingsEnabled' => ! empty( Settings::get()['notifications'] ),
 				)
 			) . ';',
@@ -224,7 +192,7 @@ final class Post_Types {
 		if ( self::FORM !== $post->post_type || wp_is_post_revision( $post_id ) ) {
 			return;
 		}
-		if ( \FForms\Schema\Schema_Compiler::has_schema_block( $post->post_content ) ) {
+		if ( \FForms\Schema\Schema_Compiler::has_form_block( $post->post_content ) ) {
 			\FForms\Schema\Schema_Repository::invalidate( $post_id );
 			$schema = \FForms\Schema\Schema_Repository::for_form( $post_id );
 			if ( ! is_wp_error( $schema ) ) {
@@ -237,7 +205,7 @@ final class Post_Types {
 	public static function prevent_invalid_publish( array $data, array $postarr ): array {
 		// wp_insert_post_data provides slashed data; unslash before parsing block JSON attributes.
 		$content = wp_unslash( (string) ( $data['post_content'] ?? '' ) );
-		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_schema_block( $content ) ) {
+		if ( self::FORM !== ( $data['post_type'] ?? '' ) || ! in_array( $data['post_status'] ?? '', array( 'publish', 'future', 'private' ), true ) || ! \FForms\Schema\Schema_Compiler::has_form_block( $content ) ) {
 			return $data;
 		}
 		$schema = \FForms\Schema\Schema_Compiler::compile( $content );

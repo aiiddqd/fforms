@@ -13,8 +13,7 @@
   ],
   "textdomain": "fforms",
   "ancestor": [
-    "fforms/form",
-    "fforms/headless-schema"
+    "fforms/form"
   ],
   "attributes": {
     "fieldId": {

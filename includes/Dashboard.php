@@ -68,7 +68,7 @@ final class Dashboard {
 		return array(
 			array(
 				'title'       => __( 'Contact form', 'fforms' ),
-				'description' => __( 'Without formType the submission goes to the main form.', 'fforms' ),
+				'description' => __( 'Without formType the submission gets the “main” type.', 'fforms' ),
 				'code'        => $curl( "{\n    \"name\": \"John\",\n    \"email\": \"john@example.com\",\n    \"message\": \"Hello!\"\n  }" ),
 			),
 			array(
@@ -77,13 +77,13 @@ final class Dashboard {
 				'code'        => $curl( "{\n    \"formType\": \"consultation_request\",\n    \"name\": \"John\",\n    \"phone\": \"+1 555 010 0000\",\n    \"email\": \"john@example.com\"\n  }" ),
 			),
 			array(
-				'title'       => __( 'Email and company website', 'fforms' ),
-				'description' => __( 'The website field is not part of the schema and is stored in customFields — nothing to configure.', 'fforms' ),
-				'code'        => $curl( "{\n    \"email\": \"sales@acme.dev\",\n    \"website\": \"https://acme.dev\"\n  }" ),
+				'title'       => __( 'Arbitrary fields', 'fforms' ),
+				'description' => __( 'There is no schema: every key you send is stored as a field of the submission.', 'fforms' ),
+				'code'        => $curl( "{\n    \"formType\": \"partner\",\n    \"email\": \"sales@acme.dev\",\n    \"company\": \"Acme\",\n    \"budget\": \"5000\"\n  }" ),
 			),
 			array(
 				'title'       => __( 'Submission with a UTM tag', 'fforms' ),
-				'description' => __( 'ref and meta keep the request context separate from the validated schema fields.', 'fforms' ),
+				'description' => __( 'ref and meta are reserved keys: they keep the request context separate from the submitted fields.', 'fforms' ),
 				'code'        => $curl( "{\n    \"message\": \"Please call me back\",\n    \"phone\": \"+1 555 010 0000\",\n    \"ref\": \"yandex-direct\",\n    \"meta\": { \"page\": \"/pricing\", \"locale\": \"en\" }\n  }" ),
 			),
 		);
@@ -163,7 +163,7 @@ final class Dashboard {
 					<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=fforms-settings' ) ); ?>"><?php esc_html_e( 'Settings →', 'fforms' ); ?></a></p>
 				</div>
 				<div class="fforms-card">
-					<h2><?php esc_html_e( 'Headless mode', 'fforms' ); ?></h2>
+					<h2><?php esc_html_e( 'Forms in code', 'fforms' ); ?></h2>
 					<?php if ( array() === $code_forms ) : ?>
 						<p class="fforms-card-status is-off"><?php esc_html_e( 'Not in use', 'fforms' ); ?></p>
 					<?php else : ?>
@@ -177,7 +177,7 @@ final class Dashboard {
 			<div class="fforms-faq">
 				<details id="fforms-faq-api" open>
 					<summary><?php esc_html_e( 'How do I start receiving messages through the REST API?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'The main form works right after the plugin is activated: there is no need to create a form first.', 'fforms' ); ?></p>
+					<p><?php esc_html_e( 'The route works right after the plugin is activated: there is no form to create and no schema to declare. Whatever top-level keys you send are stored as the submission; formType classifies it so submissions can be filtered.', 'fforms' ); ?></p>
 					<dl>
 						<dt><?php esc_html_e( 'Endpoint', 'fforms' ); ?></dt>
 						<dd><code><?php echo esc_html( $main_url ); ?></code></dd>
@@ -212,7 +212,7 @@ final class Dashboard {
 				</details>
 				<details>
 					<summary><?php esc_html_e( 'How do I create a form?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post — the form becomes available on the site and through the REST API right away.', 'fforms' ); ?></p>
+					<p><?php esc_html_e( 'Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “FForms Form” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites.', 'fforms' ); ?></p>
 				</details>
 				<details>
 					<summary><?php esc_html_e( 'How do I set up email sending?', 'fforms' ); ?></summary>

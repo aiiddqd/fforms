@@ -12,17 +12,15 @@ use WP_Error;
 use WP_Post;
 
 final class Schema_Compiler {
-	private const FORM_BLOCK            = 'fforms/form';
-	private const HEADLESS_SCHEMA_BLOCK = 'fforms/headless-schema';
-	private const SUBMIT_BLOCK          = 'fforms/submit';
+	private const FORM_BLOCK   = 'fforms/form';
+	private const SUBMIT_BLOCK = 'fforms/submit';
 
 	/**
 	 * @return array{fields: array<int, array<string, mixed>>}|WP_Error
 	 */
 	public static function compile( WP_Post|string $form ): array|WP_Error {
 		$content = $form instanceof WP_Post ? $form->post_content : $form;
-		$blocks  = parse_blocks( $content );
-		$root    = self::find_root( $blocks );
+		$root    = self::find_form_block( parse_blocks( $content ) );
 		if ( ! $root ) {
 			return new WP_Error( 'fforms_no_form_block', __( 'The form must contain a root FForms block.', 'fforms' ) );
 		}
@@ -32,11 +30,8 @@ final class Schema_Compiler {
 		$errors = array();
 		$submit = 0;
 		self::walk( $root['innerBlocks'] ?? array(), $fields, $names, $errors, $submit );
-		if ( self::HEADLESS_SCHEMA_BLOCK === $root['blockName'] ) {
-			self::validate_headless_children( $root['innerBlocks'] ?? array(), $errors );
-		}
 
-		if ( self::FORM_BLOCK === $root['blockName'] && 1 !== $submit ) {
+		if ( 1 !== $submit ) {
 			$errors[] = __( 'The form must contain exactly one submit button.', 'fforms' );
 		}
 		if ( array() === $fields ) {
@@ -49,53 +44,14 @@ final class Schema_Compiler {
 		return array( 'fields' => $fields );
 	}
 
-	/**
-	 * A headless schema is a strict field allowlist. Apart from keeping the
-	 * editor predictable, this prevents content blocks from being silently
-	 * omitted by the REST validation schema.
-	 *
-	 * @param array<int, array<string, mixed>> $blocks
-	 * @param array<int, string>               $errors
-	 */
-	private static function validate_headless_children( array $blocks, array &$errors ): void {
-		foreach ( $blocks as $block ) {
-			$name = (string) ( $block['blockName'] ?? '' );
-			if ( ! str_starts_with( $name, 'fforms/field-' ) || ! empty( $block['innerBlocks'] ) ) {
-				$errors[] = __( 'Headless API form may contain only FForms field blocks.', 'fforms' );
-				return;
-			}
-		}
-	}
-
 	public static function has_form_block( string $content ): bool {
-		return (bool) self::find_named_root( parse_blocks( $content ), self::FORM_BLOCK );
-	}
-
-	/**
-	 * Whether the post contains either editor representation of an FForms schema.
-	 */
-	public static function has_schema_block( string $content ): bool {
-		return (bool) self::find_root( parse_blocks( $content ) );
-	}
-
-	public static function has_headless_schema_block( string $content ): bool {
-		return (bool) self::find_named_root( parse_blocks( $content ), self::HEADLESS_SCHEMA_BLOCK );
+		return (bool) self::find_form_block( parse_blocks( $content ) );
 	}
 
 	/** @param array<int, array<string, mixed>> $blocks */
-	private static function find_root( array $blocks ): array|false {
+	private static function find_form_block( array $blocks ): array|false {
 		foreach ( $blocks as $block ) {
-			if ( in_array( $block['blockName'] ?? '', array( self::FORM_BLOCK, self::HEADLESS_SCHEMA_BLOCK ), true ) ) {
-				return $block;
-			}
-		}
-		return false;
-	}
-
-	/** @param array<int, array<string, mixed>> $blocks */
-	private static function find_named_root( array $blocks, string $name ): array|false {
-		foreach ( $blocks as $block ) {
-			if ( $name === ( $block['blockName'] ?? '' ) ) {
+			if ( self::FORM_BLOCK === ( $block['blockName'] ?? '' ) ) {
 				return $block;
 			}
 		}

@@ -12,7 +12,6 @@
 namespace FForms\Registry;
 
 use FForms\Form_Ref;
-use FForms\Schema;
 
 final class Main_Form {
 	public const KEY = 'main';
@@ -25,7 +24,9 @@ final class Main_Form {
 				post_id: 0,
 				key: self::KEY,
 				title: __( 'Main form (API)', 'fforms' ),
-				schema: Schema::normalize( array( 'fields' => self::fields() ) ),
+				// No schema at all: /main stores whatever keys the client sends, so
+				// there is nothing to declare, validate against or keep in sync.
+				schema: array( 'fields' => array() ),
 				success_message: __( 'Thank you! Your submission has been sent.', 'fforms' ),
 				origins: self::origins(),
 				notifications: self::notifications(),
@@ -35,21 +36,6 @@ final class Main_Form {
 		}
 
 		return self::$ref;
-	}
-
-	/**
-	 * At least one of email, phone or message must carry content, so every field
-	 * is optional on its own.
-	 *
-	 * @return array<int, array<string, mixed>>
-	 */
-	private static function fields(): array {
-		return array(
-			array( 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'type' => 'text', 'required' => false ),
-			array( 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'type' => 'email', 'required' => false ),
-			array( 'name' => 'phone', 'label' => __( 'Phone', 'fforms' ), 'type' => 'tel', 'required' => false ),
-			array( 'name' => 'message', 'label' => __( 'Message', 'fforms' ), 'type' => 'textarea', 'required' => false ),
-		);
 	}
 
 	/** @return array<int, string> */

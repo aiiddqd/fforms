@@ -19,7 +19,7 @@ final class Schema_Repository {
 			return new WP_Error( 'fforms_form_not_found', __( 'Form not found.', 'fforms' ) );
 		}
 
-		if ( Schema_Compiler::has_schema_block( $form->post_content ) ) {
+		if ( Schema_Compiler::has_form_block( $form->post_content ) ) {
 			$hash = hash( 'sha256', $form->post_content );
 			if ( $hash === (string) get_post_meta( $form_id, '_fforms_schema_hash', true ) ) {
 				$cached = json_decode( (string) get_post_meta( $form_id, '_fforms_schema', true ), true );

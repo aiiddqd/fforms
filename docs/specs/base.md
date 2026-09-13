@@ -19,12 +19,13 @@ Current system requirements:
 
 ## 2. Primary user flow
 
-1. The user creates a post under **FForms → Add form** — `block` mode by default.
-2. The sidebar can switch the mode: `block` edits `fforms/form`, `headless` edits a locked `fforms/headless-schema` holding the same field blocks. Switching converts the field set between the two root blocks; the JSON schema stays a derived cache and the REST format.
-3. With global mail settings enabled, the user turns on the notification for that specific form and configures recipients, the success message, and optionally an autoreply.
-4. The user publishes the form and either places the dynamic `fforms/form` block on a page or calls the REST API directly.
-5. A public submission is validated server-side and stored as a private entry with status `new`.
-6. An administrator reviews the entry, changes its status, and exports the data to CSV when needed.
+1. The user creates a post under **FForms → Add form**. A form has one shape: the `fforms/form` block tree in `post_content`. There is no mode to choose.
+2. With global mail settings enabled, the user turns on the notification for that specific form and configures recipients, the success message, and optionally an autoreply.
+3. The user publishes the form. Every published form is then insertable through the `fforms/form` block and the `[fform id=…]` shortcode; the "Share via link" toggle in the Publication panel additionally opens its token URL, iframe, and js-script.
+4. A public submission is validated server-side and stored as a private entry with status `new`.
+5. An administrator reviews the entry, changes its status, and exports the data to CSV when needed.
+
+An integration that has no form in wp-admin does not follow this flow at all: it posts to `POST /fforms/v1/main`, which declares no schema and stores whatever it is sent (§5.2). The mode is a property of the entry point, not of the form.
 
 The `contact` and `lead` types currently differ only by the stored type value; submission handling is identical for both.
 
@@ -41,7 +42,8 @@ The plugin uses two custom post types and one taxonomy.
 Form meta:
 
 - `_fforms_type` — `contact` or `lead`;
-- `_fforms_mode` — `block`, `public`, or `headless`. A missing value on a previously created form reads as `block`, and an `fforms/headless-schema` block in the content forces `headless` regardless of the meta value. `public` is technically identical to `block` everywhere except `Public_Form`: same block markup, same rendering, same availability in the `ref` picker — the only difference is that `Public_Form::is_enabled()` treats the form as reachable through its public link;
+- `_fforms_share_link` — boolean, `false` by default: whether the form is reachable through its share link, the embed view, and the two embed snippets;
+- `_fforms_share_token` — 16 hex characters from `random_bytes()`, issued on the form's first publish and used as its only public address. Reissuing it invalidates the previous link immediately;
 - `_fforms_schema` — the normalized JSON schema: a derived cache of the schema compiled from blocks, and the compatible format for legacy forms that have no blocks;
 - `_fforms_notifications_enabled` — enables the main notification for the form;
 - `_fforms_notification_to`, `_fforms_notification_subject` — notification recipients and subject;
@@ -55,7 +57,7 @@ Entry meta:
 - `_fforms_status` — `new`, `read`, `replied`, or `spam`;
 - `_fforms_form_key` — key of the code form or of the built-in main form (`main`) when the entry did not go to a CPT form;
 - `_fforms_source`, `_fforms_ip`, `_fforms_user_agent` — request source and technical data;
-- `_fforms_custom` — JSON of off-schema fields (`customFields` on the `POST /main` route): at most 20 keys, scalars only, up to 2,000 characters per value;
+- `_fforms_custom` — legacy JSON of off-schema fields, written by `POST /main` before it dropped its schema. It is still read on the entry screen and in CSV; nothing writes it any more;
 - `_fforms_meta` — JSON of arbitrary request context: depth at most 3, at most 8 KiB once encoded;
 - `_fforms_ref` — referral marker (`utm_source`, `ref`), up to 200 characters;
 - `_fforms_user_id` — client-supplied user identifier. It grants nothing, and the admin renders it as a link only when such a user exists;
@@ -112,16 +114,19 @@ Namespace: `fforms/v1`.
 | Method and route | Access | Purpose |
 | --- | --- | --- |
 | `POST /submit` | public | Validates and stores an entry; strict contract of `form_id`/`form_key` plus `fields`. |
-| `POST /main` | public | Lenient flat payload of the built-in main form. See §5.2. |
-| `GET /forms` | public | The built-in main form plus up to 100 published forms in alphabetical order; every CPT form carries `mode`. |
-| `GET /forms/{id\|key}` | public | The form, its `mode`, schema, success message, and submit URL. `key` is a code-form key, `main`, or the slug of the form's term. |
+| `POST /main` | public | Schema-free flat payload of the built-in main form. See §5.2. |
+| `GET /forms` | public | The built-in main form plus up to 100 published forms in alphabetical order; every CPT form carries `share_link`. |
+| `GET /forms/{id\|key}` | public | The form, its `share_link`, schema, success message, and submit URL. `key` is a code-form key, `main`, or the slug of the form's term. |
 | `GET /forms/{id\|key}/schema` | public | The normalized schema only. |
+| `POST /forms/{id}/share-token` | `edit_post` | Issues a new share token and returns the new URL and snippets. The previous link stops working at once. |
 | `GET /entries` | `manage_options` | Entries with pagination and `form_id`/`form_key`/`form_type`/`status` filters. |
 | `POST /entries/{id}/status` | `manage_options` | Changes the workflow status of an entry. |
 
 ### 5.1. Public form page
 
-A form in `public` mode is additionally reachable without authentication at `/forms/{id}/` (`Public_Form`, rewrite rule `^forms/([0-9]+)/?$`). The page renders the same block markup as a regular `fforms/form` block on the site, inside the current theme's markup (`get_header()`/`get_footer()`). Access is checked by `status === 'publish'` and `Post_Types::form_mode( $id ) === 'public'`; a missing form, a different status, or a different mode returns a 404 page. For forms in `block` and `headless` mode this URL always returns 404.
+A form with `_fforms_share_link` on is additionally reachable without authentication at `/forms/{token}/` (`Public_Form`, rewrite rule `^forms/([a-f0-9]{16})/?$`). The page renders the same block markup as a regular `fforms/form` block on the site, inside the current theme's markup (`get_header()`/`get_footer()`). Access is checked by `status === 'publish'` and `Public_Form::is_enabled( $id )`; a missing form, a different status, or the toggle being off returns a 404 page.
+
+The address is the secret. `/forms/{id}/` no longer exists, so a form cannot be found by walking post IDs, and a token that is reissued invalidates every link already shared. The page is kept out of search entirely: `wp_robots` emits `noindex, nofollow`, the response carries the same `X-Robots-Tag` header, and the `fform` CPT is non-public, so neither the form nor its token URL appears in the sitemap or in site search.
 
 The public submit accepts:
 
@@ -138,26 +143,26 @@ A successful submission returns HTTP 201, `entry_id`, the custom message, and th
 
 ### 5.2. The built-in main form and `POST /main`
 
-The main form exists only in memory (`Registry\Main_Form`): `post_id = 0`, `key = main`, `source = builtin`, and a schema of four optional fields (`name` text, `email` email, `phone` tel, `message` textarea). It creates no database records, is not editable in the admin, and cannot be embedded by the block. The `main` key is reserved — `fforms_add_api_route( 'main', … )` returns a `WP_Error` with code `fforms_reserved_key`. It works right after activation, with no form to create first.
+The main form exists only in memory (`Registry\Main_Form`): `post_id = 0`, `key = main`, `source = builtin`, and **no schema at all**. It creates no database records, is not editable in the admin, and cannot be embedded by the block. The `main` key is reserved — `fforms_add_api_route( 'main', … )` returns a `WP_Error` with code `fforms_reserved_key`. It works right after activation, with no form to create first.
 
-`POST /main` accepts a flat camelCase payload; every parameter is optional:
+`POST /main` accepts a flat payload; every parameter is optional:
 
 | Parameter | Purpose |
 | --- | --- |
-| `formType` (aliases `formId`, `form_type`, `form_id`) | Both the form address and its type. Aliases carrying different values return 400 `fforms_form_ref_conflict`. |
-| schema fields of the addressed form | Go through the regular `Schema::validate_submission()`. |
-| `customFields`, `meta`, `ref`, `userId` | Off-schema data; see the meta keys in §3. |
+| `formType` (aliases `formId`, `form_type`, `form_id`) | The type of the submission, and nothing else. Aliases carrying different values return 400 `fforms_form_ref_conflict`. |
+| any other top-level key | A field of the submission. Stored in `_fforms_data` under `sanitize_key()` of the key. |
+| `meta`, `ref`, `userId` | Request context; see the meta keys in §3. |
 | `_hp` | Honeypot for this route: when filled, returns 200 with no entry. On `/submit` the honeypot is still `website`. |
 | `source` | Same as on `/submit`; falls back to `Referer` when absent. |
 | `attachments` | Not accepted: 400 `fforms_attachments_require_multipart` in JSON, and 400 `fforms_attachments_disabled` for `multipart` with files. |
 
-Unknown top-level keys are not discarded — they are stored as `customFields`. That is why the honeypot here is named `_hp` rather than `website`: in a flat payload `website` is a perfectly ordinary user field.
+**There is no schema, so there is no validation.** `Schema::validate_submission()` is not called on this route: whatever keys arrive are what gets stored. Values are sanitized with `sanitize_text_field()` and truncated to 2,000 characters; a non-scalar value is stored as its JSON string rather than dropped; at most 50 fields are kept. The `email` key is additionally normalized with `sanitize_email()`, but an address that does not survive that is still stored — it only means no autoreply is sent. That is also why the honeypot here is named `_hp` rather than `website`: in a flat payload `website` is a perfectly ordinary user field.
 
-**Addressing and classification are independent.** The value is resolved to a form in this order: a number → post ID, a code-form key, the slug of an `fform_type` term with a non-empty `_fforms_form_id`. If no form matches, the submission goes to the built-in main form. The type is then assigned as a term: a CPT form contributes its own term, a code form its `type` argument or the key itself, and the main form the normalized incoming value. A useful side effect is that the term slug becomes a stable string key for a CPT form, replacing the post ID that differs between environments.
+**`formType` classifies, it never addresses.** A `/main` submission always goes to the built-in main form; the value is normalized to a slug and upserted into `fform_type`. Sending `formType: "123"` with the ID of an existing CPT form does *not* route the submission to that form — it creates an entry on the main form with the type `123`. Resolution by post ID, code-form key, or term slug lives on `POST /submit` only. When no type is given, the term `main` is assigned, so every `/main` entry is filterable.
 
-The main form also enforces a rule against empty submissions: at least one of `email`, `phone`, `message` must be non-empty, otherwise 422 `fforms_empty_submission`. The rate limit is counted under the key `code:main`.
+A submission with no non-empty field at all is 422 `fforms_empty_submission`. An unusable type value is 422 `fforms_invalid_form_type`, and 422 `fforms_unknown_form_type` in strict mode. The rate limit is counted under the key `code:main`.
 
-A successful response is 201 with `entry_id`, the message, and — when a type was determined — `form_type`.
+A successful response is 201 with `entry_id`, the message, and `form_type`.
 
 ## 6. Submission handling and anti-spam
 
@@ -165,11 +170,11 @@ Processing order:
 
 1. Request body size check — at most 256 KiB by default.
 2. Check that a published form exists.
-3. Resolve the form and, for `POST /main`, the form type.
+3. Resolve the form (`/submit`) or the form type (`/main`).
 4. Honeypot (`website` on `/submit`, `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created.
 5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
-6. Data normalization and server-side validation.
-7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; off-schema data is written to separate meta keys and never enters `_fforms_data`.
+6. Data normalization, and server-side validation against the schema — on `/submit`; `/main` has no schema to validate against and only normalizes.
+7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
 8. Assignment of the `fform_type` term.
 9. Sending notifications and firing the `fforms_entry_created` action.
 
@@ -177,7 +182,7 @@ The rate limit counts invalid attempts too, but not honeypot hits. The IP comes 
 
 ## 7. Gutenberg block and frontend
 
-For a published form in `block` mode, the dynamic `fforms/form` block lets an editor:
+For any published form, the dynamic `fforms/form` block lets an editor:
 
 - pick one of the published forms;
 - show or hide its title;
@@ -186,25 +191,25 @@ For a published form in `block` mode, the dynamic `fforms/form` block lets an ed
 
 Markup is generated server-side from the current schema. Fields have associated `label` elements, required fields carry `required`/`aria-required`, and the result message uses `role="status"` and `aria-live="polite"`. The client script collects the data, posts JSON through `fetch`, disables the button while the request is in flight, shows the result, and clears the form after success.
 
-Headless forms remain fully available through `fforms/v1` but are not offered in the block picker, and server-side rendering rejects a manually set `ref` pointing at one. CSS and frontend JavaScript are enqueued only when the block actually rendered a published form. Styles are minimal and theme-agnostic, but there is no dedicated `theme.json`/Global Styles integration yet. Without JavaScript the form shows a warning and does not submit.
+Every published form is offered in the block picker and renders through a `ref`: there is no per-form setting that can withhold it. CSS and frontend JavaScript are enqueued only when the block actually rendered a published form. Styles are minimal and theme-agnostic, but there is no dedicated `theme.json`/Global Styles integration yet. Without JavaScript the form shows a warning and does not submit.
 
 ### 7.1. The `[fform id=123]` shortcode
 
 The second insertion point is the `[fform id=123]` shortcode. Its only attribute is `id`, the post ID of the `fform` CPT; `[fform id=123]` and `[fform id="123"]` are equivalent. The shortcode does not duplicate markup — it calls the same server-side `Form_Renderer::render_form()` as the public form page, so markup, assets, and submit behavior match the `fforms/form` block with `ref=123`, down to the block's outer wrapper.
 
-The unavailable-form policy is shared with the block: a missing or nonexistent `id`, a post of another type, a draft, and `headless` mode render nothing — a visitor sees nothing, a user with `edit_posts` sees a text message. Code forms (`post_id=0`) are not reachable through the shortcode. `[fform id=X]` inside the content of form X itself hits the shared recursion guard and returns a circular-reference message.
+The unavailable-form policy is shared with the block: a missing or nonexistent `id`, a post of another type, and a draft render nothing — a visitor sees nothing, a user with `edit_posts` sees a text message. Code forms (`post_id=0`) are not reachable through the shortcode. `[fform id=X]` inside the content of form X itself hits the shared recursion guard and returns a circular-reference message.
 
 Assets are enqueued along two paths: on `wp_enqueue_scripts` via `has_shortcode()` against the current post content (so styles land in `wp_head`), and again, idempotently, inside the callback itself — for renders coming from a widget or a theme template. On a page without a form no assets are enqueued.
 
-The sidebar of a published form in `block`/`public` mode shows the ready-to-copy `[fform id=<ID>]` value; for a `headless` form the field is not rendered.
+The Publication panel of any published form shows the ready-to-copy `[fform id=<ID>]` value.
 
 Both the shortcode and the block insert the form into `post_content`. Pages rendered by theme code that bypasses `the_content()` are served by neither — such a template must call `do_shortcode()` or `Form_Renderer::render_form()` itself.
 
 ### 7.2. External embedding: iframe and js-script
 
-Two snippets sit on top of the public form page `/forms/{id}/` for embedding on a third-party site, so both are available only for a published form in `public` mode ("Share via URL"):
+Two snippets sit on top of the share page `/forms/{token}/` for embedding on a third-party site, so both are available only for a published form whose "Share via link" toggle is on:
 
-- `<iframe src="{home}/forms/{id}?fforms_embed=1" style="width:100%;border:0" height="600" loading="lazy">` — a simple embed with a fixed height;
+- `<iframe src="{home}/forms/{token}/?fforms_embed=1" style="width:100%;border:0" height="600" loading="lazy">` — a simple embed with a fixed height;
 - `<script src="{plugin}/assets/embed.js" data-fforms-form="{id}" data-fforms-origin="{home}" data-fforms-src="{embed_url}"></script>` — the script replaces the tag with an iframe and keeps its height in sync.
 
 The public form page, when opened inside a frame, sends the parent a `postMessage` of `{ type: 'fforms:height', formId, height }`. `assets/embed.js` applies the height only for messages coming from its own iframe's `contentWindow` with a matching `formId`, and sets it both as an attribute and as an inline style so a theme rule for `iframe` cannot override it.
@@ -215,20 +220,20 @@ Height is measured from the content (`.fforms-embed__content`) rather than from 
 
 `assets/embed.js` runs on other people's sites: no dependencies, no build step, no global variables, and it survives several embeds of different forms on one page. The exact frame URL arrives in `data-fforms-src`; without that attribute the script assembles it from `data-fforms-origin` and `data-fforms-form`.
 
-The `fforms_embed=1` parameter switches the public page into "bare" mode: a minimal HTML document with no header, footer, or admin bar, but still with `wp_head()`/`wp_footer()`, so block styles, Global Styles, and the Interactivity runtime work as usual. Without the parameter, `/forms/{id}` stays a full theme page — it remains the link to share. Padding in bare mode is zero: spacing is the embedding page's job.
+The `fforms_embed=1` parameter switches the public page into "bare" mode: a minimal HTML document with no header, footer, or admin bar, but still with `wp_head()`/`wp_footer()`, so block styles, Global Styles, and the Interactivity runtime work as usual. Without the parameter, `/forms/{token}/` stays a full theme page — it remains the link to share. Padding in bare mode is zero: spacing is the embedding page's job.
 
-All insertion points are collected in the form editor sidebar: the shortcode (`block`/`public`), the public link, the iframe and the js-script (`public` only); for `headless` nothing is shown.
+All insertion points are collected in the "Publication" panel of the form editor sidebar: the shortcode for any published form, and — while "Share via link" is on — the link, the iframe and the js-script, plus a "Reissue link" button. Every field is read-only and ready to copy. With the toggle off, both `/forms/{token}/` and its `?fforms_embed=1` view return 404 and the link fields are hidden.
 
 ## 8. Admin, mail, and export
 
 The admin implements:
 
 - creating and editing forms through the standard CPT interface;
-- a `Block editor` or `Headless API` mode in the sidebar. A new form starts as `Block editor`, and switching the mode converts the current fields between blocks and the JSON schema. In `Headless API` the container accepts FForms field blocks only, so the REST schema cannot drift from the editor content;
+- a "Publication" panel in the sidebar: the shortcode, the "Share via link" toggle, and under it the URL, the iframe and js-script snippets, and the reissue button;
 - an overview page at `admin.php?page=fforms-dashboard` that opens the "Questions and answers" block with its first question, "How do I start accepting messages over the REST API?": the real `POST /fforms/v1/main` URL, the current settings state, the list of form types, and four ready-made request examples with a "Copy" button. The top-level menu slug stays `fforms` (both CPTs and the settings and export pages use it as their parent), and `admin.php?page=fforms` redirects to the new address;
 - a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View submissions" action leading to the list filtered by its term;
 - the entry list with the form, form type, status, and a short preview; the single form-type dropdown is the only entry filter beside the status one, and an entry is titled `{form type} — {date}`, falling back to the form title when no type is assigned;
-- a view of the full entry data, source, IP, and User-Agent, plus an "Additional data" block with the form type, `ref`, `user_id`, `customFields`, and `meta`;
+- a view of the full entry data, source, IP, and User-Agent, plus an "Additional data" block with the form type, `ref`, `user_id`, `meta`, and the legacy `customFields` of older entries;
 - manual status changes on an entry;
 - CSV export of all entries, of a selected form's entries, or of a selected form type's entries.
 

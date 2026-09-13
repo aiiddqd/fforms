@@ -43,7 +43,6 @@ final class Form_Renderer {
 		$unavailable = $unavailable_notice ?: __( 'Select a published form in the block settings.', 'fforms' );
 		$form = get_post( $form_id );
 		if ( ! $form_id || ! $form || Post_Types::FORM !== $form->post_type || 'publish' !== $form->post_status ) return self::editor_notice( $unavailable, $wrapper );
-		if ( 'headless' === Post_Types::form_mode( $form_id ) ) return self::editor_notice( $unavailable, $wrapper );
 		if ( isset( self::$resolving[ $form_id ] ) ) return self::editor_notice( __( 'Circular form reference detected.', 'fforms' ), $wrapper );
 		self::$resolving[ $form_id ] = true;
 		$previous = self::$source_form_id;
