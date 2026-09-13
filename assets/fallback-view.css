@@ -1,0 +1,73 @@
+.fforms-form,
+.fforms-fields {
+	display: grid;
+	gap: 1.25rem;
+}
+
+.fforms-field {
+	display: grid;
+	gap: 0.375rem;
+}
+
+.fforms-label {
+	font-weight: 500;
+	line-height: 1.3;
+}
+
+.fforms-field legend {
+	padding-inline: 0;
+}
+
+.fforms-field input:not([type="checkbox"]):not([type="radio"]),
+.fforms-field textarea,
+.fforms-field select {
+	box-sizing: border-box;
+	max-width: 100%;
+	padding: 0.65em 0.8em;
+	border: 1px solid currentcolor;
+	border-color: color-mix(in srgb, currentcolor 35%, transparent);
+	border-radius: 4px;
+	width: 100%;
+}
+
+.fforms-field textarea {
+	min-height: 6.5rem;
+	resize: vertical;
+}
+
+.fforms-submit {
+	margin-block-start: 0.5rem;
+}
+
+.fforms-field-error:empty {
+	display: none;
+}
+
+.fforms-response:not(:empty) {
+	margin-block-start: 0.5rem;
+	padding: 0.75rem 1rem;
+	background: #edfaef;
+	border-left: 4px solid #16853a;
+}
+
+.fforms-hp {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+}
+
+.fforms-public-form__content {
+	margin-inline: auto;
+	max-width: 48rem;
+	padding: 2rem 1rem 4rem;
+}
+
+.fforms-public-form__header {
+	margin-bottom: 2rem;
+}
+
+.fforms-public-form__title {
+	margin: 0;
+}
