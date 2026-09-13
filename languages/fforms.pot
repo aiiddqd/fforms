@@ -10,21 +10,21 @@ msgstr ""
 "X-Generator: tools/i18n.py\n"
 "X-Domain: fforms\n"
 
-#: includes/Dashboard.php:151
+#: includes/Dashboard.php:180
 msgid "%d form"
 msgid_plural "%d forms"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: includes/Dashboard.php:170
+#: includes/Dashboard.php:199
 msgid "%d form in code"
 msgid_plural "%d forms in code"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: includes/Dashboard.php:145
+#: includes/Dashboard.php:174
 msgid "%d submission"
 msgid_plural "%d submissions"
 msgstr[0] ""
@@ -47,7 +47,7 @@ msgstr ""
 msgid "Add at least one form field."
 msgstr ""
 
-#: includes/Dashboard.php:136 includes/Post_Types.php:39
+#: includes/Dashboard.php:165 includes/Post_Types.php:39
 msgid "Add form"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 msgid "Additional data"
 msgstr ""
 
-#: includes/Form_Types.php:50 includes/Form_Types.php:278
+#: includes/Form_Types.php:50 includes/Form_Types.php:277
 msgid "All form types"
 msgstr ""
 
@@ -75,11 +75,11 @@ msgstr ""
 msgid "All forms"
 msgstr ""
 
-#: includes/Dashboard.php:152
+#: includes/Dashboard.php:181
 msgid "All forms →"
 msgstr ""
 
-#: includes/Dashboard.php:146
+#: includes/Dashboard.php:175
 msgid "All submissions →"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "All types"
 msgstr ""
 
-#: includes/Dashboard.php:184
+#: includes/Dashboard.php:213
 msgid "Allowed origins"
 msgstr ""
 
@@ -99,11 +99,11 @@ msgstr ""
 msgid "Anyone with the link can open and submit the form. The page is not indexed by search engines."
 msgstr ""
 
-#: includes/Dashboard.php:80
+#: includes/Dashboard.php:109
 msgid "Arbitrary fields"
 msgstr ""
 
-#: includes/Dashboard.php:188
+#: includes/Dashboard.php:217
 msgid "Attachments"
 msgstr ""
 
@@ -139,10 +139,6 @@ msgstr ""
 msgid "Button text"
 msgstr ""
 
-#: build/blocks/form/index.js:1 src/blocks/form/edit.js:108
-msgid "Button text (legacy)"
-msgstr ""
-
 #: includes/Export.php:17
 msgid "CSV export"
 msgstr ""
@@ -163,7 +159,7 @@ msgstr ""
 msgid "Circular form reference detected."
 msgstr ""
 
-#: includes/Dashboard.php:215
+#: includes/Dashboard.php:244
 msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “FForms Form” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites."
 msgstr ""
 
@@ -211,7 +207,7 @@ msgstr ""
 msgid "Confirmation"
 msgstr ""
 
-#: includes/Dashboard.php:75
+#: includes/Dashboard.php:104
 msgid "Consultation request"
 msgstr ""
 
@@ -219,15 +215,15 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-#: includes/Dashboard.php:70 includes/Default_Forms.php:16
+#: includes/Dashboard.php:99 includes/Default_Forms.php:16
 msgid "Contact form"
 msgstr ""
 
-#: includes/Dashboard.php:257
+#: includes/Dashboard.php:286
 msgid "Copied"
 msgstr ""
 
-#: includes/Dashboard.php:206
+#: includes/Dashboard.php:235
 msgid "Copy"
 msgstr ""
 
@@ -251,7 +247,7 @@ msgstr ""
 msgid "Delete the saved password"
 msgstr ""
 
-#: includes/Dashboard.php:160
+#: includes/Dashboard.php:189
 msgid "Disabled"
 msgstr ""
 
@@ -267,7 +263,7 @@ msgstr ""
 msgid "Edit form type"
 msgstr ""
 
-#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Default_Forms.php:33 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit.js:32
+#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Default_Forms.php:33 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
 msgid "Email"
 msgstr ""
 
@@ -279,7 +275,7 @@ msgstr ""
 msgid "Email field name"
 msgstr ""
 
-#: includes/Dashboard.php:161
+#: includes/Dashboard.php:190
 msgid "Email is sent through the default wp_mail()"
 msgstr ""
 
@@ -299,7 +295,7 @@ msgstr ""
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
 msgstr ""
 
-#: includes/Dashboard.php:157
+#: includes/Dashboard.php:186
 msgid "Enabled"
 msgstr ""
 
@@ -307,7 +303,7 @@ msgstr ""
 msgid "Encryption"
 msgstr ""
 
-#: includes/Dashboard.php:182
+#: includes/Dashboard.php:211
 msgid "Endpoint"
 msgstr ""
 
@@ -331,11 +327,11 @@ msgstr ""
 msgid "Export submissions"
 msgstr ""
 
-#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:133 includes/Post_Types.php:41 src/blocks/form/edit.js:117
+#: build/blocks/form/index.js:1 includes/Block.php:34 includes/Dashboard.php:21 includes/Dashboard.php:22 includes/Dashboard.php:162 includes/Post_Types.php:41 src/blocks/form/edit-reference.js:50
 msgid "FForms"
 msgstr ""
 
-#: assets/fallback-editor.js:58 assets/fallback-editor.js:118 build/blocks/form/block.json:1 src/blocks/form/block.json:1
+#: assets/fallback-editor.js:58 assets/fallback-editor.js:116 build/blocks/form/block.json:1 src/blocks/form/block.json:1
 msgid "FForms Form"
 msgstr ""
 
@@ -347,15 +343,15 @@ msgstr ""
 msgid "Field"
 msgstr ""
 
-#: assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:162
+#: assets/fallback-editor.js:157 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:162
 msgid "Field settings"
 msgstr ""
 
-#: includes/Form_Types.php:276
+#: includes/Form_Types.php:275
 msgid "Filter by form type"
 msgstr ""
 
-#: assets/fallback-editor.js:120 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:249 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit.js:84
+#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit-reference.js:38
 msgid "Form"
 msgstr ""
 
@@ -367,7 +363,7 @@ msgstr ""
 msgid "Form not found: check the id in the [fform] shortcode."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit.js:98
+#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:65
 msgid "Form settings"
 msgstr ""
 
@@ -379,7 +375,7 @@ msgstr ""
 msgid "Form type: %s"
 msgstr ""
 
-#: includes/Dashboard.php:190 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:118
+#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:118
 msgid "Form types"
 msgstr ""
 
@@ -387,11 +383,11 @@ msgstr ""
 msgid "Form: %s"
 msgstr ""
 
-#: includes/Dashboard.php:150 includes/Post_Types.php:37 includes/Post_Types.php:42
+#: includes/Dashboard.php:179 includes/Post_Types.php:37 includes/Post_Types.php:42
 msgid "Forms"
 msgstr ""
 
-#: includes/Dashboard.php:166
+#: includes/Dashboard.php:195
 msgid "Forms in code"
 msgstr ""
 
@@ -407,31 +403,31 @@ msgstr ""
 msgid "Hidden field"
 msgstr ""
 
-#: includes/Dashboard.php:158
+#: includes/Dashboard.php:187
 msgid "Host is not set"
 msgstr ""
 
-#: includes/Dashboard.php:226
+#: includes/Dashboard.php:255
 msgid "How do I add a headless form (a form defined in code)?"
 msgstr ""
 
-#: includes/Dashboard.php:214
+#: includes/Dashboard.php:243
 msgid "How do I create a form?"
 msgstr ""
 
-#: includes/Dashboard.php:222
+#: includes/Dashboard.php:251
 msgid "How do I export submissions?"
 msgstr ""
 
-#: includes/Dashboard.php:218
+#: includes/Dashboard.php:247
 msgid "How do I set up email sending?"
 msgstr ""
 
-#: includes/Dashboard.php:179
+#: includes/Dashboard.php:208
 msgid "How do I start receiving messages through the REST API?"
 msgstr ""
 
-#: includes/Dashboard.php:172
+#: includes/Dashboard.php:201
 msgid "How to connect →"
 msgstr ""
 
@@ -439,11 +435,11 @@ msgstr ""
 msgid "Iframe"
 msgstr ""
 
-#: includes/Dashboard.php:223
+#: includes/Dashboard.php:252
 msgid "In “CSV export”, pick a form (or all of them) and click “Download CSV”."
 msgstr ""
 
-#: includes/Dashboard.php:219
+#: includes/Dashboard.php:248
 msgid "In “Settings”, enable the built-in SMTP and fill in the host, port and username — or leave it off when another SMTP plugin already handles email. Notifications and auto-replies for a particular form are configured in the form itself."
 msgstr ""
 
@@ -467,7 +463,7 @@ msgstr ""
 msgid "Invalid form type."
 msgstr ""
 
-#: includes/Form_Types.php:105
+#: includes/Form_Types.php:104
 msgid "Invalid form type: Latin letters, digits, hyphen and underscore only, up to 32 characters."
 msgstr ""
 
@@ -475,7 +471,7 @@ msgstr ""
 msgid "Js-script"
 msgstr ""
 
-#: assets/fallback-editor.js:171 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:180 src/blocks/field.js:231
+#: assets/fallback-editor.js:169 build/blocks/field-checkbox/index.js:1 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:180 src/blocks/field.js:231
 msgid "Label"
 msgstr ""
 
@@ -499,7 +495,7 @@ msgstr ""
 msgid "Let visitors choose one visible option."
 msgstr ""
 
-#: includes/Dashboard.php:134
+#: includes/Dashboard.php:163
 msgid "Lightweight, headless-friendly form handling: collect data from Gutenberg blocks or from external sites through the REST API."
 msgstr ""
 
@@ -519,7 +515,7 @@ msgstr ""
 msgid "Maximum length"
 msgstr ""
 
-#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:21 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit.js:41
+#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:21 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
 msgid "Message"
 msgstr ""
 
@@ -531,7 +527,7 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#: assets/fallback-editor.js:20 assets/fallback-editor.js:161 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit.js:23
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit-builder.js:10
 msgid "Name"
 msgstr ""
 
@@ -539,7 +535,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: assets/fallback-editor.js:219
+#: assets/fallback-editor.js:217
 msgid "New field"
 msgstr ""
 
@@ -567,7 +563,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: includes/Dashboard.php:168
+#: includes/Dashboard.php:197
 msgid "Not in use"
 msgstr ""
 
@@ -615,7 +611,7 @@ msgstr ""
 msgid "Phone field"
 msgstr ""
 
-#: assets/fallback-editor.js:178 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:186
+#: assets/fallback-editor.js:176 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:186
 msgid "Placeholder"
 msgstr ""
 
@@ -635,7 +631,7 @@ msgstr ""
 msgid "Provide at least one valid form field."
 msgstr ""
 
-#: includes/REST_Controller.php:550
+#: includes/REST_Controller.php:561
 msgid "Provide form_id or form_key."
 msgstr ""
 
@@ -647,7 +643,7 @@ msgstr ""
 msgid "Publish the form to get its shortcode and link."
 msgstr ""
 
-#: includes/Dashboard.php:176
+#: includes/Dashboard.php:205
 msgid "Questions and answers"
 msgstr ""
 
@@ -659,7 +655,7 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
-#: includes/Dashboard.php:137
+#: includes/Dashboard.php:166
 msgid "Read the documentation"
 msgstr ""
 
@@ -675,7 +671,7 @@ msgstr ""
 msgid "Ref: %s"
 msgstr ""
 
-#: includes/Dashboard.php:227
+#: includes/Dashboard.php:256
 msgid "Register the form on the fforms_register_forms hook — it becomes available through the REST API under its key, with no post created in Gutenberg."
 msgstr ""
 
@@ -695,11 +691,11 @@ msgstr ""
 msgid "Request a call"
 msgstr ""
 
-#: assets/fallback-editor.js:187 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:211
+#: assets/fallback-editor.js:185 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:211
 msgid "Required field"
 msgstr ""
 
-#: includes/Dashboard.php:155 includes/Settings.php:119
+#: includes/Dashboard.php:184 includes/Settings.php:119
 msgid "SMTP"
 msgstr ""
 
@@ -711,7 +707,7 @@ msgstr ""
 msgid "SMTP requires a username and password"
 msgstr ""
 
-#: includes/Blocks/Form_Renderer.php:71
+#: includes/Blocks/Form_Renderer.php:70
 msgid "Save the form and insert a reference to it into a page."
 msgstr ""
 
@@ -723,7 +719,7 @@ msgstr ""
 msgid "Search submissions"
 msgstr ""
 
-#: assets/fallback-editor.js:102 build/blocks/form/index.js:1 src/blocks/form/edit.js:75
+#: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:29
 msgid "Select a published form"
 msgstr ""
 
@@ -731,7 +727,7 @@ msgstr ""
 msgid "Select a published form in the block settings."
 msgstr ""
 
-#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 includes/Blocks/Form_Renderer.php:108 src/blocks/field.js:33
+#: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 includes/Blocks/Form_Renderer.php:106 src/blocks/field.js:33
 msgid "Select an option"
 msgstr ""
 
@@ -739,7 +735,7 @@ msgstr ""
 msgid "Select field"
 msgstr ""
 
-#: assets/fallback-editor.js:42 assets/fallback-editor.js:261 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:23 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit.js:45 src/blocks/submit/index.js:28
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:23 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
 msgid "Send"
 msgstr ""
 
@@ -763,7 +759,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/Dashboard.php:163
+#: includes/Dashboard.php:192
 msgid "Settings →"
 msgstr ""
 
@@ -779,10 +775,6 @@ msgstr ""
 msgid "Shortcode"
 msgstr ""
 
-#: build/blocks/form/index.js:1 src/blocks/form/edit.js:101
-msgid "Show the title"
-msgstr ""
-
 #: includes/Post_Types.php:235
 msgid "Spam"
 msgstr ""
@@ -791,7 +783,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: includes/Dashboard.php:186
+#: includes/Dashboard.php:215
 msgid "Strict form types"
 msgstr ""
 
@@ -811,19 +803,19 @@ msgstr ""
 msgid "Submission not found."
 msgstr ""
 
-#: includes/Dashboard.php:85
+#: includes/Dashboard.php:114
 msgid "Submission with a UTM tag"
 msgstr ""
 
-#: includes/Dashboard.php:144 includes/Post_Types.php:67 includes/Post_Types.php:69 includes/Post_Types.php:70
+#: includes/Dashboard.php:173 includes/Post_Types.php:67 includes/Post_Types.php:69 includes/Post_Types.php:70
 msgid "Submissions"
 msgstr ""
 
-#: assets/fallback-editor.js:232 assets/fallback-editor.js:245 build/blocks/submit/block.json:1 build/blocks/submit/index.js:1 src/blocks/submit/block.json:1 src/blocks/submit/index.js:15
+#: assets/fallback-editor.js:230 assets/fallback-editor.js:243 build/blocks/submit/block.json:1 build/blocks/submit/index.js:1 src/blocks/submit/block.json:1 src/blocks/submit/index.js:15
 msgid "Submit button"
 msgstr ""
 
-#: includes/Dashboard.php:238
+#: includes/Dashboard.php:267
 msgid "Submitting form data from an external site:"
 msgstr ""
 
@@ -831,7 +823,7 @@ msgstr ""
 msgid "Success message"
 msgstr ""
 
-#: assets/fallback-editor.js:247
+#: assets/fallback-editor.js:245
 msgid "Text"
 msgstr ""
 
@@ -879,7 +871,7 @@ msgstr ""
 msgid "The form structure contains errors."
 msgstr ""
 
-#: includes/Form_Types.php:254
+#: includes/Form_Types.php:253
 msgid "The form with this type no longer exists — its submissions keep the classification."
 msgstr ""
 
@@ -895,7 +887,7 @@ msgstr ""
 msgid "The request is too large."
 msgstr ""
 
-#: includes/Dashboard.php:180
+#: includes/Dashboard.php:209
 msgid "The route works right after the plugin is activated: there is no form to create and no schema to declare. Whatever top-level keys you send are stored as the submission; formType classifies it so submissions can be filtered."
 msgstr ""
 
@@ -911,11 +903,11 @@ msgstr ""
 msgid "The “main” key is reserved for the built-in main form."
 msgstr ""
 
-#: includes/Dashboard.php:81
+#: includes/Dashboard.php:110
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr ""
 
-#: includes/REST_Controller.php:596
+#: includes/REST_Controller.php:607
 msgid "Too many submissions. Try again later."
 msgstr ""
 
@@ -923,7 +915,7 @@ msgstr ""
 msgid "URL field"
 msgstr ""
 
-#: includes/Form_Types.php:133
+#: includes/Form_Types.php:132
 msgid "Unknown form type."
 msgstr ""
 
@@ -955,7 +947,7 @@ msgstr ""
 msgid "View submissions"
 msgstr ""
 
-#: includes/Form_Types.php:257
+#: includes/Form_Types.php:256
 msgid "View submissions of this type"
 msgstr ""
 
@@ -967,7 +959,7 @@ msgstr ""
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
 msgstr ""
 
-#: includes/Dashboard.php:71
+#: includes/Dashboard.php:100
 msgid "Without formType the submission gets the “main” type."
 msgstr ""
 
@@ -983,7 +975,7 @@ msgstr ""
 msgid "button"
 msgstr ""
 
-#: includes/Dashboard.php:185
+#: includes/Dashboard.php:214
 msgid "change"
 msgstr ""
 
@@ -1015,7 +1007,7 @@ msgstr ""
 msgid "form"
 msgstr ""
 
-#: includes/Dashboard.php:76
+#: includes/Dashboard.php:105
 msgid "formType creates a form type: rename the term in the admin, the slug stays the same."
 msgstr ""
 
@@ -1051,15 +1043,15 @@ msgstr ""
 msgid "name"
 msgstr ""
 
-#: includes/Dashboard.php:193
+#: includes/Dashboard.php:222
 msgid "none yet — the first one appears after the first submission with formType"
 msgstr ""
 
-#: includes/Dashboard.php:189
+#: includes/Dashboard.php:218
 msgid "not accepted — files return 400"
 msgstr ""
 
-#: includes/Dashboard.php:185
+#: includes/Dashboard.php:214
 msgid "not set — cross-origin requests are blocked"
 msgstr ""
 
@@ -1071,11 +1063,11 @@ msgstr ""
 msgid "numeric"
 msgstr ""
 
-#: includes/Dashboard.php:187
+#: includes/Dashboard.php:216
 msgid "off — a new type is created automatically"
 msgstr ""
 
-#: includes/Dashboard.php:187
+#: includes/Dashboard.php:216
 msgid "on — only existing types are accepted"
 msgstr ""
 
@@ -1095,7 +1087,7 @@ msgstr ""
 msgid "radio"
 msgstr ""
 
-#: includes/Dashboard.php:86
+#: includes/Dashboard.php:115
 msgid "ref and meta are reserved keys: they keep the request context separate from the submitted fields."
 msgstr ""
 

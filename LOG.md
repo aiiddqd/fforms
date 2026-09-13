@@ -12,6 +12,7 @@ Entry format:
 ```
 
 ## 2026-09-13
+- Removed the `showTitle` and `submitLabel` attributes of `fforms/form` and their two controls ("Show the title", "Button text (legacy)"). Neither did anything: the submit label is read from the `label` attribute of `fforms/submit`, and `showTitle` was only read in `render_shell()`, which a reference block never reaches. Gone from `block.json`, `Block::form_attributes()`, `assets/fallback-editor.js`, the SSR whitelist (now just `{ ref }`) and the `$title` branch of `render_shell()`. Content that still carries the keys renders byte-for-byte as before — the block is dynamic, `save` is empty, and the parser ignores unknown attribute keys.
 - The `fforms/form` block on a page now previews the form it references instead of a placeholder: `edit.js` is a switcher between the new `edit-builder.js` (inner blocks inside the `fform` CPT) and `edit-reference.js` (picker plus preview on a page), and `ref > 0` renders through `ServerSideRender` against `/wp/v2/block-renderer/fforms/form`.
 - Only `ref`, `showTitle` and `submitLabel` reach that route: passing block supports would apply the padding, background and border a second time on top of the editor wrapper. An empty or failed response falls back to the "FForms" placeholder with the picker.
 - The reference branch no longer calls `useInnerBlocksProps`, so a page stores just `<!-- wp:fforms/form {"ref":123} /-->` and the default template stops leaking field blocks into `post_content`.
