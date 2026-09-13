@@ -82,6 +82,8 @@ function ChoicePreview( { type, choices } ) {
 	);
 }
 
+// Mirrors the server `field_markup()` tree: label and control are direct
+// children of `.fforms-field`, with no extra wrapper of their own.
 function FieldPreview( { attributes, type } ) {
 	if ( 'hidden' === type ) {
 		return (
@@ -111,31 +113,31 @@ function FieldPreview( { attributes, type } ) {
 		}
 
 		return (
-			<div className="fforms-field-preview">
+			<>
 				<FieldLabel attributes={ attributes } />
 				<ChoicePreview
 					type={ type }
 					choices={ attributes.options || [] }
 				/>
-			</div>
+			</>
 		);
 	}
 
 	if ( 'textarea' === type ) {
 		return (
-			<div className="fforms-field-preview">
+			<>
 				<FieldLabel attributes={ attributes } />
 				<textarea
 					className="fforms-control"
 					placeholder={ attributes.placeholder }
 					readOnly
 				/>
-			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="fforms-field-preview">
+		<>
 			<FieldLabel attributes={ attributes } />
 			<input
 				className="fforms-control"
@@ -143,7 +145,7 @@ function FieldPreview( { attributes, type } ) {
 				readOnly
 				type={ type }
 			/>
-		</div>
+		</>
 	);
 }
 
@@ -193,10 +195,7 @@ function FieldControls( { attributes, setAttributes, type } ) {
 						{ ! choiceTypes.includes( type ) &&
 							'textarea' !== type && (
 								<TextControl
-									label={ __(
-										'Maximum length',
-										'fforms'
-									) }
+									label={ __( 'Maximum length', 'fforms' ) }
 									onChange={ ( maxLength ) =>
 										setAttributes( {
 											maxLength: Number( maxLength ) || 0,

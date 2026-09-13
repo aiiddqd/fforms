@@ -40,3 +40,9 @@
 	white-space: nowrap !important;
 	width: 1px !important;
 }
+
+// Same reason: the server-rendered preview carries an empty error paragraph
+// under every control, and without `view.css` it would reserve a grid row.
+:where(.editor-styles-wrapper .fforms-field-error:empty) {
+	display: none;
+}

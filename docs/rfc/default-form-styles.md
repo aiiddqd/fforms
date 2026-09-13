@@ -1,6 +1,6 @@
 ---
 title: "Аккуратные базовые стили формы по умолчанию"
-status: draft
+status: implementing
 created: 2026-09-13
 ---
 

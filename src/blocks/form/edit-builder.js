@@ -34,9 +34,12 @@ const TEMPLATE = [
 
 // The block inside the `fform` CPT: the form itself, edited as inner blocks.
 export default function EditBuilder() {
-	const innerBlocksProps = useInnerBlocksProps( useBlockProps(), {
-		template: TEMPLATE,
-	} );
+	// The same `fforms-fields` class as the server shell renders, so the editor
+	// gets the same grid and the same gaps as the frontend.
+	const innerBlocksProps = useInnerBlocksProps(
+		useBlockProps( { className: 'fforms-fields' } ),
+		{ template: TEMPLATE }
+	);
 
 	return <div { ...innerBlocksProps } />;
 }

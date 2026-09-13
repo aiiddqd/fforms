@@ -133,15 +133,20 @@ Theme CSS can override the variables without replacing FForms structure or
 accessibility states. Error and success always include text and ARIA state; do
 not use colour as the only signal in further overrides.
 
+The values below are the actual defaults FForms ships. Every rule that uses
+them is written with `:where()`, so any theme declaration wins without
+`!important`.
+
 ```css
 :root {
   --fforms-form-gap: 1.25rem;
-  --fforms-field-gap: 0.5rem;
+  --fforms-field-gap: 0.375rem;
+  --fforms-submit-gap: 0.5rem;
   --fforms-control-padding: 0.65em 0.8em;
   --fforms-control-border-width: 1px;
-  --fforms-control-border-color: currentColor;
+  --fforms-control-border-color: color-mix(in srgb, currentcolor 35%, transparent);
   --fforms-control-border-radius: 4px;
-  --fforms-textarea-min-height: 10rem;
+  --fforms-textarea-min-height: 6.5rem;
   --fforms-choice-gap: 0.5rem;
   --fforms-submit-padding: 0.7em 1.2em;
   --fforms-focus-color: currentColor;
@@ -154,6 +159,18 @@ not use colour as the only signal in further overrides.
   --fforms-response-padding: 0.75rem 1rem;
 }
 ```
+
+Three spacing steps make the hierarchy readable out of the box:
+`--fforms-field-gap` separates a label from its control, `--fforms-form-gap`
+separates fields inside `.fforms-fields`, and `--fforms-submit-gap` is the extra
+`margin-block-start` that detaches the submit button — and a non-empty
+`.fforms-response` — from the field stack.
+
+`--fforms-control-border-color` falls back to plain `currentColor` in browsers
+without `color-mix()`. Setting the variable replaces both declarations at once.
+`:hover` and `:focus` bring the control border up to `currentColor`; an empty
+`.fforms-field-error` is hidden so it does not reserve a row under every
+control.
 
 Keep `:focus-visible` outlines intact. If a theme changes their appearance, it
 must retain a clearly visible non-colour-only focus indicator.
