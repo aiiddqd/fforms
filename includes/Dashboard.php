@@ -241,7 +241,7 @@ final class Dashboard {
 				</details>
 				<details>
 					<summary><?php esc_html_e( 'How do I create a form?', 'fforms' ); ?></summary>
-					<p><?php esc_html_e( 'Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “FForms Form” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites.', 'fforms' ); ?></p>
+					<p><?php esc_html_e( 'Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “Form by FForms” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites.', 'fforms' ); ?></p>
 				</details>
 				<details>
 					<summary><?php esc_html_e( 'How do I set up email sending?', 'fforms' ); ?></summary>

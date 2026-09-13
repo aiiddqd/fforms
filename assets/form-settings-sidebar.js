@@ -191,7 +191,7 @@
 							__( 'Shortcode', 'fforms' ),
 							'[fform id=' + String( editor.id ) + ']',
 							__(
-								'Insert it into any page or widget of this site. The block “FForms Form” inserts the same form.',
+								'Insert it into any page or widget of this site. The block “Form by FForms” inserts the same form.',
 								'fforms'
 							)
 					  )

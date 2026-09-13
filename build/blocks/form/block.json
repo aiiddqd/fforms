@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "fforms/form",
   "version": "1.0.0",
-  "title": "FForms Form",
+  "title": "Form by FForms",
   "category": "fforms",
   "icon": "feedback",
   "description": "Build a reusable FForms form or insert a published form.",

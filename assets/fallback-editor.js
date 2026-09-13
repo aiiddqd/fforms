@@ -55,7 +55,7 @@
 	];
 
 	blocks.registerBlockType( 'fforms/form', {
-		title: __( 'FForms Form', 'fforms' ),
+		title: __( 'Form by FForms', 'fforms' ),
 		icon: 'feedback',
 		category: 'fforms',
 		attributes: {
@@ -113,7 +113,7 @@
 				useBlockProps(),
 				el(
 					Placeholder,
-					{ icon: 'feedback', label: __( 'FForms Form', 'fforms' ) },
+					{ icon: 'feedback', label: __( 'Form by FForms', 'fforms' ) },
 					el( SelectControl, {
 						label: __( 'Form', 'fforms' ),
 						value: props.attributes.ref || props.attributes.formId,
