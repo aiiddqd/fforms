@@ -5,3 +5,4 @@ test-results/
 docs/rfc/jetpack
 .env
 .learnings/
+artifacts/
