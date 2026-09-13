@@ -5,6 +5,8 @@
 - [ ] pr https://github.com/aiiddqd/fforms/pull/6 
     - translate to english
 
+- [ ] share-link-panel [rfc](docs/rfc/share-link-panel-and-page-layout.md)
+
 - [ ] testing
 
 - [ ] settings - Email отправителя & Имя отправителя - make as optional - add new option like "Custom Email & Name"
