@@ -5,6 +5,8 @@
 - [ ] pr https://github.com/aiiddqd/fforms/pull/6 
     - translate to english
 
+- [ ] render form in pages http://wpc.localhost/wp-admin/post.php?post=75457&action=edit
+
 - [ ] share-link-panel [rfc](docs/rfc/share-link-panel-and-page-layout.md)
 
 - [ ] testing
