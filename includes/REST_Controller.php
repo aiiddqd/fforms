@@ -570,7 +570,6 @@ final class REST_Controller {
 			'source'          => $form->source,
 			'share_link'      => 'post' === $form->source && Public_Form::is_enabled( $form->post_id ),
 			'title'           => $form->title,
-			'type'            => 'post' === $form->source ? ( get_post_meta( $form->post_id, '_fforms_type', true ) ?: 'contact' ) : 'contact',
 			'form_type'       => $form->type,
 			'schema'          => $form->schema,
 			'success_message' => $form->success_message,

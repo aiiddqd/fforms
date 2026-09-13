@@ -89,7 +89,6 @@ final class Post_Types {
 	}
 
 	private static function register_meta(): void {
-		self::register_form_meta( '_fforms_type', array( 'type' => 'string', 'single' => true, 'default' => 'contact', 'show_in_rest' => true, 'sanitize_callback' => static fn( $value ): string => in_array( $value, array( 'contact', 'lead' ), true ) ? $value : 'contact' ) );
 		self::register_form_meta( '_fforms_share_link', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 		self::register_form_meta( '_fforms_share_layout', array( 'type' => 'string', 'single' => true, 'default' => Public_Form::LAYOUT_SITE, 'show_in_rest' => true, 'sanitize_callback' => array( Public_Form::class, 'sanitize_layout' ) ) );
 		self::register_form_meta( '_fforms_share_token', array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => array( Public_Form::class, 'sanitize_token' ) ) );
@@ -159,6 +158,7 @@ final class Post_Types {
 			return;
 		}
 
+		$post_id = (int) ( get_post()->ID ?? 0 );
 		$handle = 'fforms-form-settings-sidebar';
 		$path   = FFORMS_DIR . 'assets/form-settings-sidebar.js';
 		$version = file_exists( $path ) ? (string) filemtime( $path ) : FFORMS_VERSION;
@@ -180,6 +180,8 @@ final class Post_Types {
 					'embedScriptUrl'              => Public_Form::embed_script_url(),
 					'homeUrl'                     => home_url(),
 					'notificationSettingsEnabled' => ! empty( Settings::get()['notifications'] ),
+					'entriesUrl'                  => self::entries_url_for_form( $post_id ),
+					'entriesCount'                => self::entries_count_for_form( $post_id ),
 				)
 			) . ';',
 			'before'
@@ -371,15 +373,37 @@ final class Post_Types {
 		}
 	}
 
+	/**
+	 * Where a form's submissions live: its own type term, falling back to the
+	 * form-ref filter for forms that have no term yet (drafts, or entries saved
+	 * before types).
+	 */
+	public static function entries_url_for_form( int $post_id ): string {
+		$slug = $post_id ? Form_Types::slug_for_form( $post_id ) : '';
+		return '' !== $slug
+			? Form_Types::entries_url( $slug )
+			: add_query_arg( array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post_id ), admin_url( 'edit.php' ) );
+	}
+
+	public static function entries_count_for_form( int $post_id ): int {
+		if ( ! $post_id ) {
+			return 0;
+		}
+		$args = array( 'post_type' => self::ENTRY, 'post_status' => 'private', 'posts_per_page' => 1, 'fields' => 'ids' );
+		$slug = Form_Types::slug_for_form( $post_id );
+		if ( '' !== $slug ) {
+			$args['tax_query'] = array( array( 'taxonomy' => Form_Types::TAXONOMY, 'field' => 'slug', 'terms' => $slug ) );
+		} else {
+			$args['meta_key']   = '_fforms_form_id';
+			$args['meta_value'] = $post_id;
+		}
+		return (int) ( new \WP_Query( $args ) )->found_posts;
+	}
+
 	/** @param array<string, string> $actions */
 	public static function add_view_entries_row_action( array $actions, WP_Post $post ): array {
 		if ( self::FORM === $post->post_type && current_user_can( 'manage_options' ) ) {
-			// Prefer the form's own type term; fall back to the form-ref filter for
-			// forms that have no term yet (drafts, or entries saved before types).
-			$slug = Form_Types::slug_for_form( $post->ID );
-			$url  = '' !== $slug
-				? Form_Types::entries_url( $slug )
-				: add_query_arg( array( 'post_type' => self::ENTRY, 'form_ref' => 'post:' . $post->ID ), admin_url( 'edit.php' ) );
+			$url = self::entries_url_for_form( $post->ID );
 			$actions['fforms_view_entries'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'View submissions', 'fforms' ) . '</a>';
 		}
 		return $actions;

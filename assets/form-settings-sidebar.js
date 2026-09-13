@@ -5,11 +5,11 @@
 	const useEffect = element.useEffect;
 	const useState = element.useState;
 	const __ = i18n.__;
+	const sprintf = i18n.sprintf;
 	const PUBLICATION_PANEL_NAME = 'fforms-form-settings/publication';
 	const PANEL_DEFAULTED_KEY = 'fforms-form-settings-panel-defaulted-v3';
 	const Button = components.Button;
 	const RadioControl = components.RadioControl;
-	const SelectControl = components.SelectControl;
 	const TextControl = components.TextControl;
 	const TextareaControl = components.TextareaControl;
 	const ToggleControl = components.ToggleControl;
@@ -19,7 +19,6 @@
 		settings.notificationSettingsEnabled
 	);
 	const META = {
-		type: '_fforms_type',
 		shareLink: '_fforms_share_link',
 		shareLayout: '_fforms_share_layout',
 		shareToken: '_fforms_share_token',
@@ -154,6 +153,32 @@
 		return el(
 			element.Fragment,
 			null,
+			el(
+				PluginDocumentSettingPanel,
+				{
+					name: 'overview',
+					title: __( 'Overview', 'fforms' ),
+					className: 'fforms-form-overview',
+				},
+				// The form is its own type: its submissions are the entries
+				// carrying this form's type term.
+				el(
+					'p',
+					null,
+					el(
+						'a',
+						{ href: settings.entriesUrl || '' },
+						__( 'View submissions', 'fforms' )
+					)
+				),
+				helpText(
+					sprintf(
+						/* translators: %d: number of stored submissions. */
+						__( 'Stored submissions: %d', 'fforms' ),
+						settings.entriesCount || 0
+					)
+				)
+			),
 			el(
 				PluginDocumentSettingPanel,
 				{
@@ -302,20 +327,6 @@
 					title: __( 'Form settings', 'fforms' ),
 					className: 'fforms-form-settings',
 				},
-				el( SelectControl, {
-					label: __( 'Form type', 'fforms' ),
-					value: meta[ META.type ] || 'contact',
-					options: [
-						{
-							label: __( 'Contact', 'fforms' ),
-							value: 'contact',
-						},
-						{ label: __( 'Lead', 'fforms' ), value: 'lead' },
-					],
-					onChange( value ) {
-						updateMeta( META.type, value );
-					},
-				} ),
 				notificationSettingsEnabled
 					? el(
 							element.Fragment,

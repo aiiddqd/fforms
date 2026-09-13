@@ -35,7 +35,7 @@ msgstr[2] ""
 msgid "A form with this key is already registered."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:203
+#: assets/form-settings-sidebar.js:277
 msgid "A secret address: it cannot be guessed from the form id."
 msgstr ""
 
@@ -95,8 +95,12 @@ msgstr ""
 msgid "Allowed origins of the main form"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:180
+#: assets/form-settings-sidebar.js:254
 msgid "Anyone with the link can open and submit the form. The page is not indexed by search engines."
+msgstr ""
+
+#: assets/form-settings-sidebar.js:313
+msgid "Applies to the link only. The iframe and js-script always embed the form on its own."
 msgstr ""
 
 #: includes/Dashboard.php:109
@@ -119,15 +123,15 @@ msgstr ""
 msgid "Authentication"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:354
+#: assets/form-settings-sidebar.js:406
 msgid "Auto-reply"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:400
+#: assets/form-settings-sidebar.js:452
 msgid "Auto-reply body"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:386
+#: assets/form-settings-sidebar.js:438
 msgid "Auto-reply subject"
 msgstr ""
 
@@ -195,7 +199,7 @@ msgstr ""
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:306
+#: assets/form-settings-sidebar.js:358
 msgid "Comma-separated emails; the administrator email when empty."
 msgstr ""
 
@@ -209,10 +213,6 @@ msgstr ""
 
 #: includes/Dashboard.php:104
 msgid "Consultation request"
-msgstr ""
-
-#: assets/form-settings-sidebar.js:269
-msgid "Contact"
 msgstr ""
 
 #: includes/Dashboard.php:99 includes/Default_Forms.php:16
@@ -235,11 +235,11 @@ msgstr ""
 msgid "Could not save the submission."
 msgstr ""
 
-#: includes/Post_Types.php:312
+#: includes/Post_Types.php:315
 msgid "Data"
 msgstr ""
 
-#: includes/Post_Types.php:313
+#: includes/Post_Types.php:316
 msgid "Date"
 msgstr ""
 
@@ -263,7 +263,7 @@ msgstr ""
 msgid "Edit form type"
 msgstr ""
 
-#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Default_Forms.php:33 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
+#: assets/fallback-editor.js:29 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:54 includes/Schema.php:28 src/blocks/form/edit-builder.js:19
 msgid "Email"
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Email field"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:371
+#: assets/form-settings-sidebar.js:423
 msgid "Email field name"
 msgstr ""
 
@@ -279,11 +279,11 @@ msgstr ""
 msgid "Email is sent through the default wp_mail()"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:224
+#: assets/form-settings-sidebar.js:211
 msgid "Embed on an external site with a fixed height."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:232
+#: assets/form-settings-sidebar.js:219
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr ""
 
@@ -351,7 +351,7 @@ msgstr ""
 msgid "Filter by form type"
 msgstr ""
 
-#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:305 src/blocks/form/edit-reference.js:39
+#: assets/fallback-editor.js:118 build/blocks/form/index.js:1 includes/Export.php:28 includes/Form_Types.php:248 includes/Post_Types.php:38 includes/Post_Types.php:308 src/blocks/form/edit-reference.js:39
 msgid "Form"
 msgstr ""
 
@@ -363,11 +363,15 @@ msgstr ""
 msgid "Form not found: check the id in the [fform] shortcode."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:261 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:66
+#: assets/form-settings-sidebar.js:309
+msgid "Form only"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:327 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:66
 msgid "Form settings"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:265 includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:256 includes/Post_Types.php:309
+#: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:259 includes/Post_Types.php:312
 msgid "Form type"
 msgstr ""
 
@@ -431,7 +435,7 @@ msgstr ""
 msgid "How to connect →"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:222
+#: assets/form-settings-sidebar.js:209
 msgid "Iframe"
 msgstr ""
 
@@ -443,7 +447,7 @@ msgstr ""
 msgid "In “Settings”, enable the built-in SMTP and fill in the host, port and username — or leave it off when another SMTP plugin already handles email. Notifications and auto-replies for a particular form are configured in the form itself."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:166
+#: assets/form-settings-sidebar.js:193
 msgid "Insert it into any page or widget of this site. The block “FForms Form” inserts the same form."
 msgstr ""
 
@@ -467,7 +471,7 @@ msgstr ""
 msgid "Invalid form type: Latin letters, digits, hyphen and underscore only, up to 32 characters."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:230
+#: assets/form-settings-sidebar.js:217
 msgid "Js-script"
 msgstr ""
 
@@ -479,11 +483,7 @@ msgstr ""
 msgid "Latin letters, digits, hyphens and underscores."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:272
-msgid "Lead"
-msgstr ""
-
-#: includes/Default_Forms.php:28
+#: includes/Default_Forms.php:27
 msgid "Lead form"
 msgstr ""
 
@@ -499,7 +499,7 @@ msgstr ""
 msgid "Lightweight, headless-friendly form handling: collect data from Gutenberg blocks or from external sites through the REST API."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:201
+#: assets/form-settings-sidebar.js:275
 msgid "Link"
 msgstr ""
 
@@ -515,11 +515,11 @@ msgstr ""
 msgid "Maximum length"
 msgstr ""
 
-#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:21 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
+#: assets/fallback-editor.js:38 build/blocks/form/index.js:1 includes/Default_Forms.php:20 includes/Post_Types.php:55 includes/Schema.php:29 src/blocks/form/edit-builder.js:28
 msgid "Message"
 msgstr ""
 
-#: includes/Post_Types.php:286
+#: includes/Post_Types.php:289
 msgid "Meta"
 msgstr ""
 
@@ -527,11 +527,11 @@ msgstr ""
 msgid "Meta: %s"
 msgstr ""
 
-#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:19 includes/Default_Forms.php:31 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit-builder.js:10
+#: assets/fallback-editor.js:20 assets/fallback-editor.js:159 build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 build/blocks/form/index.js:1 includes/Default_Forms.php:18 includes/Default_Forms.php:29 includes/Post_Types.php:53 includes/Schema.php:27 src/blocks/field.js:168 src/blocks/form/edit-builder.js:10
 msgid "Name"
 msgstr ""
 
-#: includes/Post_Types.php:235
+#: includes/Post_Types.php:238
 msgid "New"
 msgstr ""
 
@@ -543,11 +543,11 @@ msgstr ""
 msgid "New submission: %s"
 msgstr ""
 
-#: includes/Post_Types.php:389
+#: includes/Post_Types.php:414
 msgid "No"
 msgstr ""
 
-#: includes/Post_Types.php:250
+#: includes/Post_Types.php:253
 msgid "No additional data."
 msgstr ""
 
@@ -567,7 +567,7 @@ msgstr ""
 msgid "Not in use"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:318
+#: assets/form-settings-sidebar.js:370
 msgid "Notification subject"
 msgstr ""
 
@@ -583,7 +583,7 @@ msgstr ""
 msgid "Once enabled, configure notifications and auto-replies separately for each form."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:218
+#: assets/form-settings-sidebar.js:292
 msgid "Open the form"
 msgstr ""
 
@@ -595,15 +595,19 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: includes/Dashboard.php:33 includes/Dashboard.php:34
+#: assets/form-settings-sidebar.js:160 includes/Dashboard.php:33 includes/Dashboard.php:34
 msgid "Overview"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:301
+msgid "Page layout"
 msgstr ""
 
 #: includes/Settings.php:125
 msgid "Password"
 msgstr ""
 
-#: includes/Default_Forms.php:32
+#: includes/Default_Forms.php:30
 msgid "Phone"
 msgstr ""
 
@@ -635,12 +639,12 @@ msgstr ""
 msgid "Provide form_id or form_key."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:159
+#: assets/form-settings-sidebar.js:186
 msgid "Publication"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:172
-msgid "Publish the form to get its shortcode and link."
+#: assets/form-settings-sidebar.js:199
+msgid "Publish the form to get its shortcode."
 msgstr ""
 
 #: includes/Dashboard.php:205
@@ -651,7 +655,7 @@ msgstr ""
 msgid "Radio field"
 msgstr ""
 
-#: includes/Post_Types.php:235
+#: includes/Post_Types.php:238
 msgid "Read"
 msgstr ""
 
@@ -659,11 +663,11 @@ msgstr ""
 msgid "Read the documentation"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:302
+#: assets/form-settings-sidebar.js:354
 msgid "Recipients"
 msgstr ""
 
-#: includes/Post_Types.php:267
+#: includes/Post_Types.php:270
 msgid "Ref"
 msgstr ""
 
@@ -675,7 +679,7 @@ msgstr ""
 msgid "Register the form on the fforms_register_forms hook — it becomes available through the REST API under its key, with no post created in Gutenberg."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:246
+#: assets/form-settings-sidebar.js:233
 msgid "Reissue link"
 msgstr ""
 
@@ -683,11 +687,11 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: includes/Post_Types.php:235
+#: includes/Post_Types.php:238
 msgid "Replied"
 msgstr ""
 
-#: includes/Default_Forms.php:35
+#: includes/Default_Forms.php:33
 msgid "Request a call"
 msgstr ""
 
@@ -735,7 +739,7 @@ msgstr ""
 msgid "Select field"
 msgstr ""
 
-#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:23 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
+#: assets/fallback-editor.js:42 assets/fallback-editor.js:259 build/blocks/form/index.js:1 build/blocks/submit/index.js:1 includes/Blocks/Form_Renderer.php:36 includes/Default_Forms.php:22 includes/Migration/Legacy_Migration.php:44 includes/Migration/Mode_Migration.php:95 includes/Post_Types.php:56 src/blocks/form/edit-builder.js:32 src/blocks/submit/index.js:28
 msgid "Send"
 msgstr ""
 
@@ -743,7 +747,7 @@ msgstr ""
 msgid "Send a value without showing a control to visitors."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:357
+#: assets/form-settings-sidebar.js:409
 msgid "Send an auto-reply to the user"
 msgstr ""
 
@@ -751,7 +755,7 @@ msgstr ""
 msgid "Send an email about a new main form submission"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:283
+#: assets/form-settings-sidebar.js:335
 msgid "Send notifications about submissions"
 msgstr ""
 
@@ -767,27 +771,31 @@ msgstr ""
 msgid "Several different formType/formId values were provided."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:178
+#: assets/form-settings-sidebar.js:248 assets/form-settings-sidebar.js:252
 msgid "Share via link"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:164
+#: assets/form-settings-sidebar.js:191
 msgid "Shortcode"
 msgstr ""
 
-#: includes/Post_Types.php:235
+#: includes/Post_Types.php:238
 msgid "Spam"
 msgstr ""
 
-#: includes/Post_Types.php:235 includes/Post_Types.php:311
+#: includes/Post_Types.php:238 includes/Post_Types.php:314
 msgid "Status"
+msgstr ""
+
+#: assets/form-settings-sidebar.js:177
+msgid "Stored submissions: %d"
 msgstr ""
 
 #: includes/Dashboard.php:215
 msgid "Strict form types"
 msgstr ""
 
-#: includes/Post_Types.php:68 includes/Post_Types.php:304
+#: includes/Post_Types.php:68 includes/Post_Types.php:307
 msgid "Submission"
 msgstr ""
 
@@ -819,7 +827,7 @@ msgstr ""
 msgid "Submitting form data from an external site:"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:338
+#: assets/form-settings-sidebar.js:390
 msgid "Success message"
 msgstr ""
 
@@ -835,7 +843,7 @@ msgstr ""
 msgid "Textarea field"
 msgstr ""
 
-#: assets/form-settings-sidebar.js:340 includes/Form_Locator.php:53 includes/Registry/Code_Forms.php:66
+#: assets/form-settings-sidebar.js:392 includes/Form_Locator.php:53 includes/Registry/Code_Forms.php:66
 msgid "Thank you! The form has been sent."
 msgstr ""
 
@@ -847,7 +855,7 @@ msgstr ""
 msgid "Thank you! Your submission has been sent."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:249
+#: assets/form-settings-sidebar.js:236
 msgid "The current link stops working immediately."
 msgstr ""
 
@@ -875,7 +883,7 @@ msgstr ""
 msgid "The form with this type no longer exists — its submissions keep the classification."
 msgstr ""
 
-#: assets/form-settings-sidebar.js:190
+#: assets/form-settings-sidebar.js:264
 msgid "The link becomes available once the form is published."
 msgstr ""
 
@@ -907,7 +915,7 @@ msgstr ""
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr ""
 
-#: includes/REST_Controller.php:607
+#: includes/REST_Controller.php:606
 msgid "Too many submissions. Try again later."
 msgstr ""
 
@@ -923,7 +931,7 @@ msgstr ""
 msgid "Use the FForms SMTP"
 msgstr ""
 
-#: includes/Post_Types.php:270
+#: includes/Post_Types.php:273
 msgid "User ID"
 msgstr ""
 
@@ -943,7 +951,7 @@ msgstr ""
 msgid "View submission"
 msgstr ""
 
-#: includes/Post_Types.php:382
+#: assets/form-settings-sidebar.js:171 includes/Post_Types.php:407
 msgid "View submissions"
 msgstr ""
 
@@ -959,11 +967,15 @@ msgstr ""
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
 msgstr ""
 
+#: assets/form-settings-sidebar.js:305
+msgid "With site header"
+msgstr ""
+
 #: includes/Dashboard.php:100
 msgid "Without formType the submission gets the “main” type."
 msgstr ""
 
-#: includes/Post_Types.php:389
+#: includes/Post_Types.php:414
 msgid "Yes"
 msgstr ""
 
@@ -1135,6 +1147,6 @@ msgstr ""
 msgid "website"
 msgstr ""
 
-#: includes/Post_Types.php:262
+#: includes/Post_Types.php:265
 msgid "— the term was not created (form type limit reached)"
 msgstr ""

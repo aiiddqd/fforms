@@ -35,13 +35,12 @@ The plugin uses two custom post types and one taxonomy.
 
 | Entity | Storage | Notes |
 | --- | --- | --- |
-| Form | `fform` | Non-public CPT with an admin UI and REST support. Holds the title, type, JSON schema, and mail settings. |
+| Form | `fform` | Non-public CPT with an admin UI and REST support. Holds the title, JSON schema, and mail settings. The form's own business meaning is its `fform_type` term, not a separate field. |
 | Entry | `fform_entry` | Private post with no public WordPress REST exposure. Creating one from the admin is forbidden; viewing and managing require `manage_options`. |
 | Form type | `fform_type` | Non-public flat taxonomy for `fform_entry` and `fform`: the business meaning of a submission ("Consultation request"), independent of which form received it. See §3.1. |
 
 Form meta:
 
-- `_fforms_type` — `contact` or `lead`;
 - `_fforms_share_link` — boolean, `false` by default: whether the form is reachable through its share link, the embed view, and the two embed snippets;
 - `_fforms_share_layout` — `site` (default) or `standalone`: whether the share link opens inside the theme's page or as a page of the form alone. Anything else falls back to `site`, so forms that predate the setting render exactly as before;
 - `_fforms_share_token` — 16 hex characters from `random_bytes()`, issued on the form's first publish and used as its only public address. Reissuing it invalidates the previous link immediately;
@@ -67,7 +66,7 @@ Entry meta:
 
 ### 3.1. The `fform_type` taxonomy
 
-`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Submissions". The existing `_fforms_type` form meta (`contact`/`lead`) is unrelated to this taxonomy.
+`public => false`, `publicly_queryable => false`, `show_ui => true`, `show_in_rest => false`, flat, `show_admin_column => true`; every capability maps to `manage_options`. The "Form types" screen is added to the FForms menu once, right after "Submissions". A form has no type field of its own: the form *is* the type, through the term linked to it below. The `_fforms_type` meta (`contact`/`lead`) that predated the taxonomy is no longer registered, written, or read; rows left in `postmeta` are inert.
 
 - Value normalization: `sanitize_key`, pattern `^[a-z0-9_-]{1,32}$`; anything else returns HTTP 422 `fforms_invalid_form_type`.
 - Upsert by slug: an unknown slug creates a term with `name = slug` and the `_fforms_autocreated` meta. Renaming the term in the admin does not affect matching — the link is by slug.
@@ -234,13 +233,14 @@ Height is measured from the content (`.fforms-embed__content`) rather than from 
 
 The `fforms_embed=1` parameter switches the public page into "bare" mode: a minimal HTML document with no header, footer, or admin bar, but still with `wp_head()`/`wp_footer()`, so block styles, Global Styles, and the Interactivity runtime work as usual. Without the parameter, `/forms/{token}/` stays a full theme page — it remains the link to share. Padding in bare mode is zero: spacing is the embedding page's job.
 
-The form editor sidebar splits the two scenarios into two independently collapsible panels. "Publication" is about this site and the sites that embed the form: the shortcode for any published form, and — while "Share via link" is on — the iframe and js-script snippets plus a "Reissue link" button. "Share via link" is about the link itself: the toggle that turns it on, the read-only link with "Open the form", and the "Page layout" choice between "With site header" (`site`) and "Form only" (`standalone`). The layout choice is shown only while the toggle is on and changes nothing about the snippets. Every snippet field is read-only and ready to copy. With the toggle off, both `/forms/{token}/` and its `?fforms_embed=1` view return 404 and the link fields are hidden.
+The form editor sidebar opens with an "Overview" panel: a "View submissions" link to the entry list filtered by this form's type term (falling back to the `form_ref` filter while the form has no term yet) and the number of stored submissions. Below it the two publication scenarios split into two independently collapsible panels. "Publication" is about this site and the sites that embed the form: the shortcode for any published form, and — while "Share via link" is on — the iframe and js-script snippets plus a "Reissue link" button. "Share via link" is about the link itself: the toggle that turns it on, the read-only link with "Open the form", and the "Page layout" choice between "With site header" (`site`) and "Form only" (`standalone`). The layout choice is shown only while the toggle is on and changes nothing about the snippets. Every snippet field is read-only and ready to copy. With the toggle off, both `/forms/{token}/` and its `?fforms_embed=1` view return 404 and the link fields are hidden.
 
 ## 8. Admin, mail, and export
 
 The admin implements:
 
 - creating and editing forms through the standard CPT interface;
+- an "Overview" panel at the top of the form editor sidebar with the submission count and a link to this form's submissions;
 - a "Publication" panel in the sidebar: the shortcode, the "Share via link" toggle, and under it the URL, the iframe and js-script snippets, and the reissue button;
 - an overview page at `admin.php?page=fforms-dashboard` that opens the "Questions and answers" block with its first question, "How do I start accepting messages over the REST API?": the real `POST /fforms/v1/main` URL, the current settings state, the list of form types, and four ready-made request examples with a "Copy" button. The top-level menu slug stays `fforms` (both CPTs and the settings and export pages use it as their parent), and `admin.php?page=fforms` redirects to the new address;
 - a "Form types" screen in the FForms menu; a term linked to a form has a link back to that form, and a form has a "View submissions" action leading to the list filtered by its term;

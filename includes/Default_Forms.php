@@ -14,7 +14,6 @@ final class Default_Forms {
 		self::maybe_create(
 			'contact',
 			__( 'Contact form', 'fforms' ),
-			'contact',
 			array(
 				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ),
 				array( 'block' => 'fforms/field-email', 'name' => 'email', 'label' => __( 'Email', 'fforms' ), 'required' => true ),
@@ -26,7 +25,6 @@ final class Default_Forms {
 		self::maybe_create(
 			'lead',
 			__( 'Lead form', 'fforms' ),
-			'lead',
 			array(
 				array( 'block' => 'fforms/field-text', 'name' => 'name', 'label' => __( 'Name', 'fforms' ), 'required' => true ),
 				array( 'block' => 'fforms/field-tel', 'name' => 'phone', 'label' => __( 'Phone', 'fforms' ), 'required' => true ),
@@ -37,7 +35,7 @@ final class Default_Forms {
 	}
 
 	/** @param array<int, array<string, mixed>> $fields */
-	private static function maybe_create( string $seed_key, string $title, string $type, array $fields, string $submit_label ): void {
+	private static function maybe_create( string $seed_key, string $title, array $fields, string $submit_label ): void {
 		$existing = get_posts(
 			array(
 				'post_type'      => Post_Types::FORM,
@@ -80,7 +78,6 @@ final class Default_Forms {
 		}
 
 		update_post_meta( $post_id, self::SEED_META_KEY, $seed_key );
-		update_post_meta( $post_id, '_fforms_type', $type );
 	}
 
 	/**
