@@ -24,15 +24,6 @@
     "formId": {
       "type": "integer",
       "default": 0
-    },
-    "showTitle": {
-      "type": "boolean",
-      "default": false
-    },
-    "submitLabel": {
-      "type": "string",
-      "role": "content",
-      "default": ""
     }
   },
   "supports": {

@@ -12,9 +12,7 @@
 	"usesContext": [ "postId" ],
 	"attributes": {
 		"ref": { "type": "integer", "default": 0 },
-		"formId": { "type": "integer", "default": 0 },
-		"showTitle": { "type": "boolean", "default": false },
-		"submitLabel": { "type": "string", "role": "content", "default": "" }
+		"formId": { "type": "integer", "default": 0 }
 	},
 	"supports": {
 		"html": false,

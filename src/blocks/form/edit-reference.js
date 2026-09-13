@@ -4,8 +4,6 @@ import {
 	Placeholder,
 	SelectControl,
 	Spinner,
-	TextControl,
-	ToggleControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
@@ -66,20 +64,6 @@ export default function EditReference( { attributes, setAttributes } ) {
 			<InspectorControls>
 				<PanelBody title={ __( 'Form settings', 'fforms' ) }>
 					{ control }
-					<ToggleControl
-						label={ __( 'Show the title', 'fforms' ) }
-						checked={ attributes.showTitle }
-						onChange={ ( showTitle ) =>
-							setAttributes( { showTitle } )
-						}
-					/>
-					<TextControl
-						label={ __( 'Button text (legacy)', 'fforms' ) }
-						value={ attributes.submitLabel }
-						onChange={ ( submitLabel ) =>
-							setAttributes( { submitLabel } )
-						}
-					/>
 				</PanelBody>
 			</InspectorControls>
 			<div { ...blockProps }>
@@ -89,11 +73,7 @@ export default function EditReference( { attributes, setAttributes } ) {
 						// Block supports are already applied to the wrapper
 						// above; sending them to the server would apply the
 						// padding, background, and border a second time.
-						attributes={ {
-							ref,
-							showTitle: attributes.showTitle,
-							submitLabel: attributes.submitLabel,
-						} }
+						attributes={ { ref } }
 						className="fforms-block-preview"
 						EmptyResponsePlaceholder={ PickerFallback }
 						ErrorResponsePlaceholder={ PickerFallback }

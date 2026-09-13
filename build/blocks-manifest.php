@@ -891,15 +891,6 @@ return array(
 			'formId' => array(
 				'type' => 'integer',
 				'default' => 0
-			),
-			'showTitle' => array(
-				'type' => 'boolean',
-				'default' => false
-			),
-			'submitLabel' => array(
-				'type' => 'string',
-				'role' => 'content',
-				'default' => ''
 			)
 		),
 		'supports' => array(

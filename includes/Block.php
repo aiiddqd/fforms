@@ -136,7 +136,7 @@ final class Block {
 	}
 
 	private static function form_attributes(): array {
-		return array( 'ref' => array( 'type' => 'integer', 'default' => 0 ), 'formId' => array( 'type' => 'integer', 'default' => 0 ), 'showTitle' => array( 'type' => 'boolean', 'default' => false ), 'submitLabel' => array( 'type' => 'string', 'default' => '' ) );
+		return array( 'ref' => array( 'type' => 'integer', 'default' => 0 ), 'formId' => array( 'type' => 'integer', 'default' => 0 ) );
 	}
 
 	private static function field_attributes(): array {

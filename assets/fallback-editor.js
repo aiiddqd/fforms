@@ -61,8 +61,6 @@
 		attributes: {
 			ref: { type: 'integer', default: 0 },
 			formId: { type: 'integer', default: 0 },
-			showTitle: { type: 'boolean', default: false },
-			submitLabel: { type: 'string', default: '' },
 		},
 		edit( props ) {
 			const isFormEditor = data.useSelect( function ( select ) {

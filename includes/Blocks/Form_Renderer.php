@@ -16,7 +16,7 @@ final class Form_Renderer {
 		$form_id = absint( $attributes['ref'] ?? $attributes['formId'] ?? 0 );
 		if ( $form_id ) return self::render_reference( $form_id, true );
 		$form_id = self::$source_form_id ?: absint( $block->context['postId'] ?? get_the_ID() );
-		return self::render_shell( $form_id, $content, $attributes );
+		return self::render_shell( $form_id, $content );
 	}
 
 	public static function render_form( int $form_id, string $unavailable_notice = '' ): string {
@@ -63,16 +63,14 @@ final class Form_Renderer {
 	private static function render_legacy( int $form_id, array $schema ): string {
 		$content = '';
 		foreach ( $schema['fields'] as $field ) $content .= self::field_markup( $field, wp_unique_id( 'fforms-control-' ) );
-		return self::render_shell( $form_id, $content . self::render_submit( array() ), array() );
+		return self::render_shell( $form_id, $content . self::render_submit( array() ) );
 	}
 
-	/** @param array<string,mixed> $attributes */
-	private static function render_shell( int $form_id, string $content, array $attributes ): string {
+	private static function render_shell( int $form_id, string $content ): string {
 		if ( ! $form_id || Post_Types::FORM !== get_post_type( $form_id ) ) return current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Save the form and insert a reference to it into a page.', 'fforms' ) . '</p>' : '';
 		$context = (string) wp_json_encode( array( 'formId' => $form_id, 'endpoint' => rest_url( 'fforms/v1/submit' ), 'isSubmitting' => false, 'isError' => false, 'message' => '' ) );
-		$title = ! empty( $attributes['showTitle'] ) ? '<h2 class="fforms-title">' . esc_html( get_the_title( $form_id ) ) . '</h2>' : '';
 		$wrapper = get_block_wrapper_attributes( array( 'class' => 'fforms' ) );
-		return '<div ' . $wrapper . '>' . $title . '<form class="fforms-form" data-wp-interactive="fforms/form" data-wp-context="' . esc_attr( $context ) . '" data-wp-on--submit="actions.submit" data-wp-bind--aria-busy="context.isSubmitting"><div class="fforms-fields">' . $content . '</div><div class="fforms-hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><div class="fforms-response" role="status" aria-live="polite" data-wp-text="context.message" data-wp-class--is-error="context.isError"></div></form></div>';
+		return '<div ' . $wrapper . '><form class="fforms-form" data-wp-interactive="fforms/form" data-wp-context="' . esc_attr( $context ) . '" data-wp-on--submit="actions.submit" data-wp-bind--aria-busy="context.isSubmitting"><div class="fforms-fields">' . $content . '</div><div class="fforms-hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><div class="fforms-response" role="status" aria-live="polite" data-wp-text="context.message" data-wp-class--is-error="context.isError"></div></form></div>';
 	}
 
 	/** Messages about a broken insertion are for editors only; guests see nothing. */
