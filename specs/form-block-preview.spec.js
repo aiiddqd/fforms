@@ -45,6 +45,13 @@ test.describe( 'form block preview in the editor', () => {
 		await expect( preview.locator( '.fforms-submit' ) ).toBeVisible();
 		await expect( preview.locator( '.fforms-hp input' ) ).not.toBeVisible();
 
+		// From the preview straight to the form itself.
+		await editor.openDocumentSettingsSidebar();
+		await page.getByRole( 'tab', { name: 'Block' } ).click();
+		await expect(
+			page.getByRole( 'link', { name: 'Edit form' } )
+		).toHaveAttribute( 'href', `post.php?post=${ formId }&action=edit` );
+
 		// The preview is not a text field: a click lands on the block.
 		const control = preview.locator( '.fforms-control' ).first();
 		const box = await control.boundingBox();
