@@ -74,7 +74,7 @@ final class Form_Types {
 		register_term_meta( self::TAXONOMY, self::TERM_AUTOCREATED, array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => false ) );
 	}
 
-	/** One "Form types" entry right after "Submissions". */
+	/** One "Form types" entry; Dashboard::order_submenu() places it after "Forms". */
 	public static function admin_menu(): void {
 		add_submenu_page(
 			'fforms',
@@ -82,8 +82,7 @@ final class Form_Types {
 			__( 'Form types', 'fforms' ),
 			'manage_options',
 			'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . Post_Types::ENTRY,
-			'',
-			3
+			''
 		);
 	}
 

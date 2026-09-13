@@ -12,7 +12,7 @@ final class Dashboard {
 
 	public static function boot(): void {
 		add_action( 'admin_menu', array( self::class, 'admin_menu' ) );
-		add_action( 'admin_menu', array( self::class, 'drop_duplicate_submenu' ), 100 );
+		add_action( 'admin_menu', array( self::class, 'order_submenu' ), 100 );
 		add_action( 'load-toplevel_page_fforms', array( self::class, 'redirect_legacy_page' ) );
 	}
 
@@ -26,26 +26,55 @@ final class Dashboard {
 			'dashicons-feedback'
 		);
 
-		// Position 0 keeps "Overview" first, ahead of the CPT-generated "Forms"/"Add form" items
-		// which WordPress appends to $submenu['fforms'] before the admin_menu hook runs.
+		// Final placement is done by self::order_submenu(); the CPT-generated
+		// "Forms"/"Submissions" items land in $submenu['fforms'] before this hook runs.
 		add_submenu_page(
 			'fforms',
 			__( 'Overview', 'fforms' ),
 			__( 'Overview', 'fforms' ),
 			'edit_posts',
 			self::PAGE,
-			array( self::class, 'render_page' ),
-			0
+			array( self::class, 'render_page' )
 		);
 	}
 
 	/**
+	 * Submissions are the daily job, forms are set up once — so the menu reads
+	 * overview, submissions, then the form setup screens and the settings.
+	 * Slugs missing from the list keep their relative order at the bottom.
+	 */
+	private const SUBMENU_ORDER = array(
+		self::PAGE,
+		'edit.php?post_type=' . Post_Types::ENTRY,
+		'edit.php?post_type=' . Post_Types::FORM,
+		'post-new.php?post_type=' . Post_Types::FORM,
+		'edit-tags.php?taxonomy=' . Form_Types::TAXONOMY . '&post_type=' . Post_Types::ENTRY,
+		'fforms-settings',
+		'fforms-export',
+	);
+
+	/**
 	 * The top-level slug stays `fforms` — both CPTs use it as show_in_menu and
 	 * the settings/export pages as their parent. Only the overview page moved,
-	 * so the auto-generated duplicate entry goes away.
+	 * so the auto-generated duplicate entry goes away before we sort.
 	 */
-	public static function drop_duplicate_submenu(): void {
+	public static function order_submenu(): void {
 		remove_submenu_page( 'fforms', 'fforms' );
+
+		global $submenu;
+		if ( empty( $submenu['fforms'] ) ) {
+			return;
+		}
+
+		$rank = array_flip( self::SUBMENU_ORDER );
+		$last = count( self::SUBMENU_ORDER );
+		$keyed = array();
+		foreach ( array_values( $submenu['fforms'] ) as $i => $item ) {
+			$keyed[] = array( $rank[ $item[2] ] ?? $last, $i, $item );
+		}
+		usort( $keyed, static fn( array $a, array $b ): int => array( $a[0], $a[1] ) <=> array( $b[0], $b[1] ) );
+
+		$submenu['fforms'] = array_column( $keyed, 2 );
 	}
 
 	/** Keep old bookmarks and documentation links working. */
