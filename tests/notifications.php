@@ -10,6 +10,7 @@ use FForms\Form_Ref;
 use FForms\Notifications;
 use FForms\REST_Controller;
 use FForms\Settings;
+use FForms\Blocks\Form_Renderer;
 use FForms\Registry\Main_Form;
 
 /** @param mixed $actual @param mixed $expected */
@@ -145,6 +146,9 @@ try {
 		throw new RuntimeException( $cpt->get_error_message() );
 	}
 	fforms_notification_assert_same( array( 'cpt@example.test' ), Notifications::recipients( $cpt ), 'A CPT recipient must override the common list.' );
+	$rendered_form = Form_Renderer::render_form( (int) $form_id );
+	fforms_notification_assert_same( 3, substr_count( $rendered_form, 'data-fforms-honeypot' ), 'A rendered form must contain three honeypot fields.' );
+	fforms_notification_assert_same( 3, substr_count( $rendered_form, 'autocomplete="off"' ), 'Honeypot fields must not be populated by browser autofill.' );
 
 	$result = fforms_add_api_route(
 		'notification_test_code',

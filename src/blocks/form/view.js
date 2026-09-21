@@ -84,7 +84,8 @@ store( 'fforms/form', {
 					throw body;
 				}
 				form.reset();
-				context.message = body.message || 'Thank you! The form has been sent.';
+				context.message =
+					body.message || 'Thank you! The form has been sent.';
 			} catch ( error ) {
 				context.isError = true;
 				context.message =
