@@ -1,6 +1,6 @@
 ---
 status: current
-updated: 2026-08-30
+updated: 2026-09-21
 ---
 
 # FForms: base specification
@@ -179,7 +179,7 @@ Processing order:
 1. Request body size check — at most 256 KiB by default.
 2. Check that a published form exists.
 3. Resolve the form (`/submit`) or the form type (`/main`).
-4. Honeypot (`website` on `/submit`, `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created.
+4. Honeypot (`website`, `company`, and `phone` on a block-rendered `/submit` form; `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created. The three `/submit` fields are visually clipped and absent from the tab order; they look like ordinary contact inputs to a generic autofill bot, while API clients can continue to omit them.
 5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
 6. Data normalization, and server-side validation against the schema — on `/submit`; `/main` has no schema to validate against and only normalizes.
 7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.

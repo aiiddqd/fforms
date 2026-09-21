@@ -16,6 +16,7 @@ use WP_Term;
 
 final class REST_Controller {
 	private const NAMESPACE = 'fforms/v1';
+	private const HONEYPOT_FIELDS = array( 'website', 'company', 'phone' );
 
 	/**
 	 * Top-level keys of POST /main that carry their own meaning. Every other
@@ -49,6 +50,8 @@ final class REST_Controller {
 					'form_key' => array( 'type' => 'string', 'pattern' => '^[a-z0-9_]{1,32}$' ),
 					'fields'   => array( 'required' => true, 'type' => 'object' ),
 					'website'  => array( 'type' => 'string', 'default' => '' ),
+					'company'  => array( 'type' => 'string', 'default' => '' ),
+					'phone'    => array( 'type' => 'string', 'default' => '' ),
 					'source'   => array( 'type' => 'string', 'default' => '' ),
 				),
 			)
@@ -107,7 +110,7 @@ final class REST_Controller {
 
 	/**
 	 * Strict contract used by the block, the shortcode and the public page:
-	 * form_id/form_key plus a fields object, honeypot `website`.
+	 * form_id/form_key plus a fields object and honeypots.
 	 */
 	public static function submit( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$too_large = self::reject_oversized_body( $request );
@@ -119,7 +122,7 @@ final class REST_Controller {
 		if ( is_wp_error( $form ) ) {
 			return $form;
 		}
-		if ( '' !== trim( (string) $request['website'] ) ) {
+		if ( self::has_filled_honeypot( $request ) ) {
 			return new WP_REST_Response( array( 'success' => true, 'message' => $form->success_message ), 200 );
 		}
 
@@ -607,6 +610,21 @@ final class REST_Controller {
 		}
 		set_transient( $key, $count + 1, $window );
 		return true;
+	}
+
+	/**
+	 * A single, obvious honeypot is easy for a generic form bot to special-case.
+	 * The block submits three ordinary-looking fields instead; any filled value is
+	 * treated as spam before validation, storage, mail, or rate limiting.
+	 */
+	private static function has_filled_honeypot( WP_REST_Request $request ): bool {
+		foreach ( self::HONEYPOT_FIELDS as $field ) {
+			if ( '' !== trim( (string) $request[ $field ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static function client_ip(): string {

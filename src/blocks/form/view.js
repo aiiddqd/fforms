@@ -17,6 +17,15 @@ const fieldPayload = ( form ) => {
 	return fields;
 };
 
+const honeypotPayload = ( form ) => {
+	const data = {};
+	const values = new FormData( form );
+	form.querySelectorAll( '[data-fforms-honeypot]' ).forEach( ( input ) => {
+		data[ input.name ] = values.get( input.name ) || '';
+	} );
+	return data;
+};
+
 const resetErrors = ( form ) =>
 	form
 		.querySelectorAll( '[aria-invalid="true"]' )
@@ -66,7 +75,7 @@ store( 'fforms/form', {
 					body: JSON.stringify( {
 						form_id: context.formId,
 						fields: fieldPayload( form ),
-						website: new FormData( form ).get( 'website' ) || '',
+						...honeypotPayload( form ),
 						source: window.location.href,
 					} ),
 				} );

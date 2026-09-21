@@ -111,11 +111,11 @@ msgstr "Произвольные поля"
 msgid "Attachments"
 msgstr "Вложения"
 
-#: includes/REST_Controller.php:440
+#: includes/REST_Controller.php:443
 msgid "Attachments are disabled."
 msgstr "Приём вложений отключён."
 
-#: includes/REST_Controller.php:443
+#: includes/REST_Controller.php:446
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr "Вложения передаются только через multipart/form-data."
 
@@ -207,6 +207,10 @@ msgstr "Домены через запятую, которым разрешён 
 msgid "Comma-separated emails. Empty — Default notification recipients, then the administrator email."
 msgstr "Адреса через запятую. Если пусто — получатели уведомлений по умолчанию, затем адрес администратора."
 
+#: includes/Blocks/Form_Renderer.php:73
+msgid "Company"
+msgstr "Компания"
+
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:79
 msgid "Confirmation"
 msgstr "Подтверждение"
@@ -231,7 +235,7 @@ msgstr "Скопировать"
 msgid "Could not build the CSV file."
 msgstr "Не удалось сформировать CSV."
 
-#: includes/REST_Controller.php:284
+#: includes/REST_Controller.php:287
 msgid "Could not save the submission."
 msgstr "Не удалось сохранить запись."
 
@@ -359,7 +363,7 @@ msgstr "Форма"
 msgid "Form by FForms"
 msgstr "Форма FForms"
 
-#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/REST_Controller.php:402 includes/Schema/Schema_Repository.php:19
+#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/REST_Controller.php:405 includes/Schema/Schema_Repository.php:19
 msgid "Form not found."
 msgstr "Форма не найдена."
 
@@ -615,7 +619,7 @@ msgstr ""
 msgid "Password"
 msgstr "Пароль"
 
-#: includes/Default_Forms.php:30
+#: includes/Blocks/Form_Renderer.php:73 includes/Default_Forms.php:30
 msgid "Phone"
 msgstr "Телефон"
 
@@ -635,7 +639,7 @@ msgstr "Порт"
 msgid "Provide a form title."
 msgstr "Укажите название формы."
 
-#: includes/REST_Controller.php:180
+#: includes/REST_Controller.php:183
 msgid "Provide at least one non-empty field."
 msgstr "Передайте хотя бы одно непустое поле."
 
@@ -643,7 +647,7 @@ msgstr "Передайте хотя бы одно непустое поле."
 msgid "Provide at least one valid form field."
 msgstr "Укажите хотя бы одно валидное поле формы."
 
-#: includes/REST_Controller.php:561
+#: includes/REST_Controller.php:564
 msgid "Provide form_id or form_key."
 msgstr "Укажите form_id или form_key."
 
@@ -775,7 +779,7 @@ msgstr "Настройки"
 msgid "Settings →"
 msgstr "Настройки →"
 
-#: includes/REST_Controller.php:467
+#: includes/REST_Controller.php:470
 msgid "Several different formType/formId values were provided."
 msgstr "Передано несколько разных значений formType/formId."
 
@@ -815,7 +819,7 @@ msgstr "Запись #%d"
 msgid "Submission data"
 msgstr "Данные записи"
 
-#: includes/REST_Controller.php:387
+#: includes/REST_Controller.php:390
 msgid "Submission not found."
 msgstr "Запись не найдена."
 
@@ -871,7 +875,7 @@ msgstr "Текущая ссылка перестанет работать сра
 msgid "The field name “%s” is duplicated."
 msgstr "Имя поля «%s» повторяется."
 
-#: includes/REST_Controller.php:128
+#: includes/REST_Controller.php:131
 msgid "The fields parameter must be an object."
 msgstr "Поле fields должно быть объектом."
 
@@ -895,11 +899,11 @@ msgstr "Формы с этим типом больше нет — записи �
 msgid "The link becomes available once the form is published."
 msgstr "Ссылка станет доступна после публикации формы."
 
-#: includes/REST_Controller.php:524
+#: includes/REST_Controller.php:527
 msgid "The meta field is too large or nested too deeply."
 msgstr "Поле meta слишком большое или слишком глубоко вложено."
 
-#: includes/REST_Controller.php:427
+#: includes/REST_Controller.php:430
 msgid "The request is too large."
 msgstr "Запрос слишком большой."
 
@@ -923,7 +927,7 @@ msgstr "Ключ «main» зарезервирован за встроенной
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr "Схемы нет: каждый переданный ключ сохраняется как поле заявки."
 
-#: includes/REST_Controller.php:606
+#: includes/REST_Controller.php:609
 msgid "Too many submissions. Try again later."
 msgstr "Слишком много отправок. Попробуйте позже."
 
@@ -974,6 +978,10 @@ msgstr "Смотреть записи этого типа"
 #: includes/Notifications.php:121
 msgid "We have received your message — %s"
 msgstr "Мы получили ваше сообщение — %s"
+
+#: includes/Blocks/Form_Renderer.php:73
+msgid "Website"
+msgstr "Сайт"
 
 #: includes/Settings.php:162
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."

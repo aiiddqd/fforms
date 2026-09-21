@@ -186,6 +186,19 @@ try {
 	$honeypot_response = REST_Controller::submit_main( $honeypot );
 	fforms_notification_assert_same( 200, $honeypot_response->get_status(), 'The /main honeypot must return a fake success.' );
 	fforms_notification_assert_same( array(), $captured, 'The /main honeypot must not call wp_mail.' );
+	$entry_count = (int) ( wp_count_posts( 'fform_entry' )->{'private'} ?? 0 );
+	$standard_honeypot = new WP_REST_Request( 'POST', '/fforms/v1/submit' );
+	$standard_honeypot->set_body_params(
+		array(
+			'form_id' => $form_id,
+			'fields'  => array( 'email' => 'bot@example.test' ),
+			'company' => 'Bot company',
+		)
+	);
+	$standard_honeypot_response = REST_Controller::submit( $standard_honeypot );
+	fforms_notification_assert_same( 200, $standard_honeypot_response->get_status(), 'Any filled regular-form honeypot must return a fake success.' );
+	fforms_notification_assert_same( array(), $captured, 'A filled regular-form honeypot must not call wp_mail.' );
+	fforms_notification_assert_same( $entry_count, (int) ( wp_count_posts( 'fform_entry' )->{'private'} ?? 0 ), 'A filled regular-form honeypot must not create an entry.' );
 	remove_filter( 'pre_wp_mail', $filter, 10 );
 
 	echo "FForms notification recipient checks passed.\n";

@@ -111,11 +111,11 @@ msgstr ""
 msgid "Attachments"
 msgstr ""
 
-#: includes/REST_Controller.php:440
+#: includes/REST_Controller.php:443
 msgid "Attachments are disabled."
 msgstr ""
 
-#: includes/REST_Controller.php:443
+#: includes/REST_Controller.php:446
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr ""
 
@@ -207,6 +207,10 @@ msgstr ""
 msgid "Comma-separated emails. Empty — Default notification recipients, then the administrator email."
 msgstr ""
 
+#: includes/Blocks/Form_Renderer.php:73
+msgid "Company"
+msgstr ""
+
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field.js:79
 msgid "Confirmation"
 msgstr ""
@@ -231,7 +235,7 @@ msgstr ""
 msgid "Could not build the CSV file."
 msgstr ""
 
-#: includes/REST_Controller.php:284
+#: includes/REST_Controller.php:287
 msgid "Could not save the submission."
 msgstr ""
 
@@ -359,7 +363,7 @@ msgstr ""
 msgid "Form by FForms"
 msgstr ""
 
-#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/REST_Controller.php:402 includes/Schema/Schema_Repository.php:19
+#: includes/Form_Locator.php:34 includes/Form_Locator.php:40 includes/REST_Controller.php:405 includes/Schema/Schema_Repository.php:19
 msgid "Form not found."
 msgstr ""
 
@@ -615,7 +619,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: includes/Default_Forms.php:30
+#: includes/Blocks/Form_Renderer.php:73 includes/Default_Forms.php:30
 msgid "Phone"
 msgstr ""
 
@@ -635,7 +639,7 @@ msgstr ""
 msgid "Provide a form title."
 msgstr ""
 
-#: includes/REST_Controller.php:180
+#: includes/REST_Controller.php:183
 msgid "Provide at least one non-empty field."
 msgstr ""
 
@@ -643,7 +647,7 @@ msgstr ""
 msgid "Provide at least one valid form field."
 msgstr ""
 
-#: includes/REST_Controller.php:561
+#: includes/REST_Controller.php:564
 msgid "Provide form_id or form_key."
 msgstr ""
 
@@ -775,7 +779,7 @@ msgstr ""
 msgid "Settings →"
 msgstr ""
 
-#: includes/REST_Controller.php:467
+#: includes/REST_Controller.php:470
 msgid "Several different formType/formId values were provided."
 msgstr ""
 
@@ -815,7 +819,7 @@ msgstr ""
 msgid "Submission data"
 msgstr ""
 
-#: includes/REST_Controller.php:387
+#: includes/REST_Controller.php:390
 msgid "Submission not found."
 msgstr ""
 
@@ -871,7 +875,7 @@ msgstr ""
 msgid "The field name “%s” is duplicated."
 msgstr ""
 
-#: includes/REST_Controller.php:128
+#: includes/REST_Controller.php:131
 msgid "The fields parameter must be an object."
 msgstr ""
 
@@ -895,11 +899,11 @@ msgstr ""
 msgid "The link becomes available once the form is published."
 msgstr ""
 
-#: includes/REST_Controller.php:524
+#: includes/REST_Controller.php:527
 msgid "The meta field is too large or nested too deeply."
 msgstr ""
 
-#: includes/REST_Controller.php:427
+#: includes/REST_Controller.php:430
 msgid "The request is too large."
 msgstr ""
 
@@ -923,7 +927,7 @@ msgstr ""
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr ""
 
-#: includes/REST_Controller.php:606
+#: includes/REST_Controller.php:609
 msgid "Too many submissions. Try again later."
 msgstr ""
 
@@ -973,6 +977,10 @@ msgstr ""
 
 #: includes/Notifications.php:121
 msgid "We have received your message — %s"
+msgstr ""
+
+#: includes/Blocks/Form_Renderer.php:73
+msgid "Website"
 msgstr ""
 
 #: includes/Settings.php:162

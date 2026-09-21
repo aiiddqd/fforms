@@ -12,6 +12,7 @@ Entry format:
 ```
 
 ## 2026-09-21
+- Strengthened block-form honeypots from one predictable `website` field to three visually clipped, out-of-tab-order fields: `website`, `company`, and `phone`. Filling any one returns a fake success before validation, entry storage, mail, or rate limiting; API clients remain compatible when they omit them. The integration check now covers the regular `/submit` route as well as `/main`.
 - Added one recipient resolver for CPT forms, code forms, and the built-in `/main` endpoint. A form-specific list overrides `default_notification_recipients`; an empty default dynamically falls back to `admin_email`. Comma- and newline-separated values are normalized, invalid addresses and case-insensitive duplicates are removed, and no `wp_mail()` call is attempted without a valid recipient.
 - Replaced the `/main`-only recipient setting with “Default notification recipients”. Saving settings migrates a non-empty legacy `main_form_notification_to` once when the new value is unset, then discards the legacy key; all notification opt-in toggles keep their previous defaults and meaning.
 - Updated the form sidebar guidance, Russian catalogs, and the base specification. Added `tests/notifications.php` plus `make test-notifications-local`, which checks the resolver, migration, CPT/code overrides, `/main`, `pre_wp_mail`, and the honeypot without real email delivery.
