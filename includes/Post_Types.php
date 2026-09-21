@@ -98,7 +98,7 @@ final class Post_Types {
 		self::register_form_meta( '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
-			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
+			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => in_array( $key, array( '_fforms_notification_to', '_fforms_autoreply_message' ), true ) ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
 		}
 		self::register_form_meta( '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
 		foreach ( array( '_fforms_form_id', '_fforms_created_post_id', '_fforms_user_id' ) as $key ) {

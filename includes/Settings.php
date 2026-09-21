@@ -29,12 +29,20 @@ final class Settings {
 	public static function sanitize( mixed $input ): array {
 		$input    = is_array( $input ) ? $input : array();
 		$current  = self::get();
+		$stored   = (array) get_option( self::OPTION, array() );
 		$security = sanitize_key( (string) ( $input['encryption'] ?? '' ) );
 		$password = isset( $input['password'] ) ? (string) $input['password'] : '';
 		if ( ! empty( $input['clear_password'] ) ) {
 			$password = '';
 		} elseif ( '' === $password ) {
 			$password = (string) ( $current['password'] ?? '' );
+		}
+		$recipients = sanitize_textarea_field( (string) ( $input['default_notification_recipients'] ?? '' ) );
+		// Move the old main-only address exactly once when this option is next
+		// saved. Do not bring it back if an administrator later clears the new
+		// common field deliberately.
+		if ( '' === trim( $recipients ) && empty( $stored['default_notification_recipients'] ) && ! empty( $stored['main_form_notification_to'] ) ) {
+			$recipients = sanitize_textarea_field( (string) $stored['main_form_notification_to'] );
 		}
 
 		return array(
@@ -48,10 +56,10 @@ final class Settings {
 			'from_email'    => sanitize_email( (string) ( $input['from_email'] ?? '' ) ),
 			'from_name'     => sanitize_text_field( (string) ( $input['from_name'] ?? '' ) ),
 			'notifications' => ! empty( $input['notifications'] ),
+			'default_notification_recipients' => $recipients,
 
 			'main_form_origins'         => self::sanitize_origins( $input['main_form_origins'] ?? '' ),
 			'main_form_notifications'   => ! empty( $input['main_form_notifications'] ),
-			'main_form_notification_to' => sanitize_text_field( (string) ( $input['main_form_notification_to'] ?? '' ) ),
 			'form_types_strict'         => ! empty( $input['form_types_strict'] ),
 		);
 	}
@@ -78,8 +86,8 @@ final class Settings {
 		return wp_parse_args(
 			(array) get_option( self::OPTION, array() ),
 			array(
-				'enabled' => false, 'host' => '', 'port' => 587, 'encryption' => 'tls', 'auth' => true, 'username' => '', 'password' => '', 'from_email' => '', 'from_name' => get_bloginfo( 'name' ), 'notifications' => false,
-				'main_form_origins' => array(), 'main_form_notifications' => false, 'main_form_notification_to' => '', 'form_types_strict' => false,
+				'enabled' => false, 'host' => '', 'port' => 587, 'encryption' => 'tls', 'auth' => true, 'username' => '', 'password' => '', 'from_email' => '', 'from_name' => get_bloginfo( 'name' ), 'notifications' => false, 'default_notification_recipients' => '',
+				'main_form_origins' => array(), 'main_form_notifications' => false, 'form_types_strict' => false,
 			)
 		);
 	}
@@ -112,9 +120,9 @@ final class Settings {
 		<p><?php esc_html_e( 'Enable the built-in SMTP only when no other SMTP plugin handles email delivery.', 'fforms' ); ?></p>
 		<form action="options.php" method="post"><?php settings_fields( 'fforms_settings' ); ?>
 		<table class="form-table" role="presentation">
-		<tr><th><?php esc_html_e( 'Notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Enable notification and auto-reply settings for forms', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Once enabled, configure notifications and auto-replies separately for each form.', 'fforms' ); ?></p></td></tr>
+		<tr><th><?php esc_html_e( 'Notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Enable notification and auto-reply settings for forms', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Once enabled, configure notifications and auto-replies separately for each form.', 'fforms' ); ?></p><p><label for="fforms-default-notification-recipients"><strong><?php esc_html_e( 'Default notification recipients', 'fforms' ); ?></strong></label><br><textarea class="large-text" rows="3" id="fforms-default-notification-recipients" name="<?php echo esc_attr( self::OPTION ); ?>[default_notification_recipients]" placeholder="<?php echo esc_attr( (string) get_option( 'admin_email' ) ); ?>"><?php echo esc_textarea( (string) $s['default_notification_recipients'] ); ?></textarea></p><p class="description"><?php esc_html_e( 'Comma- or newline-separated emails. Empty — the current administrator email is used.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Allowed origins of the main form', 'fforms' ); ?></th><td><textarea class="large-text code" rows="3" id="fforms-main-form-origins" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_origins]" placeholder="https://example.com, https://app.example.com"><?php echo esc_textarea( implode( ", ", (array) $s['main_form_origins'] ) ); ?></textarea><p class="description"><?php esc_html_e( 'Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent.', 'fforms' ); ?></p></td></tr>
-		<tr><th scope="row"><?php esc_html_e( 'Main form notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Send an email about a new main form submission', 'fforms' ); ?></label><p><input class="regular-text" type="text" id="fforms-main-form-notification-to" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notification_to]" value="<?php echo esc_attr( (string) $s['main_form_notification_to'] ); ?>" placeholder="<?php echo esc_attr( (string) get_option( "admin_email" ) ); ?>"></p><p class="description"><?php esc_html_e( 'Comma-separated recipients. Empty — the email goes to the administrator address.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Main form notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Send an email about a new main form submission', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Uses the default notification recipients above.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Form types', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[form_types_strict]" value="1" <?php checked( $s['form_types_strict'] ); ?>> <?php esc_html_e( 'Accept only existing types', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically.', 'fforms' ); ?></p></td></tr>
 		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Use the FForms SMTP', 'fforms' ); ?></label></td></tr>
 		<?php self::input_row( 'host', __( 'SMTP host', 'fforms' ), $s['host'] ); ?>

@@ -356,7 +356,7 @@
 												meta[ META.notificationTo ] ||
 												'',
 											help: __(
-												'Comma-separated emails; the administrator email when empty.',
+												'Comma-separated emails. Empty — Default notification recipients, then the administrator email.',
 												'fforms'
 											),
 											onChange( value ) {

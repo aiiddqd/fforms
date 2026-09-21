@@ -7,7 +7,7 @@ PORT   = 8890
 SITE   = http://localhost:$(PORT)
 
 .DEFAULT_GOAL := help
-.PHONY: help install up start stop restart destroy reset update xdebug logs tail cli bash wp status i18n
+.PHONY: help install up start stop restart destroy reset update xdebug logs tail cli bash wp status i18n test-notifications test-notifications-local
 
 up: ## start the environment (http://localhost:8890, admin/password)
 	$(WP_ENV) start
@@ -51,6 +51,12 @@ wp: cli ## alias for cli
 
 i18n: ## rebuild the .pot/.po/.mo and the block editor JSON catalogs
 	python3 tools/i18n.py
+
+test-notifications: ## run WordPress integration checks for notification recipients
+	$(WP_ENV) run cli wp eval-file wp-content/plugins/_fforms/tests/notifications.php
+
+test-notifications-local: ## run notification checks through the project's local WP-CLI alias
+	../../../../bin/wp @local eval-file $(CURDIR)/tests/notifications.php
 
 status: ## report WP/PHP versions, plugin and block state
 	@$(WP_ENV) run cli wp eval 'printf( "wp=%s php=%s plugin=%s block=%s permalinks=%s\n", get_bloginfo( "version" ), PHP_VERSION, is_plugin_active( "_fforms/fforms.php" ) ? "active" : "inactive", WP_Block_Type_Registry::get_instance()->is_registered( "fforms/form" ) ? "registered" : "missing", get_option( "permalink_structure" ) ?: "plain" );' --skip-themes 2>/dev/null | grep -E '^wp='

@@ -46,7 +46,7 @@ Form meta:
 - `_fforms_share_token` — 16 hex characters from `random_bytes()`, issued on the form's first publish and used as its only public address. Reissuing it invalidates the previous link immediately;
 - `_fforms_schema` — the normalized JSON schema: a derived cache of the schema compiled from blocks, and the compatible format for legacy forms that have no blocks;
 - `_fforms_notifications_enabled` — enables the main notification for the form;
-- `_fforms_notification_to`, `_fforms_notification_subject` — notification recipients and subject;
+- `_fforms_notification_to`, `_fforms_notification_subject` — an optional recipient override and notification subject; an empty `_fforms_notification_to` inherits the plugin default;
 - `_fforms_success_message` — message shown after a successful submission;
 - `_fforms_autoreply_*` — autoreply toggle, email field, subject, and body.
 
@@ -253,7 +253,7 @@ The interface is written in English and translated through the `fforms` text dom
 
 The CSV carries a UTF-8 BOM, merges the fields of every selected record into a shared column set, and guards values against spreadsheet formula injection. Besides the schema fields it contains the `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns.
 
-FForms settings also hold the allowed origins of the main form, the recipients of its notifications, and the strict form-type mode. A global setting unlocks the notification and autoreply settings in the form editor; it is off by default. The main notification is off by default too and is enabled per form. Recipients can be listed comma-separated; an empty value falls back to `admin_email`. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
+FForms settings hold the allowed origins of the main form, the default notification recipients, and the strict form-type mode. The global `notifications` setting unlocks notification and autoreply settings in the form editor and remains off by default; a recipient list alone never starts sending mail. When it is on, each CPT or code form still needs its own notification toggle. Its `_fforms_notification_to` or `notifications.to` value is an override; an empty value inherits `default_notification_recipients`, then the current WordPress `admin_email`. The built-in `/main` form has no separate recipient field and uses the same cascade behind its own `main_form_notifications` toggle. Lists accept commas or line breaks; invalid and duplicate addresses are excluded. If the cascade leaves no valid address, `wp_mail()` is not called and `notification_sent` is `false`. The legacy `main_form_notification_to` moves to the default list the next time settings are saved, only when that new value is still empty, and is then discarded. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
 
 The built-in SMTP is optional and configures the global WordPress `PHPMailer`. Enabling it therefore affects every email on the site, not only FForms, and it must not be used alongside another SMTP plugin. The SMTP password is stored in the `fforms_smtp` WordPress option without any additional encryption by the plugin.
 
