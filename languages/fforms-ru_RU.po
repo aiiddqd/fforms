@@ -409,7 +409,7 @@ msgstr "Имя отправителя"
 
 #: includes/Settings.php:154
 msgid "General"
-msgstr ""
+msgstr "Основные"
 
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/block.json:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field-hidden/block.json:1 src/blocks/field.js:91
 msgid "Hidden field"

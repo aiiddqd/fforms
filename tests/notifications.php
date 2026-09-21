@@ -102,6 +102,25 @@ try {
 	$smtp_tab = Settings::sanitize( array( 'settings_tab' => 'smtp', 'host' => 'smtp-new.example.test' ) );
 	fforms_notification_assert_same( true, $smtp_tab['notifications'], 'Saving the SMTP tab must retain notification settings.' );
 	fforms_notification_assert_same( 'default@example.test', $smtp_tab['default_notification_recipients'], 'Saving the SMTP tab must retain default recipients.' );
+	$admins = get_users( array( 'role' => 'administrator', 'number' => 1 ) );
+	if ( array() === $admins ) {
+		throw new RuntimeException( 'An administrator is required to render settings tabs.' );
+	}
+	wp_set_current_user( $admins[0]->ID );
+	$original_get = $_GET;
+	$_GET['tab'] = 'general';
+	ob_start();
+	Settings::render_page();
+	$general_page = (string) ob_get_clean();
+	fforms_notification_assert_same( true, str_contains( $general_page, 'fforms-default-notification-recipients' ), 'The General tab must render notification settings.' );
+	fforms_notification_assert_same( false, str_contains( $general_page, 'fforms-host' ), 'The General tab must not render SMTP credentials.' );
+	$_GET['tab'] = 'smtp';
+	ob_start();
+	Settings::render_page();
+	$smtp_page = (string) ob_get_clean();
+	fforms_notification_assert_same( true, str_contains( $smtp_page, 'fforms-host' ), 'The SMTP tab must render transport settings.' );
+	fforms_notification_assert_same( false, str_contains( $smtp_page, 'fforms-default-notification-recipients' ), 'The SMTP tab must not render notification settings.' );
+	$_GET = $original_get;
 
 	update_option( Settings::OPTION, array( 'notifications' => true, 'default_notification_recipients' => 'default@example.test', 'main_form_notifications' => true ) );
 	$captured = array();
