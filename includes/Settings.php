@@ -30,6 +30,38 @@ final class Settings {
 		$input    = is_array( $input ) ? $input : array();
 		$current  = self::get();
 		$stored   = (array) get_option( self::OPTION, array() );
+		$tab      = sanitize_key( (string) ( $input['settings_tab'] ?? 'general' ) );
+		if ( 'smtp' === $tab ) {
+			// Saving SMTP must not turn off unrelated notification settings simply
+			// because the General tab did not submit their fields.
+			$input = array_merge(
+				array(
+					'notifications'                    => $current['notifications'],
+					'default_notification_recipients' => $current['default_notification_recipients'],
+					'main_form_origins'                => $current['main_form_origins'],
+					'main_form_notifications'          => $current['main_form_notifications'],
+					'form_types_strict'                => $current['form_types_strict'],
+				),
+				$input
+			);
+		} else {
+			// Likewise, General must retain credentials and mailer settings that are
+			// deliberately only present on the SMTP tab.
+			$input = array_merge(
+				array(
+					'enabled'    => $current['enabled'],
+					'host'       => $current['host'],
+					'port'       => $current['port'],
+					'encryption' => $current['encryption'],
+					'auth'       => $current['auth'],
+					'username'   => $current['username'],
+					'password'   => $current['password'],
+					'from_email' => $current['from_email'],
+					'from_name'  => $current['from_name'],
+				),
+				$input
+			);
+		}
 		$security = sanitize_key( (string) ( $input['encryption'] ?? '' ) );
 		$password = isset( $input['password'] ) ? (string) $input['password'] : '';
 		if ( ! empty( $input['clear_password'] ) ) {
@@ -114,16 +146,22 @@ final class Settings {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
-		$s = self::get();
+		$s        = self::get();
+		$tab      = 'smtp' === sanitize_key( (string) ( $_GET['tab'] ?? 'general' ) ) ? 'smtp' : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page_url = admin_url( 'admin.php?page=fforms-settings' );
 		?>
 		<div class="wrap"><h1><?php esc_html_e( 'FForms settings', 'fforms' ); ?></h1>
-		<p><?php esc_html_e( 'Enable the built-in SMTP only when no other SMTP plugin handles email delivery.', 'fforms' ); ?></p>
+		<h2 class="nav-tab-wrapper"><a href="<?php echo esc_url( $page_url ); ?>" class="nav-tab <?php echo 'general' === $tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'General', 'fforms' ); ?></a><a href="<?php echo esc_url( add_query_arg( 'tab', 'smtp', $page_url ) ); ?>" class="nav-tab <?php echo 'smtp' === $tab ? 'nav-tab-active' : ''; ?>">SMTP</a></h2>
 		<form action="options.php" method="post"><?php settings_fields( 'fforms_settings' ); ?>
+		<input type="hidden" name="<?php echo esc_attr( self::OPTION ); ?>[settings_tab]" value="<?php echo esc_attr( $tab ); ?>">
 		<table class="form-table" role="presentation">
+		<?php if ( 'general' === $tab ) : ?>
 		<tr><th><?php esc_html_e( 'Notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[notifications]" value="1" <?php checked( $s['notifications'] ); ?>> <?php esc_html_e( 'Enable notification and auto-reply settings for forms', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Once enabled, configure notifications and auto-replies separately for each form.', 'fforms' ); ?></p><p><label for="fforms-default-notification-recipients"><strong><?php esc_html_e( 'Default notification recipients', 'fforms' ); ?></strong></label><br><textarea class="large-text" rows="3" id="fforms-default-notification-recipients" name="<?php echo esc_attr( self::OPTION ); ?>[default_notification_recipients]" placeholder="<?php echo esc_attr( (string) get_option( 'admin_email' ) ); ?>"><?php echo esc_textarea( (string) $s['default_notification_recipients'] ); ?></textarea></p><p class="description"><?php esc_html_e( 'Comma- or newline-separated emails. Empty — the current administrator email is used.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Allowed origins of the main form', 'fforms' ); ?></th><td><textarea class="large-text code" rows="3" id="fforms-main-form-origins" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_origins]" placeholder="https://example.com, https://app.example.com"><?php echo esc_textarea( implode( ", ", (array) $s['main_form_origins'] ) ); ?></textarea><p class="description"><?php esc_html_e( 'Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Main form notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Send an email about a new main form submission', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Uses the default notification recipients above.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Form types', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[form_types_strict]" value="1" <?php checked( $s['form_types_strict'] ); ?>> <?php esc_html_e( 'Accept only existing types', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically.', 'fforms' ); ?></p></td></tr>
+		<?php else : ?>
+		<tr><td colspan="2"><p><?php esc_html_e( 'Enable the built-in SMTP only when no other SMTP plugin handles email delivery.', 'fforms' ); ?></p></td></tr>
 		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Use the FForms SMTP', 'fforms' ); ?></label></td></tr>
 		<?php self::input_row( 'host', __( 'SMTP host', 'fforms' ), $s['host'] ); ?>
 		<?php self::input_row( 'port', __( 'Port', 'fforms' ), (string) $s['port'], 'number' ); ?>
@@ -134,6 +172,7 @@ final class Settings {
 		<tr><th></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[clear_password]" value="1"> <?php esc_html_e( 'Delete the saved password', 'fforms' ); ?></label></td></tr>
 		<?php self::input_row( 'from_email', __( 'From email', 'fforms' ), $s['from_email'], 'email' ); ?>
 		<?php self::input_row( 'from_name', __( 'From name', 'fforms' ), $s['from_name'] ); ?>
+		<?php endif; ?>
 		</table><?php submit_button(); ?></form></div>
 		<?php
 	}

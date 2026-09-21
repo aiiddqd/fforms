@@ -39,7 +39,7 @@ msgstr "Форма с таким ключом уже зарегистриров�
 msgid "A secret address: it cannot be guessed from the form id."
 msgstr "Секретный адрес: его нельзя подобрать по идентификатору формы."
 
-#: includes/Settings.php:126
+#: includes/Settings.php:162
 msgid "Accept only existing types"
 msgstr "Принимать только существующие типы"
 
@@ -91,7 +91,7 @@ msgstr "Все типы"
 msgid "Allowed origins"
 msgstr "Разрешённые origins"
 
-#: includes/Settings.php:124
+#: includes/Settings.php:160
 msgid "Allowed origins of the main form"
 msgstr "Разрешённые origins главной формы"
 
@@ -119,7 +119,7 @@ msgstr "Приём вложений отключён."
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr "Вложения передаются только через multipart/form-data."
 
-#: includes/Settings.php:131
+#: includes/Settings.php:169
 msgid "Authentication"
 msgstr "Авторизация"
 
@@ -195,11 +195,11 @@ msgstr "Собирает и проверяет email."
 msgid "Collect one or more confirmed options."
 msgstr "Собирает один или несколько отмеченных вариантов."
 
-#: includes/Settings.php:123
+#: includes/Settings.php:159
 msgid "Comma- or newline-separated emails. Empty — the current administrator email is used."
 msgstr "Адреса через запятую или с новой строки. Если пусто — используется текущий адрес администратора."
 
-#: includes/Settings.php:124
+#: includes/Settings.php:160
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr "Домены через запятую, которым разрешён кросс-доменный запрос к POST /fforms/v1/main. Пусто — CORS-заголовки не отправляются."
 
@@ -243,11 +243,11 @@ msgstr "Данные"
 msgid "Date"
 msgstr "Дата"
 
-#: includes/Settings.php:123
+#: includes/Settings.php:159
 msgid "Default notification recipients"
 msgstr "Получатели уведомлений по умолчанию"
 
-#: includes/Settings.php:134
+#: includes/Settings.php:172
 msgid "Delete the saved password"
 msgstr "Удалить сохранённый пароль"
 
@@ -291,11 +291,11 @@ msgstr "Вставка на сторонний сайт с фиксирован�
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr "Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту."
 
-#: includes/Settings.php:123
+#: includes/Settings.php:159
 msgid "Enable notification and auto-reply settings for forms"
 msgstr "Включить настройки уведомлений и автоответов для форм"
 
-#: includes/Settings.php:120
+#: includes/Settings.php:164
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
 msgstr "Встроенный SMTP включайте только в том случае, если отправкой почты не управляет другой SMTP-плагин."
 
@@ -303,7 +303,7 @@ msgstr "Встроенный SMTP включайте только в том сл
 msgid "Enabled"
 msgstr "Включён"
 
-#: includes/Settings.php:130
+#: includes/Settings.php:168
 msgid "Encryption"
 msgstr "Шифрование"
 
@@ -335,7 +335,7 @@ msgstr "Экспорт записей"
 msgid "FForms"
 msgstr ""
 
-#: includes/Settings.php:22 includes/Settings.php:119
+#: includes/Settings.php:22 includes/Settings.php:153
 msgid "FForms settings"
 msgstr "Настройки FForms"
 
@@ -383,7 +383,7 @@ msgstr "Тип формы"
 msgid "Form type: %s"
 msgstr "Тип формы: %s"
 
-#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:126
+#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:162
 msgid "Form types"
 msgstr "Типы форм"
 
@@ -399,13 +399,17 @@ msgstr "Формы"
 msgid "Forms in code"
 msgstr "Формы в коде"
 
-#: includes/Settings.php:135
+#: includes/Settings.php:173
 msgid "From email"
 msgstr "Email отправителя"
 
-#: includes/Settings.php:136
+#: includes/Settings.php:174
 msgid "From name"
 msgstr "Имя отправителя"
+
+#: includes/Settings.php:154
+msgid "General"
+msgstr ""
 
 #: build/blocks/field-checkbox/index.js:1 build/blocks/field-email/index.js:1 build/blocks/field-hidden/block.json:1 build/blocks/field-hidden/index.js:1 build/blocks/field-number/index.js:1 build/blocks/field-radio/index.js:1 build/blocks/field-select/index.js:1 build/blocks/field-tel/index.js:1 build/blocks/field-text/index.js:1 build/blocks/field-textarea/index.js:1 build/blocks/field-url/index.js:1 src/blocks/field-hidden/block.json:1 src/blocks/field.js:91
 msgid "Hidden field"
@@ -511,7 +515,7 @@ msgstr "Ссылка"
 msgid "Main form (API)"
 msgstr "Главная форма (API)"
 
-#: includes/Settings.php:125
+#: includes/Settings.php:161
 msgid "Main form notifications"
 msgstr "Уведомления главной формы"
 
@@ -563,7 +567,7 @@ msgstr "В корзине записей нет."
 msgid "No submissions found."
 msgstr "Записи не найдены."
 
-#: includes/Settings.php:130
+#: includes/Settings.php:168
 msgid "None"
 msgstr "Нет"
 
@@ -575,7 +579,7 @@ msgstr "Не используется"
 msgid "Notification subject"
 msgstr "Тема уведомления"
 
-#: includes/Settings.php:123
+#: includes/Settings.php:159
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -583,7 +587,7 @@ msgstr "Уведомления"
 msgid "Number field"
 msgstr "Поле «Число»"
 
-#: includes/Settings.php:123
+#: includes/Settings.php:159
 msgid "Once enabled, configure notifications and auto-replies separately for each form."
 msgstr "После включения настройте отправку уведомлений и автоответы отдельно для каждой формы."
 
@@ -607,7 +611,7 @@ msgstr "Обзор"
 msgid "Page layout"
 msgstr ""
 
-#: includes/Settings.php:133
+#: includes/Settings.php:171
 msgid "Password"
 msgstr "Пароль"
 
@@ -623,7 +627,7 @@ msgstr "Поле «Телефон»"
 msgid "Placeholder"
 msgstr "Подсказка"
 
-#: includes/Settings.php:129
+#: includes/Settings.php:167
 msgid "Port"
 msgstr "Порт"
 
@@ -703,15 +707,15 @@ msgstr "Оставить заявку"
 msgid "Required field"
 msgstr "Обязательное поле"
 
-#: includes/Dashboard.php:184 includes/Settings.php:127
+#: includes/Dashboard.php:184 includes/Settings.php:165
 msgid "SMTP"
 msgstr ""
 
-#: includes/Settings.php:128
+#: includes/Settings.php:166
 msgid "SMTP host"
 msgstr "Хост SMTP"
 
-#: includes/Settings.php:131
+#: includes/Settings.php:169
 msgid "SMTP requires a username and password"
 msgstr "SMTP требует логин и пароль"
 
@@ -755,7 +759,7 @@ msgstr "Передаёт значение, не показывая поле по
 msgid "Send an auto-reply to the user"
 msgstr "Отправлять автоответ пользователю"
 
-#: includes/Settings.php:125
+#: includes/Settings.php:161
 msgid "Send an email about a new main form submission"
 msgstr "Отправлять письмо о новой записи главной формы"
 
@@ -931,7 +935,7 @@ msgstr "Поле «URL»"
 msgid "Unknown form type."
 msgstr "Неизвестный тип формы."
 
-#: includes/Settings.php:127
+#: includes/Settings.php:165
 msgid "Use the FForms SMTP"
 msgstr "Использовать SMTP FForms"
 
@@ -943,11 +947,11 @@ msgstr ""
 msgid "User ID: %d"
 msgstr ""
 
-#: includes/Settings.php:132
+#: includes/Settings.php:170
 msgid "Username"
 msgstr "Логин"
 
-#: includes/Settings.php:125
+#: includes/Settings.php:161
 msgid "Uses the default notification recipients above."
 msgstr "Используются получатели уведомлений по умолчанию выше."
 
@@ -971,7 +975,7 @@ msgstr "Смотреть записи этого типа"
 msgid "We have received your message — %s"
 msgstr "Мы получили ваше сообщение — %s"
 
-#: includes/Settings.php:126
+#: includes/Settings.php:162
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
 msgstr "При включении неизвестный formType возвращает 422 и запись не сохраняется. По умолчанию новый тип создаётся автоматически."
 

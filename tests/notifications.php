@@ -95,6 +95,13 @@ try {
 	fforms_notification_assert_same( 'migrated@example.test', $migrated['default_notification_recipients'], 'The legacy main recipient must migrate to the common setting.' );
 	fforms_notification_assert_same( false, array_key_exists( 'main_form_notification_to', $migrated ), 'The migrated settings must not retain the legacy key.' );
 	fforms_notification_assert_same( false, array_key_exists( 'main_form_notification_to', $legacy ), 'The sanitizer must never save a posted legacy key.' );
+	update_option( Settings::OPTION, array( 'notifications' => true, 'default_notification_recipients' => 'default@example.test', 'host' => 'smtp.example.test', 'password' => 'secret' ) );
+	$general_tab = Settings::sanitize( array( 'settings_tab' => 'general', 'notifications' => true ) );
+	fforms_notification_assert_same( 'smtp.example.test', $general_tab['host'], 'Saving the General tab must retain the SMTP host.' );
+	fforms_notification_assert_same( 'secret', $general_tab['password'], 'Saving the General tab must retain the SMTP password.' );
+	$smtp_tab = Settings::sanitize( array( 'settings_tab' => 'smtp', 'host' => 'smtp-new.example.test' ) );
+	fforms_notification_assert_same( true, $smtp_tab['notifications'], 'Saving the SMTP tab must retain notification settings.' );
+	fforms_notification_assert_same( 'default@example.test', $smtp_tab['default_notification_recipients'], 'Saving the SMTP tab must retain default recipients.' );
 
 	update_option( Settings::OPTION, array( 'notifications' => true, 'default_notification_recipients' => 'default@example.test', 'main_form_notifications' => true ) );
 	$captured = array();
