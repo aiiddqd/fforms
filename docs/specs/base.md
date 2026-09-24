@@ -161,6 +161,7 @@ The main form exists only in memory (`Registry\Main_Form`): `post_id = 0`, `key 
 | any other top-level key | A field of the submission. Stored in `_fforms_data` under `sanitize_key()` of the key. |
 | `meta`, `ref`, `userId` | Request context; see the meta keys in §3. |
 | `_hp` | Honeypot for this route: when filled, returns 200 with no entry. On `/submit` the honeypot is still `website`. |
+| `captcha_token` | Optional provider token. It is verified only when `fforms_captcha_required` returns `true`; otherwise it is discarded. `captcha_token` and `smart-token` are reserved and never stored as fields. |
 | `source` | Same as on `/submit`; falls back to `Referer` when absent. |
 | `attachments` | Not accepted: 400 `fforms_attachments_require_multipart` in JSON, and 400 `fforms_attachments_disabled` for `multipart` with files. |
 
@@ -182,9 +183,10 @@ Processing order:
 4. Honeypot (`website`, `company`, and `phone` on a block-rendered `/submit` form; `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created. The three `/submit` fields are visually clipped and absent from the tab order; they look like ordinary contact inputs to a generic autofill bot, while API clients can continue to omit them.
 5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
 6. Data normalization, and server-side validation against the schema — on `/submit`; `/main` has no schema to validate against and only normalizes.
-7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
-8. Assignment of the `fform_type` term.
-9. Sending notifications and firing the `fforms_entry_created` action.
+7. Optional captcha verification, after `/submit` schema validation and before entry creation. `fforms_captcha_required` defaults to `false`; an enabled requirement with no token returns 422 `fforms_captcha_required`, while a provider rejection returns 422 `fforms_captcha_failed` with `data.reason`. Failed attempts count against the rate limit. Honeypot requests bypass captcha hooks.
+8. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
+9. Assignment of the `fform_type` term.
+10. Sending notifications and firing the `fforms_entry_created` action.
 
 The rate limit counts invalid attempts too, but not honeypot hits. The IP comes from `REMOTE_ADDR`; proxy headers are not trusted automatically.
 
@@ -265,7 +267,12 @@ The following extension points are available:
 - `fforms_rate_limit` — the number of attempts per window;
 - `fforms_rate_window` — the rate limit window length;
 - `fforms_client_ip` — the computed client IP;
+- `fforms_captcha_required( bool $required, Form_Ref $form, string $route )` — require a provider token for this form and route (`submit` or `main`); defaults to `false`;
+- `fforms_verify_captcha( true|WP_Error $result, string $token, Form_Ref $form, WP_REST_Request $request )` — verify the token; defaults to `true`;
+- `fforms_captcha_markup( string $html, Form_Ref $form )` — return optional provider markup in a form slot before its submit button; defaults to an empty string;
 - `fforms_entry_created` — an action fired after the entry is stored and the emails have been attempted.
+
+Frontend providers may expose `window.fformsCaptchaProvider` with `getToken(formElement): Promise<string>` and `reset(formElement): void`. The block and fallback clients add the token as `captcha_token`, keep the submit button disabled while waiting, and reset the provider after a server response except when field validation failed. Provider errors use the form's live response and focus the captcha slot.
 
 The REST contract is versioned through the `v1` namespace. CORS for the `fforms/v1` namespace is handled by the plugin itself, under an exact-match per-form allowlist; see `api-route-headless-cms-mode.md` §6, which also documents the extension points layered on top of this section.
 
@@ -283,7 +290,7 @@ The REST contract is versioned through the `v1` namespace. CORS for the `fforms/
 - a visual field builder and nested Gutenberg field blocks;
 - the `content` and `survey` types;
 - conditional logic, multi-step, and file uploads;
-- CAPTCHA/Turnstile, webhooks, and external integrations;
+- a CAPTCHA provider in core (the provider-agnostic hooks are available for separate integrations);
 - analytics, per-form roles, and a retention policy;
 - a server-side fallback for submitting without JavaScript;
 - a dedicated automated PHPUnit/JavaScript test suite.

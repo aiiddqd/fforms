@@ -11,6 +11,11 @@ Entry format:
 - ...
 ```
 
+## 2026-09-24
+- Added provider-agnostic captcha hooks to the REST pipeline and renderer, with reserved token fields and 422 responses before entry creation.
+- Updated the block and fallback clients to await a provider token, forward it, focus captcha errors, and reset consumed tokens; added a local WordPress integration check.
+- Updated the base specification, built assets, and Russian translation catalogs.
+
 ## 2026-09-21
 - Strengthened block-form honeypots from one predictable `website` field to three visually clipped, out-of-tab-order fields: `website`, `company`, and `phone`. Filling any one returns a fake success before validation, entry storage, mail, or rate limiting; API clients remain compatible when they omit them. The integration check now covers the regular `/submit` route as well as `/main`.
 - Added one recipient resolver for CPT forms, code forms, and the built-in `/main` endpoint. A form-specific list overrides `default_notification_recipients`; an empty default dynamically falls back to `admin_email`. Comma- and newline-separated values are normalized, invalid addresses and case-insensitive duplicates are removed, and no `wp_mail()` call is attempted without a valid recipient.

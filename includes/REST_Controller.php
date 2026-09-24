@@ -22,7 +22,7 @@ final class REST_Controller {
 	 * Top-level keys of POST /main that carry their own meaning. Every other
 	 * key is a form field and is stored exactly as it arrived.
 	 */
-	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source' );
+	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source', 'captcha_token', 'smart-token' );
 
 	/** Type assigned when a /main submission names none, so every entry is filterable. */
 	private const MAIN_DEFAULT_TYPE = 'main';
@@ -52,6 +52,7 @@ final class REST_Controller {
 					'website'  => array( 'type' => 'string', 'default' => '' ),
 					'company'  => array( 'type' => 'string', 'default' => '' ),
 					'phone'    => array( 'type' => 'string', 'default' => '' ),
+					'captcha_token' => array( 'type' => 'string', 'default' => '' ),
 					'source'   => array( 'type' => 'string', 'default' => '' ),
 				),
 			)
@@ -253,7 +254,7 @@ final class REST_Controller {
 	}
 
 	/**
-	 * Shared pipeline: rate limit → schema validation → entry → type term →
+	 * Shared pipeline: rate limit → schema validation → captcha → entry → type term →
 	 * mail → fforms_entry_created.
 	 *
 	 * @param array<string, mixed> $fields   Raw values keyed by field name.
@@ -269,6 +270,19 @@ final class REST_Controller {
 		$data = $validate ? Schema::validate_submission( $form->schema, $fields ) : $fields;
 		if ( is_wp_error( $data ) ) {
 			return $data;
+		}
+
+		$route = str_ends_with( $request->get_route(), '/main' ) ? 'main' : 'submit';
+		if ( (bool) apply_filters( 'fforms_captcha_required', false, $form, $route ) ) {
+			$token = sanitize_text_field( (string) ( $request['captcha_token'] ?? '' ) );
+			if ( '' === $token ) {
+				return new WP_Error( 'fforms_captcha_required', __( 'Confirm that you are not a robot.', 'fforms' ), array( 'status' => 422 ) );
+			}
+			$verified = apply_filters( 'fforms_verify_captcha', true, $token, $form, $request );
+			if ( is_wp_error( $verified ) || true !== $verified ) {
+				$reason = is_wp_error( $verified ) ? $verified->get_error_code() : 'invalid';
+				return new WP_Error( 'fforms_captcha_failed', __( 'Verification failed. Try again.', 'fforms' ), array( 'status' => 422, 'reason' => $reason ) );
+			}
 		}
 
 		// A form without its own type keeps today's behaviour: no term assigned.

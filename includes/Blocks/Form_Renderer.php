@@ -35,7 +35,15 @@ final class Form_Renderer {
 	public static function render_submit( array $attributes, bool $is_block = false ): string {
 		$label = sanitize_text_field( (string) ( $attributes['label'] ?? '' ) ) ?: __( 'Send', 'fforms' );
 		$wrapper = $is_block ? get_block_wrapper_attributes( array( 'class' => 'fforms-submit wp-element-button' ) ) : 'class="fforms-submit wp-element-button"';
-		return '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
+		$captcha = '';
+		if ( self::$source_form_id ) {
+			$form = \FForms\Form_Locator::resolve( self::$source_form_id );
+			if ( $form instanceof \FForms\Form_Ref ) {
+				$captcha = (string) apply_filters( 'fforms_captcha_markup', '', $form );
+			}
+		}
+		$slot = '' !== $captcha ? '<div class="fforms-captcha" data-fforms-captcha>' . $captcha . '</div>' : '';
+		return $slot . '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
 	}
 
 	private static function render_reference( int $form_id, bool $is_reference = false, string $unavailable_notice = '' ): string {
