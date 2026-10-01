@@ -16,12 +16,13 @@ use WP_Term;
 
 final class REST_Controller {
 	private const NAMESPACE = 'fforms/v1';
+	private const HONEYPOT_FIELDS = array( 'website', 'company', 'phone' );
 
 	/**
 	 * Top-level keys of POST /main that carry their own meaning. Every other
 	 * key is a form field and is stored exactly as it arrived.
 	 */
-	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source' );
+	private const MAIN_RESERVED_KEYS = array( 'formType', 'formId', 'form_type', 'form_id', 'meta', 'ref', 'userId', 'attachments', '_hp', 'source', 'captcha_token', 'smart-token' );
 
 	/** Type assigned when a /main submission names none, so every entry is filterable. */
 	private const MAIN_DEFAULT_TYPE = 'main';
@@ -49,6 +50,9 @@ final class REST_Controller {
 					'form_key' => array( 'type' => 'string', 'pattern' => '^[a-z0-9_]{1,32}$' ),
 					'fields'   => array( 'required' => true, 'type' => 'object' ),
 					'website'  => array( 'type' => 'string', 'default' => '' ),
+					'company'  => array( 'type' => 'string', 'default' => '' ),
+					'phone'    => array( 'type' => 'string', 'default' => '' ),
+					'captcha_token' => array( 'type' => 'string', 'default' => '' ),
 					'source'   => array( 'type' => 'string', 'default' => '' ),
 				),
 			)
@@ -107,7 +111,7 @@ final class REST_Controller {
 
 	/**
 	 * Strict contract used by the block, the shortcode and the public page:
-	 * form_id/form_key plus a fields object, honeypot `website`.
+	 * form_id/form_key plus a fields object and honeypots.
 	 */
 	public static function submit( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$too_large = self::reject_oversized_body( $request );
@@ -119,7 +123,7 @@ final class REST_Controller {
 		if ( is_wp_error( $form ) ) {
 			return $form;
 		}
-		if ( '' !== trim( (string) $request['website'] ) ) {
+		if ( self::has_filled_honeypot( $request ) ) {
 			return new WP_REST_Response( array( 'success' => true, 'message' => $form->success_message ), 200 );
 		}
 
@@ -250,7 +254,7 @@ final class REST_Controller {
 	}
 
 	/**
-	 * Shared pipeline: rate limit → schema validation → entry → type term →
+	 * Shared pipeline: rate limit → schema validation → captcha → entry → type term →
 	 * mail → fforms_entry_created.
 	 *
 	 * @param array<string, mixed> $fields   Raw values keyed by field name.
@@ -266,6 +270,19 @@ final class REST_Controller {
 		$data = $validate ? Schema::validate_submission( $form->schema, $fields ) : $fields;
 		if ( is_wp_error( $data ) ) {
 			return $data;
+		}
+
+		$route = str_ends_with( $request->get_route(), '/main' ) ? 'main' : 'submit';
+		if ( (bool) apply_filters( 'fforms_captcha_required', false, $form, $route ) ) {
+			$token = sanitize_text_field( (string) ( $request['captcha_token'] ?? '' ) );
+			if ( '' === $token ) {
+				return new WP_Error( 'fforms_captcha_required', __( 'Confirm that you are not a robot.', 'fforms' ), array( 'status' => 422 ) );
+			}
+			$verified = apply_filters( 'fforms_verify_captcha', true, $token, $form, $request );
+			if ( is_wp_error( $verified ) || true !== $verified ) {
+				$reason = is_wp_error( $verified ) ? $verified->get_error_code() : 'invalid';
+				return new WP_Error( 'fforms_captcha_failed', __( 'Verification failed. Try again.', 'fforms' ), array( 'status' => 422, 'reason' => $reason ) );
+			}
 		}
 
 		// A form without its own type keeps today's behaviour: no term assigned.
@@ -607,6 +624,21 @@ final class REST_Controller {
 		}
 		set_transient( $key, $count + 1, $window );
 		return true;
+	}
+
+	/**
+	 * A single, obvious honeypot is easy for a generic form bot to special-case.
+	 * The block submits three ordinary-looking fields instead; any filled value is
+	 * treated as spam before validation, storage, mail, or rate limiting.
+	 */
+	private static function has_filled_honeypot( WP_REST_Request $request ): bool {
+		foreach ( self::HONEYPOT_FIELDS as $field ) {
+			if ( '' !== trim( (string) $request[ $field ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static function client_ip(): string {

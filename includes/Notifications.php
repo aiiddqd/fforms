@@ -9,6 +9,42 @@ namespace FForms;
 
 final class Notifications {
 	/**
+	 * Resolve the recipient list shared by CPT, code and built-in forms.
+	 *
+	 * A form-specific value is an override rather than an addition: this keeps
+	 * departments from accidentally receiving another team's submissions.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function recipients( Form_Ref $form ): array {
+		$settings = Settings::get();
+		$raw       = (string) ( $form->notifications['to'] ?? '' );
+		if ( '' === trim( $raw ) ) {
+			$raw = (string) ( $settings['default_notification_recipients'] ?? '' );
+		}
+		if ( '' === trim( $raw ) ) {
+			$raw = (string) get_option( 'admin_email' );
+		}
+
+		$recipients = array();
+		foreach ( preg_split( '/[\r\n,]+/', $raw ) ?: array() as $candidate ) {
+			$email = sanitize_email( trim( $candidate ) );
+			if ( ! is_email( $email ) ) {
+				continue;
+			}
+
+			// RFC 5321 treats the domain case-insensitively; using a lowercase key
+			// also prevents the same mailbox being listed twice in a different case.
+			$key = strtolower( $email );
+			if ( ! isset( $recipients[ $key ] ) ) {
+				$recipients[ $key ] = $email;
+			}
+		}
+
+		return array_values( $recipients );
+	}
+
+	/**
 	 * @param array<string, mixed> $data   Sanitized submission data.
 	 * @param array<string, mixed> $extras Off-schema data: type, custom fields, meta, ref, user id.
 	 */
@@ -19,25 +55,22 @@ final class Notifications {
 
 		$sent = false;
 		if ( ! empty( $form->notifications['enabled'] ) ) {
-			$raw_recipients = (string) $form->notifications['to'];
-			$recipients     = array_filter( array_map( 'sanitize_email', preg_split( '/\s*,\s*/', $raw_recipients ) ?: array() ), 'is_email' );
-			if ( array() === $recipients ) {
-				$recipients = array( sanitize_email( (string) get_option( 'admin_email' ) ) );
-			}
+			$recipients = self::recipients( $form );
+			if ( array() !== $recipients ) {
+				$subject = (string) $form->notifications['subject'];
+				if ( '' === $subject ) {
+					$subject = sprintf( __( 'New submission: %s', 'fforms' ), $form->title );
+				}
 
-			$subject = (string) $form->notifications['subject'];
-			if ( '' === $subject ) {
-				$subject = sprintf( __( 'New submission: %s', 'fforms' ), $form->title );
-			}
+				$lines  = array( sprintf( __( 'Form: %s', 'fforms' ), $form->title ), sprintf( __( 'Submission #%d', 'fforms' ), $entry_id ), '' );
+				$labels = wp_list_pluck( $form->schema['fields'], 'label', 'name' );
+				foreach ( $data as $key => $value ) {
+					$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
+				}
+				$lines = array_merge( $lines, self::extras_lines( $entry_id, $extras ) );
 
-			$lines  = array( sprintf( __( 'Form: %s', 'fforms' ), $form->title ), sprintf( __( 'Submission #%d', 'fforms' ), $entry_id ), '' );
-			$labels = wp_list_pluck( $form->schema['fields'], 'label', 'name' );
-			foreach ( $data as $key => $value ) {
-				$lines[] = sprintf( '%s: %s', $labels[ $key ] ?? $key, Post_Types::stringify( $value ) );
+				$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );
 			}
-			$lines = array_merge( $lines, self::extras_lines( $entry_id, $extras ) );
-
-			$sent = wp_mail( $recipients, $subject, implode( "\n", $lines ) );
 		}
 		self::send_autoreply( $form, $data );
 		return $sent;

@@ -113,7 +113,10 @@
 				useBlockProps(),
 				el(
 					Placeholder,
-					{ icon: 'feedback', label: __( 'Form by FForms', 'fforms' ) },
+					{
+						icon: 'feedback',
+						label: __( 'Form by FForms', 'fforms' ),
+					},
 					el( SelectControl, {
 						label: __( 'Form', 'fforms' ),
 						value: props.attributes.ref || props.attributes.formId,

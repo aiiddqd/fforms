@@ -11,6 +11,18 @@ Entry format:
 - ...
 ```
 
+## 2026-09-24
+- Added provider-agnostic captcha hooks to the REST pipeline and renderer, with reserved token fields and 422 responses before entry creation.
+- Updated the block and fallback clients to await a provider token, forward it, focus captcha errors, and reset consumed tokens; added a local WordPress integration check.
+- Updated the base specification, built assets, and Russian translation catalogs.
+
+## 2026-09-21
+- Strengthened block-form honeypots from one predictable `website` field to three visually clipped, out-of-tab-order fields: `website`, `company`, and `phone`. Filling any one returns a fake success before validation, entry storage, mail, or rate limiting; API clients remain compatible when they omit them. The integration check now covers the regular `/submit` route as well as `/main`.
+- Added one recipient resolver for CPT forms, code forms, and the built-in `/main` endpoint. A form-specific list overrides `default_notification_recipients`; an empty default dynamically falls back to `admin_email`. Comma- and newline-separated values are normalized, invalid addresses and case-insensitive duplicates are removed, and no `wp_mail()` call is attempted without a valid recipient.
+- Replaced the `/main`-only recipient setting with “Default notification recipients”. Saving settings migrates a non-empty legacy `main_form_notification_to` once when the new value is unset, then discards the legacy key; all notification opt-in toggles keep their previous defaults and meaning.
+- Updated the form sidebar guidance, Russian catalogs, and the base specification. Added `tests/notifications.php` plus `make test-notifications-local`, which checks the resolver, migration, CPT/code overrides, `/main`, `pre_wp_mail`, and the honeypot without real email delivery.
+- Split FForms settings into **General** and **SMTP** tabs. SMTP credentials, transport settings, and From fields no longer share the notification page; saving either tab retains every value owned by the other.
+
 ## 2026-09-13
 - `Schema_Compiler::find_form_block()` only looked at the top level of the parsed tree, so a `fforms/form` block wrapped in a Group (or Columns, or any other container) was invisible to it. `has_form_block()` then returned `false` for such a form, and every gate built on it fell through to the legacy branch: `cache_compiled_schema()` skipped the save hook, `prevent_invalid_publish()` skipped validation, and `Schema_Repository::for_form()` returned the stale `_fforms_schema` meta instead of compiling the blocks. The visible symptom was a form whose editor showed renamed labels while every page rendering it kept the old ones — `Form_Renderer::render_reference()` was rendering `render_legacy()` from that meta, not `do_blocks()`. The lookup recurses into `innerBlocks` now; `compile()` and `walk()` needed no change, as they already walked the whole subtree.
 - Default form styles: the builder's inner blocks container now carries `fforms-fields` (`edit-builder.js`), so the editor grid and gaps are the ones `render_shell()` produces; the `.fforms-field-preview` wrapper is gone from `field.js`, leaving `.fforms-label` and `.fforms-control` direct children of `.fforms-field` exactly as `field_markup()` renders them.

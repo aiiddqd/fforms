@@ -1,6 +1,6 @@
 ---
 status: current
-updated: 2026-08-30
+updated: 2026-09-21
 ---
 
 # FForms: base specification
@@ -46,7 +46,7 @@ Form meta:
 - `_fforms_share_token` — 16 hex characters from `random_bytes()`, issued on the form's first publish and used as its only public address. Reissuing it invalidates the previous link immediately;
 - `_fforms_schema` — the normalized JSON schema: a derived cache of the schema compiled from blocks, and the compatible format for legacy forms that have no blocks;
 - `_fforms_notifications_enabled` — enables the main notification for the form;
-- `_fforms_notification_to`, `_fforms_notification_subject` — notification recipients and subject;
+- `_fforms_notification_to`, `_fforms_notification_subject` — an optional recipient override and notification subject; an empty `_fforms_notification_to` inherits the plugin default;
 - `_fforms_success_message` — message shown after a successful submission;
 - `_fforms_autoreply_*` — autoreply toggle, email field, subject, and body.
 
@@ -161,6 +161,7 @@ The main form exists only in memory (`Registry\Main_Form`): `post_id = 0`, `key 
 | any other top-level key | A field of the submission. Stored in `_fforms_data` under `sanitize_key()` of the key. |
 | `meta`, `ref`, `userId` | Request context; see the meta keys in §3. |
 | `_hp` | Honeypot for this route: when filled, returns 200 with no entry. On `/submit` the honeypot is still `website`. |
+| `captcha_token` | Optional provider token. It is verified only when `fforms_captcha_required` returns `true`; otherwise it is discarded. `captcha_token` and `smart-token` are reserved and never stored as fields. |
 | `source` | Same as on `/submit`; falls back to `Referer` when absent. |
 | `attachments` | Not accepted: 400 `fforms_attachments_require_multipart` in JSON, and 400 `fforms_attachments_disabled` for `multipart` with files. |
 
@@ -179,12 +180,13 @@ Processing order:
 1. Request body size check — at most 256 KiB by default.
 2. Check that a published form exists.
 3. Resolve the form (`/submit`) or the form type (`/main`).
-4. Honeypot (`website` on `/submit`, `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created.
+4. Honeypot (`website`, `company`, and `phone` on a block-rendered `/submit` form; `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created. The three `/submit` fields are visually clipped and absent from the tab order; they look like ordinary contact inputs to a generic autofill bot, while API clients can continue to omit them.
 5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
 6. Data normalization, and server-side validation against the schema — on `/submit`; `/main` has no schema to validate against and only normalizes.
-7. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
-8. Assignment of the `fform_type` term.
-9. Sending notifications and firing the `fforms_entry_created` action.
+7. Optional captcha verification, after `/submit` schema validation and before entry creation. `fforms_captcha_required` defaults to `false`; an enabled requirement with no token returns 422 `fforms_captcha_required`, while a provider rejection returns 422 `fforms_captcha_failed` with `data.reason`. Failed attempts count against the rate limit. Honeypot requests bypass captcha hooks.
+8. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
+9. Assignment of the `fform_type` term.
+10. Sending notifications and firing the `fforms_entry_created` action.
 
 The rate limit counts invalid attempts too, but not honeypot hits. The IP comes from `REMOTE_ADDR`; proxy headers are not trusted automatically.
 
@@ -253,7 +255,7 @@ The interface is written in English and translated through the `fforms` text dom
 
 The CSV carries a UTF-8 BOM, merges the fields of every selected record into a shared column set, and guards values against spreadsheet formula injection. Besides the schema fields it contains the `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns.
 
-FForms settings also hold the allowed origins of the main form, the recipients of its notifications, and the strict form-type mode. A global setting unlocks the notification and autoreply settings in the form editor; it is off by default. The main notification is off by default too and is enabled per form. Recipients can be listed comma-separated; an empty value falls back to `admin_email`. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
+FForms settings have **General** and **SMTP** tabs. General holds the allowed origins of the main form, default notification recipients, and the strict form-type mode; SMTP holds the mailer toggle, host, port, encryption, authentication credentials, and From fields. Saving either tab preserves values owned by the other. The global `notifications` setting unlocks notification and autoreply settings in the form editor and remains off by default; a recipient list alone never starts sending mail. When it is on, each CPT or code form still needs its own notification toggle. Its `_fforms_notification_to` or `notifications.to` value is an override; an empty value inherits `default_notification_recipients`, then the current WordPress `admin_email`. The built-in `/main` form has no separate recipient field and uses the same cascade behind its own `main_form_notifications` toggle. Lists accept commas or line breaks; invalid and duplicate addresses are excluded. If the cascade leaves no valid address, `wp_mail()` is not called and `notification_sent` is `false`. The legacy `main_form_notification_to` moves to the default list the next time settings are saved, only when that new value is still empty, and is then discarded. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
 
 The built-in SMTP is optional and configures the global WordPress `PHPMailer`. Enabling it therefore affects every email on the site, not only FForms, and it must not be used alongside another SMTP plugin. The SMTP password is stored in the `fforms_smtp` WordPress option without any additional encryption by the plugin.
 
@@ -265,7 +267,12 @@ The following extension points are available:
 - `fforms_rate_limit` — the number of attempts per window;
 - `fforms_rate_window` — the rate limit window length;
 - `fforms_client_ip` — the computed client IP;
+- `fforms_captcha_required( bool $required, Form_Ref $form, string $route )` — require a provider token for this form and route (`submit` or `main`); defaults to `false`;
+- `fforms_verify_captcha( true|WP_Error $result, string $token, Form_Ref $form, WP_REST_Request $request )` — verify the token; defaults to `true`;
+- `fforms_captcha_markup( string $html, Form_Ref $form )` — return optional provider markup in a form slot before its submit button; defaults to an empty string;
 - `fforms_entry_created` — an action fired after the entry is stored and the emails have been attempted.
+
+Frontend providers may expose `window.fformsCaptchaProvider` with `getToken(formElement): Promise<string>` and `reset(formElement): void`. The block and fallback clients add the token as `captcha_token`, keep the submit button disabled while waiting, and reset the provider after a server response except when field validation failed. Provider errors use the form's live response and focus the captcha slot.
 
 The REST contract is versioned through the `v1` namespace. CORS for the `fforms/v1` namespace is handled by the plugin itself, under an exact-match per-form allowlist; see `api-route-headless-cms-mode.md` §6, which also documents the extension points layered on top of this section.
 
@@ -283,7 +290,7 @@ The REST contract is versioned through the `v1` namespace. CORS for the `fforms/
 - a visual field builder and nested Gutenberg field blocks;
 - the `content` and `survey` types;
 - conditional logic, multi-step, and file uploads;
-- CAPTCHA/Turnstile, webhooks, and external integrations;
+- a CAPTCHA provider in core (the provider-agnostic hooks are available for separate integrations);
 - analytics, per-form roles, and a retention policy;
 - a server-side fallback for submitting without JavaScript;
 - a dedicated automated PHPUnit/JavaScript test suite.

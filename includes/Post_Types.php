@@ -17,6 +17,7 @@ final class Post_Types {
 		add_action( 'add_meta_boxes', array( self::class, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::ENTRY, array( self::class, 'save_entry' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'enqueue_form_settings_sidebar' ) );
+		add_action( 'rest_api_init', array( self::class, 'register_rest_fields' ) );
 		add_filter( 'allowed_block_types_all', array( self::class, 'limit_internal_blocks_to_form_editor' ), 10, 2 );
 		add_filter( 'manage_' . self::ENTRY . '_posts_columns', array( self::class, 'entry_columns' ) );
 		add_action( 'manage_' . self::ENTRY . '_posts_custom_column', array( self::class, 'render_entry_column' ), 10, 2 );
@@ -97,7 +98,7 @@ final class Post_Types {
 		self::register_form_meta( '_fforms_notifications_enabled', array( 'type' => 'boolean', 'single' => true, 'default' => false, 'show_in_rest' => true ) );
 
 		foreach ( array( '_fforms_notification_to', '_fforms_notification_subject', '_fforms_success_message', '_fforms_autoreply_email_field', '_fforms_autoreply_subject', '_fforms_autoreply_message' ) as $key ) {
-			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => '_fforms_autoreply_message' === $key ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
+			self::register_form_meta( $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => true, 'sanitize_callback' => in_array( $key, array( '_fforms_notification_to', '_fforms_autoreply_message' ), true ) ? 'sanitize_textarea_field' : 'sanitize_text_field' ) );
 		}
 		self::register_form_meta( '_fforms_autoreply_enabled', array( 'type' => 'boolean', 'single' => true, 'show_in_rest' => true ) );
 		foreach ( array( '_fforms_form_id', '_fforms_created_post_id', '_fforms_user_id' ) as $key ) {
@@ -106,6 +107,24 @@ final class Post_Types {
 		foreach ( array( '_fforms_form_key', '_fforms_data', '_fforms_status', '_fforms_source', '_fforms_ip', '_fforms_user_agent', '_fforms_custom', '_fforms_meta', '_fforms_ref', '_fforms_form_type_raw' ) as $key ) {
 			register_post_meta( self::ENTRY, $key, array( 'type' => 'string', 'single' => true, 'show_in_rest' => false ) );
 		}
+	}
+
+	/**
+	 * The block editor links a form block to its submissions, and the URL depends
+	 * on server-side state (the form's type term). Expose the same URL the forms
+	 * list row action uses so both entry points land on the same filtered list.
+	 */
+	public static function register_rest_fields(): void {
+		register_rest_field(
+			self::FORM,
+			'fforms_entries_url',
+			array(
+				// Submissions are a manage_options screen; hand the URL only to
+				// users who can actually open it, so the button stays hidden.
+				'get_callback' => static fn( array $post ): string => current_user_can( 'manage_options' ) ? self::entries_url_for_form( (int) $post['id'] ) : '',
+				'schema'       => array( 'type' => 'string', 'format' => 'uri', 'context' => array( 'view', 'edit' ), 'readonly' => true ),
+			)
+		);
 	}
 
 	/** @param array<string, mixed> $args */

@@ -35,7 +35,15 @@ final class Form_Renderer {
 	public static function render_submit( array $attributes, bool $is_block = false ): string {
 		$label = sanitize_text_field( (string) ( $attributes['label'] ?? '' ) ) ?: __( 'Send', 'fforms' );
 		$wrapper = $is_block ? get_block_wrapper_attributes( array( 'class' => 'fforms-submit wp-element-button' ) ) : 'class="fforms-submit wp-element-button"';
-		return '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
+		$captcha = '';
+		if ( self::$source_form_id ) {
+			$form = \FForms\Form_Locator::resolve( self::$source_form_id );
+			if ( $form instanceof \FForms\Form_Ref ) {
+				$captcha = (string) apply_filters( 'fforms_captcha_markup', '', $form );
+			}
+		}
+		$slot = '' !== $captcha ? '<div class="fforms-captcha" data-fforms-captcha>' . $captcha . '</div>' : '';
+		return $slot . '<button ' . $wrapper . ' type="submit" data-wp-bind--disabled="context.isSubmitting">' . esc_html( $label ) . '</button>';
 	}
 
 	private static function render_reference( int $form_id, bool $is_reference = false, string $unavailable_notice = '' ): string {
@@ -70,7 +78,7 @@ final class Form_Renderer {
 		if ( ! $form_id || Post_Types::FORM !== get_post_type( $form_id ) ) return current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Save the form and insert a reference to it into a page.', 'fforms' ) . '</p>' : '';
 		$context = (string) wp_json_encode( array( 'formId' => $form_id, 'endpoint' => rest_url( 'fforms/v1/submit' ), 'isSubmitting' => false, 'isError' => false, 'message' => '' ) );
 		$wrapper = get_block_wrapper_attributes( array( 'class' => 'fforms' ) );
-		return '<div ' . $wrapper . '><form class="fforms-form" data-wp-interactive="fforms/form" data-wp-context="' . esc_attr( $context ) . '" data-wp-on--submit="actions.submit" data-wp-bind--aria-busy="context.isSubmitting"><div class="fforms-fields">' . $content . '</div><div class="fforms-hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><div class="fforms-response" role="status" aria-live="polite" data-wp-text="context.message" data-wp-class--is-error="context.isError"></div></form></div>';
+		return '<div ' . $wrapper . '><form class="fforms-form" data-wp-interactive="fforms/form" data-wp-context="' . esc_attr( $context ) . '" data-wp-on--submit="actions.submit" data-wp-bind--aria-busy="context.isSubmitting"><div class="fforms-fields">' . $content . '</div><div class="fforms-hp" aria-hidden="true"><label>' . esc_html__( 'Website', 'fforms' ) . '<input type="text" name="website" data-fforms-honeypot tabindex="-1" autocomplete="off"></label><label>' . esc_html__( 'Company', 'fforms' ) . '<input type="text" name="company" data-fforms-honeypot tabindex="-1" autocomplete="off"></label><label>' . esc_html__( 'Phone', 'fforms' ) . '<input type="tel" name="phone" data-fforms-honeypot tabindex="-1" autocomplete="off"></label></div><div class="fforms-response" role="status" aria-live="polite" data-wp-text="context.message" data-wp-class--is-error="context.isError"></div></form></div>';
 	}
 
 	/** Messages about a broken insertion are for editors only; guests see nothing. */
