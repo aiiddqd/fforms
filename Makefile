@@ -56,13 +56,13 @@ test-notifications: ## run WordPress integration checks for notification recipie
 	$(WP_ENV) run cli wp eval-file wp-content/plugins/_fforms/tests/notifications.php
 
 test-notifications-local: ## run notification checks through the project's local WP-CLI alias
-	../../../../bin/wp @local eval-file $(CURDIR)/tests/notifications.php
+	../../../../../bin/wp @local eval-file $(CURDIR)/tests/notifications.php
 
 test-captcha: ## run provider-agnostic captcha pipeline checks
 	$(WP_ENV) run cli wp eval-file wp-content/plugins/_fforms/tests/captcha.php
 
 test-captcha-local: ## run captcha pipeline checks through the local WP-CLI alias
-	../../../../bin/wp @local eval-file $(CURDIR)/tests/captcha.php
+	../../../../../bin/wp @local eval-file $(CURDIR)/tests/captcha.php
 
 status: ## report WP/PHP versions, plugin and block state
 	@$(WP_ENV) run cli wp eval 'printf( "wp=%s php=%s plugin=%s block=%s permalinks=%s\n", get_bloginfo( "version" ), PHP_VERSION, is_plugin_active( "_fforms/fforms.php" ) ? "active" : "inactive", WP_Block_Type_Registry::get_instance()->is_registered( "fforms/form" ) ? "registered" : "missing", get_option( "permalink_structure" ) ?: "plain" );' --skip-themes 2>/dev/null | grep -E '^wp='
