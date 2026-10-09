@@ -49,7 +49,9 @@ final class Main_Form {
 		$settings = \FForms\Settings::get();
 		return array(
 			'enabled'               => ! empty( $settings['main_form_notifications'] ),
-			'to'                    => (string) ( $settings['main_form_notification_to'] ?? '' ),
+			// The built-in form never has its own override; Notifications resolves
+			// the shared setting and then the dynamic WordPress admin address.
+			'to'                    => '',
 			'subject'               => '',
 			'autoreply_enabled'     => false,
 			'autoreply_email_field' => 'email',

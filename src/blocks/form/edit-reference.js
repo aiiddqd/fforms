@@ -1,6 +1,8 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
 	Button,
+	Flex,
+	FlexItem,
 	PanelBody,
 	Placeholder,
 	SelectControl,
@@ -26,6 +28,13 @@ export default function EditReference( { attributes, setAttributes } ) {
 	const blockProps = useBlockProps();
 
 	const ref = attributes.ref || attributes.formId || 0;
+
+	// The submissions list is filtered server-side by the form's type term, so
+	// the URL comes from the REST record rather than being rebuilt here. It is
+	// empty for users who cannot open that screen.
+	const entriesUrl =
+		( forms || [] ).find( ( form ) => form.id === ref )
+			?.fforms_entries_url || '';
 	const options = [
 		{ label: __( 'Select a published form', 'fforms' ), value: 0 },
 	].concat(
@@ -66,17 +75,34 @@ export default function EditReference( { attributes, setAttributes } ) {
 				<PanelBody title={ __( 'Form settings', 'fforms' ) }>
 					{ control }
 					{ !! ref && (
-						// The editor always lives under /wp-admin/, so a
-						// relative href needs no site URL to resolve. A new
-						// tab keeps the unsaved page behind it intact.
-						<Button
-							variant="secondary"
-							href={ `post.php?post=${ ref }&action=edit` }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ __( 'Edit form', 'fforms' ) }
-						</Button>
+						<Flex justify="flex-start" gap={ 2 }>
+							<FlexItem>
+								{ /* The editor always lives under /wp-admin/,
+								so a relative href needs no site URL to
+								resolve. A new tab keeps the unsaved page
+								behind it intact. */ }
+								<Button
+									variant="secondary"
+									href={ `post.php?post=${ ref }&action=edit` }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ __( 'Edit form', 'fforms' ) }
+								</Button>
+							</FlexItem>
+							{ !! entriesUrl && (
+								<FlexItem>
+									<Button
+										variant="secondary"
+										href={ entriesUrl }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ __( 'View submissions', 'fforms' ) }
+									</Button>
+								</FlexItem>
+							) }
+						</Flex>
 					) }
 				</PanelBody>
 			</InspectorControls>

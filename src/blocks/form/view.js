@@ -17,6 +17,15 @@ const fieldPayload = ( form ) => {
 	return fields;
 };
 
+const honeypotPayload = ( form ) => {
+	const data = {};
+	const values = new FormData( form );
+	form.querySelectorAll( '[data-fforms-honeypot]' ).forEach( ( input ) => {
+		data[ input.name ] = values.get( input.name ) || '';
+	} );
+	return data;
+};
+
 const resetErrors = ( form ) =>
 	form
 		.querySelectorAll( '[aria-invalid="true"]' )
@@ -52,6 +61,8 @@ store( 'fforms/form', {
 			context.isSubmitting = true;
 			context.isError = false;
 			context.message = '';
+			let fieldValidationError = false;
+			let receivedResponse = false;
 			resetErrors( form );
 			form.querySelectorAll( '[data-fforms-error]' ).forEach(
 				( node ) => {
@@ -59,6 +70,15 @@ store( 'fforms/form', {
 				}
 			);
 			try {
+				const captchaSlot = form.querySelector(
+					'[data-fforms-captcha]'
+				);
+				let captchaToken = '';
+				if ( captchaSlot && window.fformsCaptchaProvider ) {
+					captchaToken = await window.fformsCaptchaProvider
+						.getToken( form )
+						.catch( () => '' );
+				}
 				const response = await fetch( context.endpoint, {
 					method: 'POST',
 					credentials: 'same-origin',
@@ -66,23 +86,39 @@ store( 'fforms/form', {
 					body: JSON.stringify( {
 						form_id: context.formId,
 						fields: fieldPayload( form ),
-						website: new FormData( form ).get( 'website' ) || '',
+						...honeypotPayload( form ),
+						captcha_token: captchaToken,
 						source: window.location.href,
 					} ),
 				} );
+				receivedResponse = true;
 				const body = await response.json().catch( () => ( {} ) );
 				if ( ! response.ok ) {
 					throw body;
 				}
 				form.reset();
-				context.message = body.message || 'Thank you! The form has been sent.';
+				context.message =
+					body.message || 'Thank you! The form has been sent.';
 			} catch ( error ) {
+				fieldValidationError =
+					'fforms_validation_failed' === error?.code &&
+					!! error?.data?.fields;
 				context.isError = true;
 				context.message =
 					error?.message ||
 					'Could not submit the form. Please try again.';
 				showFieldErrors( form, error?.data?.fields );
+				if ( /^fforms_captcha_/.test( error?.code || '' ) ) {
+					const slot = form.querySelector( '[data-fforms-captcha]' );
+					if ( slot ) {
+						slot.setAttribute( 'tabindex', '-1' );
+						slot.focus();
+					}
+				}
 			} finally {
+				if ( receivedResponse && ! fieldValidationError ) {
+					window.fformsCaptchaProvider?.reset( form );
+				}
 				context.isSubmitting = false;
 			}
 		},

@@ -67,7 +67,7 @@ final class Code_Forms {
 			origins: self::sanitize_origins( $args['origins'] ?? array() ),
 			notifications: array(
 				'enabled'               => ! empty( $notifications['enabled'] ),
-				'to'                    => sanitize_text_field( (string) ( $notifications['to'] ?? '' ) ),
+				'to'                    => sanitize_textarea_field( (string) ( $notifications['to'] ?? '' ) ),
 				'subject'               => sanitize_text_field( (string) ( $notifications['subject'] ?? '' ) ),
 				'autoreply_enabled'     => ! empty( $autoreply['enabled'] ),
 				'autoreply_email_field' => sanitize_key( (string) ( $autoreply['email_field'] ?? 'email' ) ),
