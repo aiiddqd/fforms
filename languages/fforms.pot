@@ -211,16 +211,16 @@ msgstr ""
 msgid "Collect one or more confirmed options."
 msgstr ""
 
-#: includes/Settings.php:218
-msgid "Comma- or newline-separated emails. Empty — the current administrator email is used."
-msgstr ""
-
 #: includes/Settings.php:219
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr ""
 
 #: assets/form-settings-sidebar.js:358
 msgid "Comma-separated emails. Empty — Default notification recipients, then the administrator email."
+msgstr ""
+
+#: includes/Settings.php:218
+msgid "Comma-separated emails. Empty — the current administrator email is used."
 msgstr ""
 
 #: includes/Blocks/Form_Renderer.php:81
@@ -317,10 +317,6 @@ msgstr ""
 
 #: assets/form-settings-sidebar.js:219
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
-msgstr ""
-
-#: includes/Settings.php:218
-msgid "Enable notification and auto-reply settings for forms"
 msgstr ""
 
 #: includes/Settings.php:245
@@ -813,6 +809,10 @@ msgstr ""
 
 #: includes/Settings.php:220
 msgid "Send an email about a new main form submission"
+msgstr ""
+
+#: includes/Settings.php:218
+msgid "Send email notifications about form submissions"
 msgstr ""
 
 #: assets/form-settings-sidebar.js:335

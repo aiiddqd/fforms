@@ -211,10 +211,6 @@ msgstr "Собирает и проверяет email."
 msgid "Collect one or more confirmed options."
 msgstr "Собирает один или несколько отмеченных вариантов."
 
-#: includes/Settings.php:218
-msgid "Comma- or newline-separated emails. Empty — the current administrator email is used."
-msgstr "Адреса через запятую или с новой строки. Если пусто — используется текущий адрес администратора."
-
 #: includes/Settings.php:219
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr "Домены через запятую, которым разрешён кросс-доменный запрос к POST /fforms/v1/main. Пусто — CORS-заголовки не отправляются."
@@ -222,6 +218,10 @@ msgstr "Домены через запятую, которым разрешён 
 #: assets/form-settings-sidebar.js:358
 msgid "Comma-separated emails. Empty — Default notification recipients, then the administrator email."
 msgstr "Адреса через запятую. Если пусто — получатели уведомлений по умолчанию, затем адрес администратора."
+
+#: includes/Settings.php:218
+msgid "Comma-separated emails. Empty — the current administrator email is used."
+msgstr "Адреса через запятую. Если пусто — используется текущий адрес администратора."
 
 #: includes/Blocks/Form_Renderer.php:81
 msgid "Company"
@@ -318,10 +318,6 @@ msgstr "Вставка на сторонний сайт с фиксирован�
 #: assets/form-settings-sidebar.js:219
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr "Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту."
-
-#: includes/Settings.php:218
-msgid "Enable notification and auto-reply settings for forms"
-msgstr "Включить настройки уведомлений и автоответов для форм"
 
 #: includes/Settings.php:245
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
@@ -814,6 +810,10 @@ msgstr "Отправлять автоответ пользователю"
 #: includes/Settings.php:220
 msgid "Send an email about a new main form submission"
 msgstr "Отправлять письмо о новой записи главной формы"
+
+#: includes/Settings.php:218
+msgid "Send email notifications about form submissions"
+msgstr "Отправлять уведомления о записях на почту"
 
 #: assets/form-settings-sidebar.js:335
 msgid "Send notifications about submissions"
