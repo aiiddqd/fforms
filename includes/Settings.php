@@ -1,6 +1,9 @@
 <?php
 /**
- * SMTP settings and PHPMailer integration.
+ * Plugin settings: notifications, SMTP, and captcha.
+ *
+ * All values live in one option; the settings_tab hidden field routes the
+ * sanitize merge so saving one tab never wipes the values owned by another.
  *
  * @package FForms
  */
@@ -32,8 +35,8 @@ final class Settings {
 		$stored   = (array) get_option( self::OPTION, array() );
 		$tab      = sanitize_key( (string) ( $input['settings_tab'] ?? 'general' ) );
 		if ( 'smtp' === $tab ) {
-			// Saving SMTP must not turn off unrelated notification settings simply
-			// because the General tab did not submit their fields.
+			// Saving SMTP must not turn off unrelated notification or captcha
+			// settings simply because the other tabs did not submit their fields.
 			$input = array_merge(
 				array(
 					'notifications'                    => $current['notifications'],
@@ -41,12 +44,35 @@ final class Settings {
 					'main_form_origins'                => $current['main_form_origins'],
 					'main_form_notifications'          => $current['main_form_notifications'],
 					'form_types_strict'                => $current['form_types_strict'],
+					'captcha'                          => (array) ( $current['captcha'] ?? array() ),
+				),
+				$input
+			);
+		} elseif ( 'captcha' === $tab ) {
+			// The Captcha tab holds none of the General or SMTP fields; keep both
+			// groups untouched while the captcha subarray is replaced.
+			$input = array_merge(
+				array(
+					'notifications'                    => $current['notifications'],
+					'default_notification_recipients' => $current['default_notification_recipients'],
+					'main_form_origins'                => $current['main_form_origins'],
+					'main_form_notifications'          => $current['main_form_notifications'],
+					'form_types_strict'                => $current['form_types_strict'],
+					'enabled'                          => $current['enabled'],
+					'host'                             => $current['host'],
+					'port'                             => $current['port'],
+					'encryption'                       => $current['encryption'],
+					'auth'                             => $current['auth'],
+					'username'                         => $current['username'],
+					'password'                         => $current['password'],
+					'from_email'                       => $current['from_email'],
+					'from_name'                        => $current['from_name'],
 				),
 				$input
 			);
 		} else {
-			// Likewise, General must retain credentials and mailer settings that are
-			// deliberately only present on the SMTP tab.
+			// Likewise, General must retain credentials, mailer, and captcha
+			// settings that are deliberately only present on their own tabs.
 			$input = array_merge(
 				array(
 					'enabled'    => $current['enabled'],
@@ -58,6 +84,7 @@ final class Settings {
 					'password'   => $current['password'],
 					'from_email' => $current['from_email'],
 					'from_name'  => $current['from_name'],
+					'captcha'    => (array) ( $current['captcha'] ?? array() ),
 				),
 				$input
 			);
@@ -93,6 +120,36 @@ final class Settings {
 			'main_form_origins'         => self::sanitize_origins( $input['main_form_origins'] ?? '' ),
 			'main_form_notifications'   => ! empty( $input['main_form_notifications'] ),
 			'form_types_strict'         => ! empty( $input['form_types_strict'] ),
+
+			'captcha'                   => self::sanitize_captcha( $input['captcha'] ?? array(), (array) ( $current['captcha'] ?? array() ) ),
+		);
+	}
+
+	/**
+	 * The captcha subarray. An empty submitted server key keeps the stored one
+	 * (the field is a password input); an unknown provider id falls back to
+	 * none rather than keeping a dangling selection.
+	 *
+	 * @return array{provider: string, client_key: string, server_key: string, apply_main: bool, apply_forms: bool}
+	 */
+	private static function sanitize_captcha( mixed $input, array $current = array() ): array {
+		$input    = is_array( $input ) ? $input : array();
+		$provider = sanitize_key( (string) ( $input['provider'] ?? 'none' ) );
+		$registry = Captcha\Manager::providers();
+		if ( 'none' !== $provider && ! isset( $registry[ $provider ] ) ) {
+			$provider = 'none';
+		}
+		$server_key = trim( sanitize_text_field( (string) ( $input['server_key'] ?? '' ) ) );
+		if ( '' === $server_key ) {
+			$server_key = (string) ( $current['server_key'] ?? '' );
+		}
+
+		return array(
+			'provider'    => $provider,
+			'client_key'  => trim( sanitize_text_field( (string) ( $input['client_key'] ?? '' ) ) ),
+			'server_key'  => $server_key,
+			'apply_main'  => ! empty( $input['apply_main'] ),
+			'apply_forms' => ! empty( $input['apply_forms'] ),
 		);
 	}
 
@@ -120,6 +177,7 @@ final class Settings {
 			array(
 				'enabled' => false, 'host' => '', 'port' => 587, 'encryption' => 'tls', 'auth' => true, 'username' => '', 'password' => '', 'from_email' => '', 'from_name' => get_bloginfo( 'name' ), 'notifications' => false, 'default_notification_recipients' => '',
 				'main_form_origins' => array(), 'main_form_notifications' => false, 'form_types_strict' => false,
+				'captcha' => array(),
 			)
 		);
 	}
@@ -147,11 +205,12 @@ final class Settings {
 			return;
 		}
 		$s        = self::get();
-		$tab      = 'smtp' === sanitize_key( (string) ( $_GET['tab'] ?? 'general' ) ) ? 'smtp' : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab      = sanitize_key( (string) ( $_GET['tab'] ?? 'general' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab      = in_array( $tab, array( 'general', 'smtp', 'captcha' ), true ) ? $tab : 'general';
 		$page_url = admin_url( 'admin.php?page=fforms-settings' );
 		?>
 		<div class="wrap"><h1><?php esc_html_e( 'FForms settings', 'fforms' ); ?></h1>
-		<h2 class="nav-tab-wrapper"><a href="<?php echo esc_url( $page_url ); ?>" class="nav-tab <?php echo 'general' === $tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'General', 'fforms' ); ?></a><a href="<?php echo esc_url( add_query_arg( 'tab', 'smtp', $page_url ) ); ?>" class="nav-tab <?php echo 'smtp' === $tab ? 'nav-tab-active' : ''; ?>">SMTP</a></h2>
+		<h2 class="nav-tab-wrapper"><a href="<?php echo esc_url( $page_url ); ?>" class="nav-tab <?php echo 'general' === $tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'General', 'fforms' ); ?></a><a href="<?php echo esc_url( add_query_arg( 'tab', 'smtp', $page_url ) ); ?>" class="nav-tab <?php echo 'smtp' === $tab ? 'nav-tab-active' : ''; ?>">SMTP</a><a href="<?php echo esc_url( add_query_arg( 'tab', 'captcha', $page_url ) ); ?>" class="nav-tab <?php echo 'captcha' === $tab ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Captcha', 'fforms' ); ?></a></h2>
 		<form action="options.php" method="post"><?php settings_fields( 'fforms_settings' ); ?>
 		<input type="hidden" name="<?php echo esc_attr( self::OPTION ); ?>[settings_tab]" value="<?php echo esc_attr( $tab ); ?>">
 		<table class="form-table" role="presentation">
@@ -160,6 +219,28 @@ final class Settings {
 		<tr><th scope="row"><?php esc_html_e( 'Allowed origins of the main form', 'fforms' ); ?></th><td><textarea class="large-text code" rows="3" id="fforms-main-form-origins" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_origins]" placeholder="https://example.com, https://app.example.com"><?php echo esc_textarea( implode( ", ", (array) $s['main_form_origins'] ) ); ?></textarea><p class="description"><?php esc_html_e( 'Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Main form notifications', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[main_form_notifications]" value="1" <?php checked( $s['main_form_notifications'] ); ?>> <?php esc_html_e( 'Send an email about a new main form submission', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Uses the default notification recipients above.', 'fforms' ); ?></p></td></tr>
 		<tr><th scope="row"><?php esc_html_e( 'Form types', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[form_types_strict]" value="1" <?php checked( $s['form_types_strict'] ); ?>> <?php esc_html_e( 'Accept only existing types', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically.', 'fforms' ); ?></p></td></tr>
+		<?php elseif ( 'captcha' === $tab ) : ?>
+		<?php $captcha = (array) ( $s['captcha'] ?? array() ); $captcha_providers = Captcha\Manager::providers(); ?>
+		<?php if ( Captcha\Manager::is_ready() ) : ?>
+		<tr><td colspan="2"><div class="notice notice-success inline"><p><?php esc_html_e( 'Captcha is active: protected forms now require a token.', 'fforms' ); ?></p></div></td></tr>
+		<?php else : ?>
+		<tr><td colspan="2"><p class="description"><?php esc_html_e( 'Select a provider and fill in both keys to activate captcha protection.', 'fforms' ); ?></p></td></tr>
+		<?php endif; ?>
+		<tr><th scope="row"><label for="fforms-captcha-provider"><?php esc_html_e( 'Provider', 'fforms' ); ?></label></th><td><select id="fforms-captcha-provider" name="<?php echo esc_attr( self::OPTION ); ?>[captcha][provider]"><option value="none" <?php selected( $captcha['provider'] ?? 'none', 'none' ); ?>><?php esc_html_e( 'None', 'fforms' ); ?></option>
+		<?php foreach ( $captcha_providers as $provider_id => $captcha_provider ) : ?>
+		<option value="<?php echo esc_attr( $provider_id ); ?>" <?php selected( $captcha['provider'] ?? 'none', $provider_id ); ?>><?php echo esc_html( $captcha_provider->label() ); ?></option>
+		<?php endforeach; ?></select><p class="description"><?php esc_html_e( 'Third-party providers can register themselves through the fforms_captcha_providers filter.', 'fforms' ); ?></p></td></tr>
+		<tr><th><label for="fforms-captcha-client-key"><?php esc_html_e( 'Client key', 'fforms' ); ?></label></th><td><input class="regular-text" type="text" autocomplete="off" id="fforms-captcha-client-key" name="<?php echo esc_attr( self::OPTION ); ?>[captcha][client_key]" value="<?php echo esc_attr( (string) ( $captcha['client_key'] ?? '' ) ); ?>"><p class="description"><?php esc_html_e( 'The public sitekey rendered by the widget in the form.', 'fforms' ); ?></p></td></tr>
+		<tr><th><label for="fforms-captcha-server-key"><?php esc_html_e( 'Server key', 'fforms' ); ?></label></th><td><input class="regular-text" type="password" autocomplete="new-password" id="fforms-captcha-server-key" name="<?php echo esc_attr( self::OPTION ); ?>[captcha][server_key]" value="" placeholder="<?php echo esc_attr( (string) ( $captcha['server_key'] ?? '' ) ); ?>"><p class="description"><?php esc_html_e( 'The secret used to verify tokens on the server. Submitting an empty field keeps the saved key.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Provider consoles', 'fforms' ); ?></th><td><ul style="list-style:disc inside"><li><a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noopener noreferrer">Google reCAPTCHA admin</a></li><li><a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank" rel="noopener noreferrer">Cloudflare Turnstile</a></li><li><a href="https://cloud.yandex.ru/services/smartcaptcha" target="_blank" rel="noopener noreferrer">Yandex SmartCaptcha</a></li></ul><p class="description"><?php esc_html_e( 'Create the client and server keys in the console of the chosen provider.', 'fforms' ); ?></p></td></tr>
+		<tr><th scope="row"><?php esc_html_e( 'Apply captcha to', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[captcha][apply_forms]" value="1" <?php checked( ! empty( $captcha['apply_forms'] ) ); ?>> <?php esc_html_e( 'Protect form submissions', 'fforms' ); ?></label><br><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[captcha][apply_main]" value="1" <?php checked( ! empty( $captcha['apply_main'] ) ); ?>> <?php esc_html_e( 'Protect the main endpoint', 'fforms' ); ?></label><p class="description"><?php esc_html_e( 'Form submissions are POST /fforms/v1/submit; the main endpoint is POST /fforms/v1/main.', 'fforms' ); ?></p></td></tr>
+		<tr><th></th><td><p class="description">
+		<?php if ( defined( 'FFORMS_CAPTCHA_SERVER_KEY' ) ) : ?>
+		<?php esc_html_e( 'The server key is defined via the FFORMS_CAPTCHA_SERVER_KEY constant and takes priority over the saved value.', 'fforms' ); ?>
+		<?php else : ?>
+		<?php esc_html_e( 'Tip: define the FFORMS_CAPTCHA_SERVER_KEY constant in wp-config.php to keep the secret out of the database.', 'fforms' ); ?>
+		<?php endif; ?>
+		</p></td></tr>
 		<?php else : ?>
 		<tr><td colspan="2"><p><?php esc_html_e( 'Enable the built-in SMTP only when no other SMTP plugin handles email delivery.', 'fforms' ); ?></p></td></tr>
 		<tr><th><?php esc_html_e( 'SMTP', 'fforms' ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( $s['enabled'] ); ?>> <?php esc_html_e( 'Use the FForms SMTP', 'fforms' ); ?></label></td></tr>

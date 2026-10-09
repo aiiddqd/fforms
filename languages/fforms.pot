@@ -39,7 +39,7 @@ msgstr ""
 msgid "A secret address: it cannot be guessed from the form id."
 msgstr ""
 
-#: includes/Settings.php:162
+#: includes/Settings.php:221
 msgid "Accept only existing types"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Allowed origins"
 msgstr ""
 
-#: includes/Settings.php:160
+#: includes/Settings.php:219
 msgid "Allowed origins of the main form"
 msgstr ""
 
@@ -101,6 +101,10 @@ msgstr ""
 
 #: assets/form-settings-sidebar.js:313
 msgid "Applies to the link only. The iframe and js-script always embed the form on its own."
+msgstr ""
+
+#: includes/Settings.php:236
+msgid "Apply captcha to"
 msgstr ""
 
 #: includes/Dashboard.php:109
@@ -119,7 +123,7 @@ msgstr ""
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr ""
 
-#: includes/Settings.php:169
+#: includes/Settings.php:250
 msgid "Authentication"
 msgstr ""
 
@@ -147,6 +151,14 @@ msgstr ""
 msgid "CSV export"
 msgstr ""
 
+#: includes/Settings.php:213
+msgid "Captcha"
+msgstr ""
+
+#: includes/Settings.php:225
+msgid "Captcha is active: protected forms now require a token."
+msgstr ""
+
 #: includes/Schema.php:142
 msgid "Check the submitted fields."
 msgstr ""
@@ -165,6 +177,10 @@ msgstr ""
 
 #: includes/Dashboard.php:244
 msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “Form by FForms” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites."
+msgstr ""
+
+#: includes/Settings.php:233
+msgid "Client key"
 msgstr ""
 
 #: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
@@ -195,11 +211,11 @@ msgstr ""
 msgid "Collect one or more confirmed options."
 msgstr ""
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Comma- or newline-separated emails. Empty — the current administrator email is used."
 msgstr ""
 
-#: includes/Settings.php:160
+#: includes/Settings.php:219
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr ""
 
@@ -243,6 +259,10 @@ msgstr ""
 msgid "Could not save the submission."
 msgstr ""
 
+#: includes/Settings.php:235
+msgid "Create the client and server keys in the console of the chosen provider."
+msgstr ""
+
 #: includes/Post_Types.php:334
 msgid "Data"
 msgstr ""
@@ -251,11 +271,11 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Default notification recipients"
 msgstr ""
 
-#: includes/Settings.php:172
+#: includes/Settings.php:253
 msgid "Delete the saved password"
 msgstr ""
 
@@ -299,11 +319,11 @@ msgstr ""
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr ""
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Enable notification and auto-reply settings for forms"
 msgstr ""
 
-#: includes/Settings.php:164
+#: includes/Settings.php:245
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
 msgstr ""
 
@@ -311,7 +331,7 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: includes/Settings.php:168
+#: includes/Settings.php:249
 msgid "Encryption"
 msgstr ""
 
@@ -343,7 +363,7 @@ msgstr ""
 msgid "FForms"
 msgstr ""
 
-#: includes/Settings.php:22 includes/Settings.php:153
+#: includes/Settings.php:25 includes/Settings.php:212
 msgid "FForms settings"
 msgstr ""
 
@@ -383,6 +403,10 @@ msgstr ""
 msgid "Form settings"
 msgstr ""
 
+#: includes/Settings.php:236
+msgid "Form submissions are POST /fforms/v1/submit; the main endpoint is POST /fforms/v1/main."
+msgstr ""
+
 #: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:278 includes/Post_Types.php:331
 msgid "Form type"
 msgstr ""
@@ -391,7 +415,7 @@ msgstr ""
 msgid "Form type: %s"
 msgstr ""
 
-#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:162
+#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:221
 msgid "Form types"
 msgstr ""
 
@@ -407,15 +431,15 @@ msgstr ""
 msgid "Forms in code"
 msgstr ""
 
-#: includes/Settings.php:173
+#: includes/Settings.php:254
 msgid "From email"
 msgstr ""
 
-#: includes/Settings.php:174
+#: includes/Settings.php:255
 msgid "From name"
 msgstr ""
 
-#: includes/Settings.php:154
+#: includes/Settings.php:213
 msgid "General"
 msgstr ""
 
@@ -523,7 +547,7 @@ msgstr ""
 msgid "Main form (API)"
 msgstr ""
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Main form notifications"
 msgstr ""
 
@@ -575,7 +599,7 @@ msgstr ""
 msgid "No submissions found."
 msgstr ""
 
-#: includes/Settings.php:168
+#: includes/Settings.php:229 includes/Settings.php:249
 msgid "None"
 msgstr ""
 
@@ -587,7 +611,7 @@ msgstr ""
 msgid "Notification subject"
 msgstr ""
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Notifications"
 msgstr ""
 
@@ -595,7 +619,7 @@ msgstr ""
 msgid "Number field"
 msgstr ""
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Once enabled, configure notifications and auto-replies separately for each form."
 msgstr ""
 
@@ -619,7 +643,7 @@ msgstr ""
 msgid "Page layout"
 msgstr ""
 
-#: includes/Settings.php:171
+#: includes/Settings.php:252
 msgid "Password"
 msgstr ""
 
@@ -635,8 +659,16 @@ msgstr ""
 msgid "Placeholder"
 msgstr ""
 
-#: includes/Settings.php:167
+#: includes/Settings.php:248
 msgid "Port"
+msgstr ""
+
+#: includes/Settings.php:236
+msgid "Protect form submissions"
+msgstr ""
+
+#: includes/Settings.php:236
+msgid "Protect the main endpoint"
 msgstr ""
 
 #: includes/Registry/Code_Forms.php:45
@@ -653,6 +685,14 @@ msgstr ""
 
 #: includes/REST_Controller.php:578
 msgid "Provide form_id or form_key."
+msgstr ""
+
+#: includes/Settings.php:229
+msgid "Provider"
+msgstr ""
+
+#: includes/Settings.php:235
+msgid "Provider consoles"
 msgstr ""
 
 #: assets/form-settings-sidebar.js:186
@@ -715,15 +755,15 @@ msgstr ""
 msgid "Required field"
 msgstr ""
 
-#: includes/Dashboard.php:184 includes/Settings.php:165
+#: includes/Dashboard.php:184 includes/Settings.php:246
 msgid "SMTP"
 msgstr ""
 
-#: includes/Settings.php:166
+#: includes/Settings.php:247
 msgid "SMTP host"
 msgstr ""
 
-#: includes/Settings.php:169
+#: includes/Settings.php:250
 msgid "SMTP requires a username and password"
 msgstr ""
 
@@ -737,6 +777,10 @@ msgstr ""
 
 #: includes/Post_Types.php:74
 msgid "Search submissions"
+msgstr ""
+
+#: includes/Settings.php:227
+msgid "Select a provider and fill in both keys to activate captcha protection."
 msgstr ""
 
 #: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:39
@@ -767,7 +811,7 @@ msgstr ""
 msgid "Send an auto-reply to the user"
 msgstr ""
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Send an email about a new main form submission"
 msgstr ""
 
@@ -775,7 +819,11 @@ msgstr ""
 msgid "Send notifications about submissions"
 msgstr ""
 
-#: includes/Settings.php:22
+#: includes/Settings.php:234
+msgid "Server key"
+msgstr ""
+
+#: includes/Settings.php:25
 msgid "Settings"
 msgstr ""
 
@@ -871,6 +919,14 @@ msgstr ""
 msgid "Thank you! Your submission has been sent."
 msgstr ""
 
+#: includes/Captcha/Manager.php:250
+msgid "The captcha service is unavailable. Try again later."
+msgstr ""
+
+#: includes/Captcha/Manager.php:189
+msgid "The captcha token was rejected."
+msgstr ""
+
 #: assets/form-settings-sidebar.js:236
 msgid "The current link stops working immediately."
 msgstr ""
@@ -907,12 +963,24 @@ msgstr ""
 msgid "The meta field is too large or nested too deeply."
 msgstr ""
 
+#: includes/Settings.php:233
+msgid "The public sitekey rendered by the widget in the form."
+msgstr ""
+
 #: includes/REST_Controller.php:444
 msgid "The request is too large."
 msgstr ""
 
 #: includes/Dashboard.php:209
 msgid "The route works right after the plugin is activated: there is no form to create and no schema to declare. Whatever top-level keys you send are stored as the submission; formType classifies it so submissions can be filtered."
+msgstr ""
+
+#: includes/Settings.php:234
+msgid "The secret used to verify tokens on the server. Submitting an empty field keeps the saved key."
+msgstr ""
+
+#: includes/Settings.php:239
+msgid "The server key is defined via the FFORMS_CAPTCHA_SERVER_KEY constant and takes priority over the saved value."
 msgstr ""
 
 #: includes/Schema.php:127
@@ -931,6 +999,14 @@ msgstr ""
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr ""
 
+#: includes/Settings.php:232
+msgid "Third-party providers can register themselves through the fforms_captcha_providers filter."
+msgstr ""
+
+#: includes/Settings.php:241
+msgid "Tip: define the FFORMS_CAPTCHA_SERVER_KEY constant in wp-config.php to keep the secret out of the database."
+msgstr ""
+
 #: includes/REST_Controller.php:623
 msgid "Too many submissions. Try again later."
 msgstr ""
@@ -943,7 +1019,7 @@ msgstr ""
 msgid "Unknown form type."
 msgstr ""
 
-#: includes/Settings.php:165
+#: includes/Settings.php:246
 msgid "Use the FForms SMTP"
 msgstr ""
 
@@ -955,11 +1031,11 @@ msgstr ""
 msgid "User ID: %d"
 msgstr ""
 
-#: includes/Settings.php:170
+#: includes/Settings.php:251
 msgid "Username"
 msgstr ""
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Uses the default notification recipients above."
 msgstr ""
 
@@ -991,7 +1067,7 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: includes/Settings.php:162
+#: includes/Settings.php:221
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
 msgstr ""
 

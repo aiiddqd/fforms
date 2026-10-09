@@ -1,6 +1,6 @@
 ---
 status: current
-updated: 2026-09-21
+updated: 2026-10-09
 ---
 
 # FForms: base specification
@@ -183,7 +183,7 @@ Processing order:
 4. Honeypot (`website`, `company`, and `phone` on a block-rendered `/submit` form; `_hp` on `/main`): a filled honeypot gets a fake successful HTTP 200 response, but no entry, term, or email is created. The three `/submit` fields are visually clipped and absent from the tab order; they look like ordinary contact inputs to a generic autofill bot, while API clients can continue to omit them.
 5. Rate limit — 5 attempts per 60 seconds per form + IP pair by default.
 6. Data normalization, and server-side validation against the schema — on `/submit`; `/main` has no schema to validate against and only normalizes.
-7. Optional captcha verification, after `/submit` schema validation and before entry creation. `fforms_captcha_required` defaults to `false`; an enabled requirement with no token returns 422 `fforms_captcha_required`, while a provider rejection returns 422 `fforms_captcha_failed` with `data.reason`. Failed attempts count against the rate limit. Honeypot requests bypass captcha hooks.
+7. Optional captcha verification, after `/submit` schema validation and before entry creation. `fforms_captcha_required` defaults to `false`; an enabled requirement with no token returns 422 `fforms_captcha_required`, while a provider rejection returns 422 `fforms_captcha_failed` with `data.reason`. Failed attempts count against the rate limit. Honeypot requests bypass captcha hooks. FForms ships three built-in providers behind the same hooks (§9): Google reCAPTCHA v2, Cloudflare Turnstile, and Yandex SmartCaptcha; they activate only when a provider and both keys are configured.
 8. Creation of a private `fform_entry` and storage of source, IP, and User-Agent; request context (`meta`, `ref`, `userId`) is written to separate meta keys.
 9. Assignment of the `fform_type` term.
 10. Sending notifications and firing the `fforms_entry_created` action.
@@ -255,7 +255,7 @@ The interface is written in English and translated through the `fforms` text dom
 
 The CSV carries a UTF-8 BOM, merges the fields of every selected record into a shared column set, and guards values against spreadsheet formula injection. Besides the schema fields it contains the `form_type`, `ref`, `user_id`, `custom_fields`, and `meta` columns.
 
-FForms settings have **General** and **SMTP** tabs. General holds the allowed origins of the main form, default notification recipients, and the strict form-type mode; SMTP holds the mailer toggle, host, port, encryption, authentication credentials, and From fields. Saving either tab preserves values owned by the other. The global `notifications` setting unlocks notification and autoreply settings in the form editor and remains off by default; a recipient list alone never starts sending mail. When it is on, each CPT or code form still needs its own notification toggle. Its `_fforms_notification_to` or `notifications.to` value is an override; an empty value inherits `default_notification_recipients`, then the current WordPress `admin_email`. The built-in `/main` form has no separate recipient field and uses the same cascade behind its own `main_form_notifications` toggle. Lists accept commas or line breaks; invalid and duplicate addresses are excluded. If the cascade leaves no valid address, `wp_mail()` is not called and `notification_sent` is `false`. The legacy `main_form_notification_to` moves to the default list the next time settings are saved, only when that new value is still empty, and is then discarded. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
+FForms settings have **General**, **SMTP**, and **Captcha** tabs. General holds the allowed origins of the main form, default notification recipients, and the strict form-type mode; SMTP holds the mailer toggle, host, port, encryption, authentication credentials, and From fields; Captcha holds the anti-bot provider and its keys (§9.1). Saving any tab preserves values owned by the others. The global `notifications` setting unlocks notification and autoreply settings in the form editor and remains off by default; a recipient list alone never starts sending mail. When it is on, each CPT or code form still needs its own notification toggle. Its `_fforms_notification_to` or `notifications.to` value is an override; an empty value inherits `default_notification_recipients`, then the current WordPress `admin_email`. The built-in `/main` form has no separate recipient field and uses the same cascade behind its own `main_form_notifications` toggle. Lists accept commas or line breaks; invalid and duplicate addresses are excluded. If the cascade leaves no valid address, `wp_mail()` is not called and `notification_sent` is `false`. The legacy `main_form_notification_to` moves to the default list the next time settings are saved, only when that new value is still empty, and is then discarded. The autoreply is enabled and configured on the form itself, then sent to the value of the configured email field. The form type and the off-schema data go into the email as a separate block after the form fields.
 
 The built-in SMTP is optional and configures the global WordPress `PHPMailer`. Enabling it therefore affects every email on the site, not only FForms, and it must not be used alongside another SMTP plugin. The SMTP password is stored in the `fforms_smtp` WordPress option without any additional encryption by the plugin.
 
@@ -271,6 +271,16 @@ The following extension points are available:
 - `fforms_verify_captcha( true|WP_Error $result, string $token, Form_Ref $form, WP_REST_Request $request )` — verify the token; defaults to `true`;
 - `fforms_captcha_markup( string $html, Form_Ref $form )` — return optional provider markup in a form slot before its submit button; defaults to an empty string;
 - `fforms_entry_created` — an action fired after the entry is stored and the emails have been attempted.
+
+### 9.1. Built-in captcha providers
+
+FForms implements three captcha providers behind the hooks of §9 — Google reCAPTCHA v2 (checkbox), Cloudflare Turnstile (managed), and Yandex SmartCaptcha (visible widget) — in the `FForms\Captcha` namespace. Each is a thin protocol adapter (`Provider`: widget script URL, verification endpoint, request-field and response mapping); `Captcha\Manager` owns the registry, settings, and error policy.
+
+- **Settings.** The `captcha` subarray of the shared FForms option (`Settings::OPTION`) holds `provider` (`none` by default), `client_key`, `server_key`, `apply_main` (protect `POST /main`, off by default), and `apply_forms` (protect `POST /submit`, on by default). The secret can also come from the `FFORMS_CAPTCHA_SERVER_KEY` constant, which takes priority over the saved value so production secrets can stay out of the options table.
+- **Activation.** The default hook handlers register only when a provider is selected and both keys are in place (`Captcha\Manager::is_ready()`, checked on `init`). Until then the pipeline behaves exactly as without captcha, and a third-party filter at a later priority can still override every decision.
+- **Verification policy — fail-closed.** A verified token lets the submission through. Everything else rejects it with 422 `fforms_captcha_failed`: a provider answer of "invalid" becomes a `WP_Error` whose code is `<provider>_rejected` (`recaptcha_rejected`, `turnstile_rejected`, `smartcaptcha_rejected`), while network errors, HTTP ≥ 400, and unparseable bodies become `captcha_unavailable`. The `fforms_captcha_fail_open` filter relaxes only the latter — an explicit provider rejection is never relaxed. Verification POSTs use a 5-second timeout and carry `secret`, the token, and the client IP (`REMOTE_ADDR`, overridable through `fforms_client_ip`; proxy headers are not trusted).
+- **Widget markup.** The markup handler returns a widget container (unique id per insertion, `data-provider` and `data-sitekey` attributes) and enqueues the provider API script (`render=explicit`) plus the `fforms-captcha` adapter (`assets/captcha-provider.js`) with an inline `window.fformsCaptchaConfig` of `{ provider, sitekey }` — only when a form actually rendered the captcha slot, so pages without forms load no captcha assets.
+- **Registry.** `fforms_captcha_providers` filters the id ⇒ class map of providers; add-ons register their own implementations (any class implementing `Captcha\Provider`) without touching core.
 
 Frontend providers may expose `window.fformsCaptchaProvider` with `getToken(formElement): Promise<string>` and `reset(formElement): void`. The block and fallback clients add the token as `captcha_token`, keep the submit button disabled while waiting, and reset the provider after a server response except when field validation failed. Provider errors use the form's live response and focus the captcha slot.
 
@@ -290,7 +300,7 @@ The REST contract is versioned through the `v1` namespace. CORS for the `fforms/
 - a visual field builder and nested Gutenberg field blocks;
 - the `content` and `survey` types;
 - conditional logic, multi-step, and file uploads;
-- a CAPTCHA provider in core (the provider-agnostic hooks are available for separate integrations);
+- captcha modes beyond the three built-in visible widgets (invisible modes, reCAPTCHA v3 scoring) and per-form captcha toggles — the provider-agnostic hooks remain open to separate integrations and add-ons;
 - analytics, per-form roles, and a retention policy;
 - a server-side fallback for submitting without JavaScript;
 - a dedicated automated PHPUnit/JavaScript test suite.

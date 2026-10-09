@@ -7,7 +7,7 @@ PORT   = 8890
 SITE   = http://localhost:$(PORT)
 
 .DEFAULT_GOAL := help
-.PHONY: help install up start stop restart destroy reset update xdebug logs tail cli bash wp status i18n test-notifications test-notifications-local test-captcha test-captcha-local
+.PHONY: help install up start stop restart destroy reset update xdebug logs tail cli bash wp status i18n test-notifications test-notifications-local test-captcha test-captcha-local test-captcha-providers test-captcha-providers-local test-captcha-constant-local
 
 up: ## start the environment (http://localhost:8890, admin/password)
 	$(WP_ENV) start
@@ -63,6 +63,15 @@ test-captcha: ## run provider-agnostic captcha pipeline checks
 
 test-captcha-local: ## run captcha pipeline checks through the local WP-CLI alias
 	../../../../../bin/wp @local eval-file $(CURDIR)/tests/captcha.php
+
+test-captcha-providers: ## run native captcha provider checks
+	$(WP_ENV) run cli wp eval-file wp-content/plugins/_fforms/tests/captcha-providers.php
+
+test-captcha-providers-local: ## run native captcha provider checks through the local WP-CLI alias
+	../../../../../bin/wp @local eval-file $(CURDIR)/tests/captcha-providers.php
+
+test-captcha-constant-local: ## run the FFORMS_CAPTCHA_SERVER_KEY constant check (separate process: the constant cannot be undefined)
+	../../../../../bin/wp @local eval-file $(CURDIR)/tests/captcha-constant.php
 
 status: ## report WP/PHP versions, plugin and block state
 	@$(WP_ENV) run cli wp eval 'printf( "wp=%s php=%s plugin=%s block=%s permalinks=%s\n", get_bloginfo( "version" ), PHP_VERSION, is_plugin_active( "_fforms/fforms.php" ) ? "active" : "inactive", WP_Block_Type_Registry::get_instance()->is_registered( "fforms/form" ) ? "registered" : "missing", get_option( "permalink_structure" ) ?: "plain" );' --skip-themes 2>/dev/null | grep -E '^wp='

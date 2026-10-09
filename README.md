@@ -46,6 +46,16 @@ curl -X POST https://example.com/wp-json/fforms/v1/main \
 
 Встроенный SMTP выключен по умолчанию. Не включайте его одновременно с другим SMTP-плагином.
 
+## Anti-spam
+
+FForms protects submissions in layers, all server-side:
+
+- **Honeypot** — visually hidden `website`/`company`/`phone` fields (and `_hp` on `/main`): a filled value gets a fake 200 response; nothing is stored or emailed.
+- **Rate limit** — 5 attempts per 60 seconds per form + IP pair by default (`fforms_rate_limit` / `fforms_rate_window` filters).
+- **Native captcha** — Google reCAPTCHA v2, Cloudflare Turnstile, or Yandex SmartCaptcha behind the provider-agnostic hooks. Configure provider and keys in **FForms → Settings → Captcha**; the server key can also come from the `FFORMS_CAPTCHA_SERVER_KEY` constant. The policy is fail-closed: a provider outage rejects submissions unless `fforms_captcha_fail_open` says otherwise.
+
+Details: `docs/specs/base.md` §6 and §9.1.
+
 ## Локальная разработка (wp-env)
 
 Требуется Docker и Node 20+.

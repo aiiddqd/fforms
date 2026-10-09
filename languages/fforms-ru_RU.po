@@ -39,7 +39,7 @@ msgstr "Форма с таким ключом уже зарегистриров�
 msgid "A secret address: it cannot be guessed from the form id."
 msgstr "Секретный адрес: его нельзя подобрать по идентификатору формы."
 
-#: includes/Settings.php:162
+#: includes/Settings.php:221
 msgid "Accept only existing types"
 msgstr "Принимать только существующие типы"
 
@@ -91,7 +91,7 @@ msgstr "Все типы"
 msgid "Allowed origins"
 msgstr "Разрешённые origins"
 
-#: includes/Settings.php:160
+#: includes/Settings.php:219
 msgid "Allowed origins of the main form"
 msgstr "Разрешённые origins главной формы"
 
@@ -102,6 +102,10 @@ msgstr "Любой, у кого есть ссылка, может открыть
 #: assets/form-settings-sidebar.js:313
 msgid "Applies to the link only. The iframe and js-script always embed the form on its own."
 msgstr "Применяется только к ссылке. Iframe и Js-script всегда встраивают форму отдельно."
+
+#: includes/Settings.php:236
+msgid "Apply captcha to"
+msgstr "Применять капчу к"
 
 #: includes/Dashboard.php:109
 msgid "Arbitrary fields"
@@ -119,7 +123,7 @@ msgstr "Приём вложений отключён."
 msgid "Attachments are only accepted as multipart/form-data."
 msgstr "Вложения передаются только через multipart/form-data."
 
-#: includes/Settings.php:169
+#: includes/Settings.php:250
 msgid "Authentication"
 msgstr "Авторизация"
 
@@ -147,6 +151,14 @@ msgstr "Текст кнопки"
 msgid "CSV export"
 msgstr "Экспорт CSV"
 
+#: includes/Settings.php:213
+msgid "Captcha"
+msgstr "Капча"
+
+#: includes/Settings.php:225
+msgid "Captcha is active: protected forms now require a token."
+msgstr "Капча активна: защищённые формы теперь требуют токен."
+
 #: includes/Schema.php:142
 msgid "Check the submitted fields."
 msgstr "Проверьте заполненные поля."
@@ -166,6 +178,10 @@ msgstr "Обнаружена циклическая ссылка формы."
 #: includes/Dashboard.php:244
 msgid "Click “Add form”, build the fields with FForms blocks right in the Gutenberg editor and publish the post. A published form can be inserted with the “Form by FForms” block or the [fform id=…] shortcode; turning on “Share via link” in the Publication panel also gives it a secret URL plus iframe and js-script snippets for external sites."
 msgstr "Нажмите «Добавить форму», соберите поля блоками FForms прямо в редакторе Gutenberg и опубликуйте запись. Опубликованную форму можно вставить блоком «Form by FForms» или шорткодом [fform id=…]; если включить «Доступ по ссылке» в панели «Публикация», у неё появятся ещё и секретный URL, iframe- и js-сниппеты для внешних сайтов."
+
+#: includes/Settings.php:233
+msgid "Client key"
+msgstr "Клиентский ключ"
 
 #: build/blocks/field-textarea/block.json:1 src/blocks/field-textarea/block.json:1
 msgid "Collect a longer multi-line response."
@@ -195,11 +211,11 @@ msgstr "Собирает и проверяет email."
 msgid "Collect one or more confirmed options."
 msgstr "Собирает один или несколько отмеченных вариантов."
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Comma- or newline-separated emails. Empty — the current administrator email is used."
 msgstr "Адреса через запятую или с новой строки. Если пусто — используется текущий адрес администратора."
 
-#: includes/Settings.php:160
+#: includes/Settings.php:219
 msgid "Comma-separated domains allowed to make a cross-origin request to POST /fforms/v1/main. Empty — no CORS headers are sent."
 msgstr "Домены через запятую, которым разрешён кросс-доменный запрос к POST /fforms/v1/main. Пусто — CORS-заголовки не отправляются."
 
@@ -243,6 +259,10 @@ msgstr "Не удалось сформировать CSV."
 msgid "Could not save the submission."
 msgstr "Не удалось сохранить запись."
 
+#: includes/Settings.php:235
+msgid "Create the client and server keys in the console of the chosen provider."
+msgstr "Создайте клиентский и серверный ключи в консоли выбранного провайдера."
+
 #: includes/Post_Types.php:334
 msgid "Data"
 msgstr "Данные"
@@ -251,11 +271,11 @@ msgstr "Данные"
 msgid "Date"
 msgstr "Дата"
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Default notification recipients"
 msgstr "Получатели уведомлений по умолчанию"
 
-#: includes/Settings.php:172
+#: includes/Settings.php:253
 msgid "Delete the saved password"
 msgstr "Удалить сохранённый пароль"
 
@@ -299,11 +319,11 @@ msgstr "Вставка на сторонний сайт с фиксирован�
 msgid "Embed on an external site: the script inserts the iframe and adjusts its height."
 msgstr "Вставка на сторонний сайт: скрипт сам подставит iframe и подгонит высоту."
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Enable notification and auto-reply settings for forms"
 msgstr "Включить настройки уведомлений и автоответов для форм"
 
-#: includes/Settings.php:164
+#: includes/Settings.php:245
 msgid "Enable the built-in SMTP only when no other SMTP plugin handles email delivery."
 msgstr "Встроенный SMTP включайте только в том случае, если отправкой почты не управляет другой SMTP-плагин."
 
@@ -311,7 +331,7 @@ msgstr "Встроенный SMTP включайте только в том сл
 msgid "Enabled"
 msgstr "Включён"
 
-#: includes/Settings.php:168
+#: includes/Settings.php:249
 msgid "Encryption"
 msgstr "Шифрование"
 
@@ -343,7 +363,7 @@ msgstr "Экспорт записей"
 msgid "FForms"
 msgstr ""
 
-#: includes/Settings.php:22 includes/Settings.php:153
+#: includes/Settings.php:25 includes/Settings.php:212
 msgid "FForms settings"
 msgstr "Настройки FForms"
 
@@ -383,6 +403,10 @@ msgstr "Только форма"
 msgid "Form settings"
 msgstr "Настройки формы"
 
+#: includes/Settings.php:236
+msgid "Form submissions are POST /fforms/v1/submit; the main endpoint is POST /fforms/v1/main."
+msgstr "Отправки форм — это POST /fforms/v1/submit; главный эндпоинт — POST /fforms/v1/main."
+
 #: includes/Export.php:30 includes/Form_Types.php:45 includes/Post_Types.php:278 includes/Post_Types.php:331
 msgid "Form type"
 msgstr "Тип формы"
@@ -391,7 +415,7 @@ msgstr "Тип формы"
 msgid "Form type: %s"
 msgstr "Тип формы: %s"
 
-#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:162
+#: includes/Dashboard.php:219 includes/Form_Types.php:44 includes/Form_Types.php:46 includes/Form_Types.php:81 includes/Form_Types.php:82 includes/Settings.php:221
 msgid "Form types"
 msgstr "Типы форм"
 
@@ -407,15 +431,15 @@ msgstr "Формы"
 msgid "Forms in code"
 msgstr "Формы в коде"
 
-#: includes/Settings.php:173
+#: includes/Settings.php:254
 msgid "From email"
 msgstr "Email отправителя"
 
-#: includes/Settings.php:174
+#: includes/Settings.php:255
 msgid "From name"
 msgstr "Имя отправителя"
 
-#: includes/Settings.php:154
+#: includes/Settings.php:213
 msgid "General"
 msgstr "Основные"
 
@@ -523,7 +547,7 @@ msgstr "Ссылка"
 msgid "Main form (API)"
 msgstr "Главная форма (API)"
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Main form notifications"
 msgstr "Уведомления главной формы"
 
@@ -575,7 +599,7 @@ msgstr "В корзине записей нет."
 msgid "No submissions found."
 msgstr "Записи не найдены."
 
-#: includes/Settings.php:168
+#: includes/Settings.php:229 includes/Settings.php:249
 msgid "None"
 msgstr "Нет"
 
@@ -587,7 +611,7 @@ msgstr "Не используется"
 msgid "Notification subject"
 msgstr "Тема уведомления"
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -595,7 +619,7 @@ msgstr "Уведомления"
 msgid "Number field"
 msgstr "Поле «Число»"
 
-#: includes/Settings.php:159
+#: includes/Settings.php:218
 msgid "Once enabled, configure notifications and auto-replies separately for each form."
 msgstr "После включения настройте отправку уведомлений и автоответы отдельно для каждой формы."
 
@@ -619,7 +643,7 @@ msgstr "Обзор"
 msgid "Page layout"
 msgstr "Макет страницы"
 
-#: includes/Settings.php:171
+#: includes/Settings.php:252
 msgid "Password"
 msgstr "Пароль"
 
@@ -635,9 +659,17 @@ msgstr "Поле «Телефон»"
 msgid "Placeholder"
 msgstr "Подсказка"
 
-#: includes/Settings.php:167
+#: includes/Settings.php:248
 msgid "Port"
 msgstr "Порт"
+
+#: includes/Settings.php:236
+msgid "Protect form submissions"
+msgstr "Защищать отправки форм"
+
+#: includes/Settings.php:236
+msgid "Protect the main endpoint"
+msgstr "Защищать главный эндпоинт"
 
 #: includes/Registry/Code_Forms.php:45
 msgid "Provide a form title."
@@ -654,6 +686,14 @@ msgstr "Укажите хотя бы одно валидное поле форм
 #: includes/REST_Controller.php:578
 msgid "Provide form_id or form_key."
 msgstr "Укажите form_id или form_key."
+
+#: includes/Settings.php:229
+msgid "Provider"
+msgstr "Провайдер"
+
+#: includes/Settings.php:235
+msgid "Provider consoles"
+msgstr "Консоли провайдеров"
 
 #: assets/form-settings-sidebar.js:186
 msgid "Publication"
@@ -715,15 +755,15 @@ msgstr "Оставить заявку"
 msgid "Required field"
 msgstr "Обязательное поле"
 
-#: includes/Dashboard.php:184 includes/Settings.php:165
+#: includes/Dashboard.php:184 includes/Settings.php:246
 msgid "SMTP"
 msgstr ""
 
-#: includes/Settings.php:166
+#: includes/Settings.php:247
 msgid "SMTP host"
 msgstr "Хост SMTP"
 
-#: includes/Settings.php:169
+#: includes/Settings.php:250
 msgid "SMTP requires a username and password"
 msgstr "SMTP требует логин и пароль"
 
@@ -738,6 +778,10 @@ msgstr "Искать типы форм"
 #: includes/Post_Types.php:74
 msgid "Search submissions"
 msgstr "Искать записи"
+
+#: includes/Settings.php:227
+msgid "Select a provider and fill in both keys to activate captcha protection."
+msgstr "Выберите провайдера и заполните оба ключа, чтобы включить защиту капчей."
 
 #: assets/fallback-editor.js:100 build/blocks/form/index.js:1 src/blocks/form/edit-reference.js:39
 msgid "Select a published form"
@@ -767,7 +811,7 @@ msgstr "Передаёт значение, не показывая поле по
 msgid "Send an auto-reply to the user"
 msgstr "Отправлять автоответ пользователю"
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Send an email about a new main form submission"
 msgstr "Отправлять письмо о новой записи главной формы"
 
@@ -775,7 +819,11 @@ msgstr "Отправлять письмо о новой записи главн�
 msgid "Send notifications about submissions"
 msgstr "Отправлять уведомления о записях"
 
-#: includes/Settings.php:22
+#: includes/Settings.php:234
+msgid "Server key"
+msgstr "Серверный ключ"
+
+#: includes/Settings.php:25
 msgid "Settings"
 msgstr "Настройки"
 
@@ -871,6 +919,14 @@ msgstr "Спасибо! Мы получили ваше сообщение и с�
 msgid "Thank you! Your submission has been sent."
 msgstr "Спасибо! Запись отправлена."
 
+#: includes/Captcha/Manager.php:250
+msgid "The captcha service is unavailable. Try again later."
+msgstr "Сервис капчи недоступен. Попробуйте позже."
+
+#: includes/Captcha/Manager.php:189
+msgid "The captcha token was rejected."
+msgstr "Токен капчи отклонён."
+
 #: assets/form-settings-sidebar.js:236
 msgid "The current link stops working immediately."
 msgstr "Текущая ссылка перестанет работать сразу."
@@ -907,6 +963,10 @@ msgstr "Ссылка станет доступна после публикаци
 msgid "The meta field is too large or nested too deeply."
 msgstr "Поле meta слишком большое или слишком глубоко вложено."
 
+#: includes/Settings.php:233
+msgid "The public sitekey rendered by the widget in the form."
+msgstr "Публичный sitekey, который виджет показывает в форме."
+
 #: includes/REST_Controller.php:444
 msgid "The request is too large."
 msgstr "Запрос слишком большой."
@@ -914,6 +974,14 @@ msgstr "Запрос слишком большой."
 #: includes/Dashboard.php:209
 msgid "The route works right after the plugin is activated: there is no form to create and no schema to declare. Whatever top-level keys you send are stored as the submission; formType classifies it so submissions can be filtered."
 msgstr "Роут работает сразу после активации плагина: форму создавать не нужно, схему объявлять тоже. Какие ключи верхнего уровня передали — такие и сохранились как заявка; formType классифицирует её, чтобы записи можно было фильтровать."
+
+#: includes/Settings.php:234
+msgid "The secret used to verify tokens on the server. Submitting an empty field keeps the saved key."
+msgstr "Секрет для проверки токенов на сервере. Пустое поле сохраняет ранее сохранённый ключ."
+
+#: includes/Settings.php:239
+msgid "The server key is defined via the FFORMS_CAPTCHA_SERVER_KEY constant and takes priority over the saved value."
+msgstr "Серверный ключ задан константой FFORMS_CAPTCHA_SERVER_KEY и имеет приоритет над сохранённым значением."
 
 #: includes/Schema.php:127
 msgid "The “%s” field is required."
@@ -931,6 +999,14 @@ msgstr "Ключ «main» зарезервирован за встроенной
 msgid "There is no schema: every key you send is stored as a field of the submission."
 msgstr "Схемы нет: каждый переданный ключ сохраняется как поле заявки."
 
+#: includes/Settings.php:232
+msgid "Third-party providers can register themselves through the fforms_captcha_providers filter."
+msgstr "Сторонние провайдеры могут регистрироваться через фильтр fforms_captcha_providers."
+
+#: includes/Settings.php:241
+msgid "Tip: define the FFORMS_CAPTCHA_SERVER_KEY constant in wp-config.php to keep the secret out of the database."
+msgstr "Совет: задайте константу FFORMS_CAPTCHA_SERVER_KEY в wp-config.php, чтобы не хранить секрет в базе."
+
 #: includes/REST_Controller.php:623
 msgid "Too many submissions. Try again later."
 msgstr "Слишком много отправок. Попробуйте позже."
@@ -943,7 +1019,7 @@ msgstr "Поле «URL»"
 msgid "Unknown form type."
 msgstr "Неизвестный тип формы."
 
-#: includes/Settings.php:165
+#: includes/Settings.php:246
 msgid "Use the FForms SMTP"
 msgstr "Использовать SMTP FForms"
 
@@ -955,11 +1031,11 @@ msgstr ""
 msgid "User ID: %d"
 msgstr ""
 
-#: includes/Settings.php:170
+#: includes/Settings.php:251
 msgid "Username"
 msgstr "Логин"
 
-#: includes/Settings.php:161
+#: includes/Settings.php:220
 msgid "Uses the default notification recipients above."
 msgstr "Используются получатели уведомлений по умолчанию выше."
 
@@ -991,7 +1067,7 @@ msgstr "Мы получили ваше сообщение — %s"
 msgid "Website"
 msgstr "Сайт"
 
-#: includes/Settings.php:162
+#: includes/Settings.php:221
 msgid "When enabled, an unknown formType returns 422 and the submission is not saved. By default a new type is created automatically."
 msgstr "При включении неизвестный formType возвращает 422 и запись не сохраняется. По умолчанию новый тип создаётся автоматически."
 

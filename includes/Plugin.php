@@ -22,6 +22,7 @@ final class Plugin {
 		Dashboard::boot();
 		Settings::boot();
 		REST_Controller::boot();
+		Captcha\Manager::boot();
 		CORS::boot();
 		Public_Form::boot();
 		Block::boot();
